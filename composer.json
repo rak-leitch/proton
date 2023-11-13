@@ -1,0 +1,34 @@
+{
+    "name": "adepta/proton",
+    "description": "Laravel CRUD UI based on relationships",
+    "type": "library",
+    "require-dev": {
+        "phpunit/phpunit": "^10.4",
+        "orchestra/testbench-dusk": "^8.14",
+        "nunomaduro/larastan": "^2.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Adepta\\Proton\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Adepta\\Proton\\Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Richard Leitch",
+            "email": "rak_leitch@hotmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Adepta\\Proton\\ProtonServiceProvider"
+            ]
+        }
+    }
+}
