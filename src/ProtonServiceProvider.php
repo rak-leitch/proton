@@ -4,7 +4,9 @@ namespace Adepta\Proton;
 
 use Illuminate\Support\ServiceProvider;
 use Adepta\Proton\Contracts\ConfigStoreContract;
+use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Services\ConfigStoreService;
+use Adepta\Proton\Entity\EntityConfig;
 
 class ProtonServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,7 @@ class ProtonServiceProvider extends ServiceProvider
     public function register(): void
     {
          $this->app->singleton(ConfigStoreContract::class, ConfigStoreService::class);
+         $this->app->bind(EntityConfigContract::class, EntityConfig::class);
     }
 
     /**
