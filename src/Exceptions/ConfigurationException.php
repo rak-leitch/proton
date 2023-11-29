@@ -11,9 +11,9 @@ class ConfigurationException extends Exception
     /**
      * Custom JSON response for frontend
      * 
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
     */
     public function render(Request $request) : JsonResponse
     {

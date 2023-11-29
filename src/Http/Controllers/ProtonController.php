@@ -10,7 +10,7 @@ class ProtonController extends BaseController
     /**
      * Action to render main Proton template.
      *
-     * @return \Illuminate\View\View
+     * @return View
     */
     public function index() : View
     {

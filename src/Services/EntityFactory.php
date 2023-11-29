@@ -14,7 +14,7 @@ class EntityFactory
     /**
      * Constructor.
      *
-     * @param \Adepta\Proton\Contracts\ConfigStoreContract $configStore
+     * @param ConfigStoreContract $configStore
     */
     public function __construct(
         private ConfigStoreContract $configStore
@@ -26,7 +26,7 @@ class EntityFactory
      * 
      * @param string $entityCode
      *
-     * @return \Adepta\Proton\Entity\Entity
+     * @return Entity
     */
     public function create(string $entityCode) : Entity 
     {

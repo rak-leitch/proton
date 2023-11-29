@@ -9,7 +9,7 @@ interface EntityDefinitionContract
     /**
      * Define and return the entity's configuration.
      * 
-     * @return \Adepta\Proton\Contracts\Entity\EntityConfigContract $entityConfig
+     * @return EntityConfigContract $entityConfig
     */
     public function getEntityConfig() : EntityConfigContract;
 }
