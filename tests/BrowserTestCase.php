@@ -4,6 +4,8 @@ namespace Adepta\Proton\Tests;
 
 use Adepta\Proton\ProtonServiceProvider;
 use Orchestra\Testbench\Dusk\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Config;
+use Adepta\Proton\Tests\TestConfig;
 
 class BrowserTestCase extends \Orchestra\Testbench\Dusk\TestCase
 {
@@ -18,6 +20,7 @@ class BrowserTestCase extends \Orchestra\Testbench\Dusk\TestCase
     public function setUp(): void
     {
         parent::setUp();
+        Config::set('proton', TestConfig::getConfig());
     }
 
     /**

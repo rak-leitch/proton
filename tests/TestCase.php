@@ -4,6 +4,8 @@ namespace Adepta\Proton\Tests;
 
 use Adepta\Proton\ProtonServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Config;
+use Adepta\Proton\Tests\TestConfig;
 
 class TestCase extends BaseTestCase
 {
@@ -15,6 +17,7 @@ class TestCase extends BaseTestCase
     public function setUp(): void
     {
         parent::setUp();
+        Config::set('proton', TestConfig::getConfig());
     }
 
     /**
@@ -37,6 +40,6 @@ class TestCase extends BaseTestCase
     */
     protected function getEnvironmentSetUp($app) : void
     {
-
+        
     }
 }
