@@ -16,13 +16,19 @@ class EntityIndexTest extends TestCase
     */
     public function test_entity_index() : void
     {        
-        $response = $this->get(route('proton.config.index', ['entity_code' => 'project']));
+        $response = $this->get(route('proton.config.list.config', [
+            'entity_code' => 'project',
+            'view_type' => 'entity_index',
+        ]));
+        
+        //dd($response);
          
         $response->assertStatus(200);
 
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->has('list_fields', 4, fn (AssertableJson $json) =>
-                $json->where('field_name', 'id')
+            $json->has('fields', 4, fn (AssertableJson $json) =>
+                $json->where('title', 'id')
+                     ->where('key', 'id')
                      ->where('sortable', true)
             )
         );

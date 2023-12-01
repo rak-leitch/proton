@@ -18,6 +18,14 @@ interface EntityConfigContract
     public function setCode(string $code) : self;
     
     /**
+     * Get the entity code that matches a code 
+     * defined in the Proton config. 
+     * 
+     * @return string
+     */
+    public function getCode() : string;
+    
+    /**
      * Set the model associated with this entity
      * configuration.
      *

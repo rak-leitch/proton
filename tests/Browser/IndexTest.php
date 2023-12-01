@@ -9,18 +9,20 @@ use Illuminate\Support\Facades\Config;
 class IndexTest extends BrowserTestCase
 {
     /**
-     * Basic test to visit the main route and
-     * see if Vue and Vuetify are working
+     * Test to check projects table renders
      *
      * @return void
     */
     public function test_index(): void
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit(route('proton.index'))
-                ->assertSee('Proton')
-                ->waitFor('@test-button')
-                ->assertSeeIn('@test-button span.v-btn__content', 'WORKING');
+            $browser->visit(url('proton/entity/project/index'))
+                ->waitFor('.v-data-table__thead')
+                ->assertSeeIn('.v-card-title', 'Projects')
+                ->assertSeeIn('.v-data-table__thead', 'id')
+                ->assertSeeIn('.v-data-table__thead', 'name')
+                ->assertSeeIn('.v-data-table__thead', 'description')
+                ->assertSeeIn('.v-data-table__thead', 'priority');
         });
     }
 }

@@ -10,21 +10,24 @@ class ListConfigService
      * Get the list config for an entity
      * for use by the frontend.
      *
-     * @aparam Entity $entity
+     * @param Entity $entity
+     * @param string $viewType
      * 
      * @return mixed[]
     */
-    public function getListConfig(Entity $entity) : array
+    public function getListConfig(Entity $entity, string $viewType) : array
     {
-        $fieldsConfig = [];
+        $listConfig = [];
+        $listConfig['fields'] = [];
         
         foreach($entity->getFields() as $field) {
             $fieldConfig = [];
-            $fieldConfig['field_name'] = $field->getFieldName();
+            $fieldConfig['title'] = $field->getFieldName();
+            $fieldConfig['key'] = $field->getFieldName();
             $fieldConfig['sortable'] = $field->getSortable();
-            $fieldsConfig[] = $fieldConfig;
+            $listConfig['fields'][] = $fieldConfig;
         };
         
-        return $fieldsConfig;
+        return $listConfig;
     }
 }
