@@ -5,11 +5,12 @@
     const baseUrl = window.protonApiBase;
     const itemsPerPage = ref(5);
     const serverItems = ref([]);
+    const headers = ref([]);
     const loading = ref(true);
     const totalItems = ref(0);
     const page = ref(1);
-    const headers = ref([]);
     const emit = defineEmits(["configError"]);
+    const configData = ref({});
    
     const props = defineProps({
         entityCode: String,
@@ -17,7 +18,7 @@
     });
     
     function loadData ({ page, itemsPerPage, sortBy }) {
-        
+
         loading.value = true;
         
         //Dummy fetch for the time being.
@@ -30,16 +31,10 @@
         
         loading.value = false;
     }
-    
-    watch(
-        () => props.entityCode,
-        () => {
-            useAjax(`config/list/${props.viewType}/${props.entityCode}`).then((configData)  => {
-                headers.value = configData.fields;
-            });
-        },
-        { immediate: true },
-    )
+
+    let config = await useAjax(`config/list/${props.viewType}/${props.entityCode}`);
+    headers.value = config.fields;
+
 </script>
 
 <template>

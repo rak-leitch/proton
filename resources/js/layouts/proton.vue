@@ -1,11 +1,11 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref } from "vue";
     
-    const errorActive = ref(false);
+    const showOverlay = true;
+    const reloadViewFlag = ref(false);
     
-    //Set the error - TODO: this needs to report the message.
-    function configError() {
-        errorActive.value = true;
+    function reloadView() {
+        reloadViewFlag.value = !reloadViewFlag.value;
     }
 </script>
 
@@ -16,21 +16,33 @@
             <v-container>
                 <v-row>
                     <v-col>
-                        <v-alert type="error" v-if="errorActive" title="Error" text="Something went wrong"></v-alert>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col>
-                        <router-view @config-error="configError" v-slot="{ Component }">
-                            <component :is="Component"/>
-                        </router-view>
+                        <RouterView v-slot="{ Component }">
+                            <template v-if="Component">
+                                <Suspense timeout="0">
+                                    <component :is="Component" @reloadView="reloadView" :key="reloadViewFlag"/>
+                                    <template #fallback>
+                                        <v-overlay
+                                            :model-value="showOverlay"
+                                            class="align-center justify-center"
+                                        >
+                                            <v-progress-circular
+                                                color="primary"
+                                                indeterminate
+                                                size="64"
+                                             ></v-progress-circular>
+                                        </v-overlay>
+                                    </template>
+                                </Suspense>
+                            </template>
+                        </RouterView>
                     </v-col>
                 </v-row>
                 <v-row>
                     <v-col>
                         <div class="mt-3 text-center">
-                            <router-link to="/proton/entity/project/index">Projects</router-link>
-                            <router-link to="/proton/entity/task/index">Tasks</router-link>
+                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'project' }}">Projects</router-link> |
+                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'task' }}">Tasks</router-link> | 
+                            <router-link :to="{ name: 'entity-view', params: { entityCode: 'project' }}">Project View</router-link>
                         </div>
                     </v-col>
                 </v-row>

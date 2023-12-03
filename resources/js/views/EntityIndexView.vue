@@ -2,24 +2,24 @@
     import protonList from "../components/ListComponent.vue";
     import { useAjax } from "../composables/ajax";
     import { useRoute } from "vue-router";
-    import { ref, onMounted, watch } from "vue";
+    import { ref, watch } from "vue";
     
+    const emit =  defineEmits(['reloadView']);
     const route = useRoute();
     const viewType = route.name;
     const entityCode = ref(route.params.entityCode);
     const label = ref("");
-    const emit = defineEmits(["configError"]);
     
+    let configData = await useAjax(`config/view/${viewType}/${route.params.entityCode}`);
+    label.value = configData.entity_label_plural;
+
     watch(
-        () => route.params.entityCode,
+        () => route.params,
         () => {
-            useAjax(`config/view/${viewType}/${route.params.entityCode}`).then((configData)  => {
-                label.value = configData.entity_label_plural;          
-                entityCode.value = configData.entity_code;
-            });
-        },
-        { immediate: true },
+            emit('reloadView');
+        }
     )
+    
 </script>
 
 <template>
