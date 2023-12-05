@@ -1,12 +1,5 @@
 <script setup>
-    import { ref } from "vue";
-    
     const showOverlay = true;
-    const reloadViewFlag = ref(false);
-    
-    function reloadView() {
-        reloadViewFlag.value = !reloadViewFlag.value;
-    }
 </script>
 
 <template>
@@ -19,7 +12,7 @@
                         <RouterView v-slot="{ Component }">
                             <template v-if="Component">
                                 <Suspense timeout="0">
-                                    <component :is="Component" @reloadView="reloadView" :key="reloadViewFlag"/>
+                                    <component :is="Component"/>
                                     <template #fallback>
                                         <v-overlay
                                             :model-value="showOverlay"

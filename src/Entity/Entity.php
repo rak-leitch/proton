@@ -45,6 +45,16 @@ class Entity
     }
     
     /**
+     * Get the model for this entity.
+     *
+     * @return string
+    */
+    public function getModel() : string
+    {
+        return $this->entityConfig->getModel();
+    }
+    
+    /**
      * Get the label for this entity.
      *
      * @return ?string

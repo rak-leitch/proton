@@ -1,51 +1,91 @@
 <script setup>
-    import { ref, watch } from 'vue';
+    import { ref, watch } from "vue";
     import { useAjax } from "../composables/ajax";
-    
-    const baseUrl = window.protonApiBase;
+
+    const configData = ref({});
+    const configChange = ref(false);
     const itemsPerPage = ref(5);
     const serverItems = ref([]);
-    const headers = ref([]);
     const loading = ref(true);
     const totalItems = ref(0);
-    const page = ref(1);
-    const emit = defineEmits(["configError"]);
-    const configData = ref({});
+    const currentError = ref("");
+    
+    const itemsPerPageOptions = [
+        { value: 3, title: '3' },
+        { value: 5, title: '5' },
+        { value: 10, title: '10' }  
+    ];
    
     const props = defineProps({
-        entityCode: String,
-        viewType: String,
+        settings: Object,
     });
     
-    function loadData ({ page, itemsPerPage, sortBy }) {
-
-        loading.value = true;
-        
-        //Dummy fetch for the time being.
-        serverItems.value = [
-            { id: 1, name: 'Project 1', description: 'Go down the pub', priority: 'Urgent' },
-            { id: 2, name: 'Project 2', description: 'Boring housework', priority: 'Low' },
-        ];
-        
-        totalItems.value = 2;
-        
-        loading.value = false;
+    watch(
+        () => props.settings,
+        () => {
+            getConfig().then(() => {
+                configChange.value = !configChange.value;
+            })
+        }, {
+            deep: true,
+        }
+    );
+    
+    async function getConfig() {
+        try {
+            const getParams = {
+                viewType: props.settings.viewType,
+                entityCode: props.settings.entityCode
+            };
+            configData.value = await useAjax("config/list", getParams);
+        } catch (error) {
+            currentError.value = `Failed to get list config: ${error.message}`;
+        }
     }
-
-    let config = await useAjax(`config/list/${props.viewType}/${props.entityCode}`);
-    headers.value = config.fields;
+    
+    await getConfig();
+    
+    async function loadData ({ page, itemsPerPage, sortBy }) {
+        try {
+            loading.value = true;
+            const sortByParam = sortBy.length ? sortBy.toString() : "null";
+            const getParams = {
+                entityCode: props.settings.entityCode,
+                page: page,
+                itemsPerPage: itemsPerPage,
+                sortBy: sortByParam,
+            };
+            const response = await useAjax("data/list", getParams);
+            serverItems.value = response.data;
+            totalItems.value = response.totalRows;
+        } catch (error) {
+            serverItems.value = [];
+            totalItems.value = 0;
+            currentError.value = `Failed to get list data: ${error.message}`;
+        } finally {
+            loading.value = false;
+        }
+    }
 
 </script>
 
 <template>
+    <v-alert
+        v-if="currentError"
+        type="error"
+        title="Error"
+    >
+        {{ currentError }}
+    </v-alert>
     <v-data-table-server
         v-model:items-per-page="itemsPerPage"
-        :headers="headers"
+        :headers="configData.fields"
         :items-length="totalItems"
         :items="serverItems"
         :loading="loading"
-        :page="page"
         item-value="name"
         @update:options="loadData"
+        :items-per-page-options="itemsPerPageOptions"
+        :key="configChange"
     ></v-data-table-server>
 </template>

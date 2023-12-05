@@ -36,6 +36,14 @@ interface EntityConfigContract
     public function setModel(string $model) : self;
     
     /**
+     * Get the model associated with this entity
+     * configuration. 
+     * 
+     * @return string
+     */
+    public function getModel() : string;
+    
+    /**
      * Add a field to the configuration
      *
      * @param FieldContract $field 

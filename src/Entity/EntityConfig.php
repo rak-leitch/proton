@@ -67,6 +67,17 @@ class EntityConfig implements EntityConfigContract
     }
     
     /**
+     * Get the model associated with this entity
+     * configuration.
+     * 
+     * @return string
+     */
+    public function getModel() : string
+    {
+        return $this->model;
+    }
+    
+    /**
      * Add a field to the configuration
      *
      * @param FieldContract $field 

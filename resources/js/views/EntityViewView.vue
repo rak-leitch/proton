@@ -3,8 +3,6 @@
     import { useRoute } from "vue-router";
     import { ref } from "vue";
     
-    const route = useRoute();
-    const entityCode = ref(route.params.entityCode);
     const label = ref("projects");
 </script>
 
