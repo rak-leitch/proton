@@ -6,7 +6,7 @@ use Adepta\Proton\Http\Controllers\View\EntityIndexController;
 use Adepta\Proton\Http\Controllers\List\ListConfigController;
 use Adepta\Proton\Http\Controllers\List\ListDataController;
 
-Route::prefix('proton')->middleware('web')->name('proton.')->group(function () {
+Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(function () {
     Route::prefix('api')->group(function () {
         Route::prefix('config')->name('config.')->group(function () {
             Route::prefix('view')->name('view.')->group(function () {

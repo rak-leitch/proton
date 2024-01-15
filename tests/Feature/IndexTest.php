@@ -3,6 +3,7 @@
 namespace Adepta\Proton\Tests\Feature;
 
 use Adepta\Proton\Tests\TestCase;
+use Adepta\Proton\Tests\Models\User;
 
 class IndexTest extends TestCase
 {
@@ -13,7 +14,8 @@ class IndexTest extends TestCase
     */
     public function test_index_page() : void
     {        
+        $this->actingAs(User::findOrFail(1));
         $response = $this->get(route('proton.index'));
-        $response->assertStatus(500);
+        $response->assertStatus(200);
     }
 }

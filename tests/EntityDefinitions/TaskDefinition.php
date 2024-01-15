@@ -30,6 +30,7 @@ class TaskDefinition implements EntityDefinitionContract
             ->setCode('task')
             ->setModel(TaskModel::class)
             ->addField(Id::create('id')->sortable())
+            ->addField(Text::create('project_id')->sortable()) //TODO: Needs to be a relationship type later
             ->addField(Text::create('name')->sortable())
             ->addField(Text::create('description'));
             
