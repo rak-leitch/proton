@@ -1,12 +1,12 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Http\Controllers;
+namespace Adepta\Proton\Http\Controllers\View;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Services\List\ListConfigService;
+use Adepta\Proton\Services\ViewConfig\IndexConfigService;
 
 class EntityIndexController extends BaseController
 {    
@@ -17,11 +17,14 @@ class EntityIndexController extends BaseController
     */
     public function __construct(
         private EntityFactory $entityFactory,
-        private ListConfigService $listConfigService,
+        private IndexConfigService $indexConfigService,
     ) { }
     
     /**
      * Get the configuration for an entity index page.
+     * 
+     * @param Request $request
+     * @param string $entityCode
      *
      * @return JsonResponse
     */
@@ -29,10 +32,8 @@ class EntityIndexController extends BaseController
     {
         $listFieldsConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $listFieldsConfig = $this->listConfigService->getListConfig($entity);
+        $listFieldsConfig = $this->indexConfigService->getViewConfig($entity);
         
-        return response()->json([
-            'list_fields' => $listFieldsConfig,
-        ]);
+        return response()->json($listFieldsConfig);
     }
 }

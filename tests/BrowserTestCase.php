@@ -4,11 +4,14 @@ namespace Adepta\Proton\Tests;
 
 use Adepta\Proton\ProtonServiceProvider;
 use Orchestra\Testbench\Dusk\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\Config;
-use Adepta\Proton\Tests\TestConfig;
+use Adepta\Proton\Tests\Database\Traits\InitialiseDatabaseTrait;
+use Adepta\Proton\Tests\EntityDefinitions\Traits\InitialiseEntityConfigTrait;
 
-class BrowserTestCase extends \Orchestra\Testbench\Dusk\TestCase
+class BrowserTestCase extends BaseTestCase
 {
+    use InitialiseDatabaseTrait;
+    use InitialiseEntityConfigTrait;
+
     protected static $baseServeHost = '127.0.0.1';
     protected static $baseServePort = 9001;
     
@@ -20,7 +23,6 @@ class BrowserTestCase extends \Orchestra\Testbench\Dusk\TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Config::set('proton', TestConfig::getConfig());
     }
 
     /**
@@ -36,13 +38,25 @@ class BrowserTestCase extends \Orchestra\Testbench\Dusk\TestCase
     }
 
     /**
-     * Define environment setup. Currently this
-     * is done in phpunit.xml.
+     * Define environment setup.
      *
      * @return void
     */
-    protected function getEnvironmentSetUp($app) : void
+    protected function defineEnvironment($app) : void
     {
-
+        $this->setDbConfig($app);
+        $this->setEntityConfig($app);
+    }
+    
+    /**
+     * Define database migrations and seeders.
+     *
+     * @return void
+     */
+    protected function defineDatabaseMigrations()
+    {
+        $this->initialiseTestingDb();
+        $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
+        $this->runSeeders();
     }
 }

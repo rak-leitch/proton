@@ -5,6 +5,7 @@ namespace Adepta\Proton\Entity;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Illuminate\Support\Collection;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use Illuminate\Support\Str;
 
 class Entity
 {
@@ -31,5 +32,41 @@ class Entity
     public function getFields() : Collection
     {
         return $this->entityConfig->getFields();
+    }
+    
+    /**
+     * Get the code for this entity.
+     *
+     * @return string
+    */
+    public function getCode() : string
+    {
+        return $this->entityConfig->getCode();
+    }
+    
+    /**
+     * Get the model for this entity.
+     *
+     * @return string
+    */
+    public function getModel() : string
+    {
+        return $this->entityConfig->getModel();
+    }
+    
+    /**
+     * Get the label for this entity.
+     *
+     * @return ?string
+    */
+    public function getLabel(bool $plural = false) : ?string
+    {
+        $label = Str::studly($this->entityConfig->getCode());
+        
+        if($plural) {
+            $label = Str::pluralStudly($label);
+        }
+        
+        return preg_replace('/(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', $label);
     }
 }

@@ -4,27 +4,28 @@ namespace Adepta\Proton\Tests\Feature;
 
 use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Adepta\Proton\Tests\Models\User;
 
 class EntityIndexTest extends TestCase
 {
     /**
-     * Basic test to check the entity index route
-     * for a project returns 200 and returns correct
-     * config JSON.
+     * Check the entity index configuration endpoint.
      *
      * @return void
     */
-    public function test_entity_index() : void
+    public function test_list_config_endpoint() : void
     {        
-        $response = $this->get(route('proton.config.index', ['entity_code' => 'project']));
+        $this->actingAs(User::findOrFail(1));
+        
+        $response = $this->get(route('proton.config.view.index', [
+            'entity_code' => 'project',
+        ]));
          
         $response->assertStatus(200);
-
+        
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->has('list_fields', 4, fn (AssertableJson $json) =>
-                $json->where('field_name', 'id')
-                     ->where('sortable', true)
-            )
+            $json->where('entity_code', 'project')
+                 ->where('entity_label_plural', 'Projects')
         );
     }
 }

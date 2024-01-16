@@ -9,8 +9,8 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 
 class EntityConfig implements EntityConfigContract
 {
-    private ?string $code;
-    private ?string $model;
+    private string $code;
+    private string $model;
     
     /**
      * @var Collection<int, FieldContract> $fieldCollection
@@ -22,8 +22,8 @@ class EntityConfig implements EntityConfigContract
     */
     public function __construct()
     {
-        $this->code = null;
-        $this->model = null;
+        $this->code = '';
+        $this->model = '';
         $this->fieldCollection = collect();
     }
     
@@ -42,6 +42,17 @@ class EntityConfig implements EntityConfigContract
     }
     
     /**
+     * Get the entity code that matches a code 
+     * defined in the Proton config. 
+     * 
+     * @return string
+     */
+    public function getCode() : string
+    {
+        return $this->code;
+    }
+    
+    /**
      * Set the model associated with this entity
      * configuration.
      *
@@ -53,6 +64,17 @@ class EntityConfig implements EntityConfigContract
     {
         $this->model = $model;
         return $this;
+    }
+    
+    /**
+     * Get the model associated with this entity
+     * configuration.
+     * 
+     * @return string
+     */
+    public function getModel() : string
+    {
+        return $this->model;
     }
     
     /**
@@ -75,11 +97,11 @@ class EntityConfig implements EntityConfigContract
      */
     public function validate() : void
     {
-        if($this->code === null) {
+        if(strlen($this->code) === 0) {
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         
-        if($this->model === null) {
+        if(strlen($this->model) === 0) {
             throw new ConfigurationException('Entity model must be supplied with setModel()'); 
         }
         

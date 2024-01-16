@@ -5,3 +5,5 @@
 /tests/Browser/console
 /tests/Browser/screenshots
 /tests/Browser/source
+/tests/Database/testing_persistent.sqlite
+/.env*

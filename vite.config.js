@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import { exec } from "node:child_process";
+//import vuetify from 'vite-plugin-vuetify';
 
 export default defineConfig(({ command }) => ({
     plugins: [
@@ -17,6 +18,7 @@ export default defineConfig(({ command }) => ({
                     exec('vendor/bin/testbench-dusk vendor:publish --force --tag=assets');
                 }
             }
-        }
+        },
+        //vuetify({ autoImport: true, styles: { configFile: 'resources/styles/vuetify.scss' } }),
     ]
 }));
