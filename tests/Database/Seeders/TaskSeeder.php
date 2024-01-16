@@ -12,7 +12,7 @@ class TaskSeeder extends Seeder
      *
      * @return void
     */
-    public function run()
+    public function run(): void
     {
         Task::factory()->create([
             'project_id' => 1,

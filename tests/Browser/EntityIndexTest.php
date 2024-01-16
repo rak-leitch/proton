@@ -7,14 +7,14 @@ use Adepta\Proton\Tests\BrowserTestCase;
 use Illuminate\Support\Facades\Config;
 use Adepta\Proton\Tests\Models\User;
  
-class IndexTest extends BrowserTestCase
+class EntityIndexTest extends BrowserTestCase
 {
     /**
      * Test to check projects table renders
      *
      * @return void
     */
-    public function test_index(): void
+    public function test_project_index(): void
     {
         $this->browse(function (Browser $browser) {
             $browser

@@ -12,7 +12,7 @@ class ProjectSeeder extends Seeder
      *
      * @return void
     */
-    public function run()
+    public function run(): void
     {
         Project::factory()->create([
             'name' => 'Do it yourself',

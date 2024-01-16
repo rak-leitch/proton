@@ -12,12 +12,10 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
             Route::prefix('view')->name('view.')->group(function () {
                 Route::get('entity-index/{entity_code}', [EntityIndexController::class, 'getConfig'])->name('index');
             });
-            Route::prefix('list')->name('list.')->group(function () {
-                Route::get('{view_type}/{entity_code}', [ListConfigController::class, 'getConfig'])->name('config');
-            });
+            Route::get('list/{view_type}/{entity_code}', [ListConfigController::class, 'getConfig'])->name('list');
         });
         Route::prefix('data')->name('data.')->group(function () {
-            Route::get('list/{entity_code}/{page}/{items_per_page}/{sort_by}', [ListDataController::class, 'getData'])->name('data');
+            Route::get('list/{entity_code}/{page}/{items_per_page}/{sort_by}', [ListDataController::class, 'getData'])->name('list');
         }); 
     });
     Route::get('/', [ProtonController::class, 'index'])->name('index');

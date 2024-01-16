@@ -9,29 +9,23 @@ use Adepta\Proton\Tests\Models\User;
 class EntityIndexTest extends TestCase
 {
     /**
-     * Basic test to check the entity index route
-     * for a project returns 200 and returns correct
-     * config JSON.
+     * Check the entity index configuration endpoint.
      *
      * @return void
     */
-    public function test_entity_index() : void
+    public function test_list_config_endpoint() : void
     {        
         $this->actingAs(User::findOrFail(1));
         
-        $response = $this->get(route('proton.config.list.config', [
+        $response = $this->get(route('proton.config.view.index', [
             'entity_code' => 'project',
-            'view_type' => 'entity_index',
         ]));
          
         $response->assertStatus(200);
-
+        
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->has('fields', 5, fn (AssertableJson $json) =>
-                $json->where('title', 'id')
-                     ->where('key', 'id')
-                     ->where('sortable', true)
-            )
+            $json->where('entity_code', 'project')
+                 ->where('entity_label_plural', 'Projects')
         );
     }
 }
