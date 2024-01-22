@@ -7,17 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\ViewConfig\IndexConfigService;
+use Adepta\Proton\Services\Auth\AuthorisationService;
 
 class EntityIndexController extends BaseController
-{    
+{
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
+     * @param IndexConfigService $indexConfigService
+     * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private IndexConfigService $indexConfigService,
+        private AuthorisationService $authorisationService,
     ) { }
     
     /**
@@ -32,6 +36,8 @@ class EntityIndexController extends BaseController
     {
         $listFieldsConfig = [];
         $entity = $this->entityFactory->create($entityCode);
+        $this->authorisationService->canViewAny($request->user(), $entity, true);
+        
         $listFieldsConfig = $this->indexConfigService->getViewConfig($entity);
         
         return response()->json($listFieldsConfig);

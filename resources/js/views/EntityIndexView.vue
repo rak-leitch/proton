@@ -9,10 +9,12 @@
     const route = useRoute();
     const viewType = route.name;
     const currentError = ref("");
+    const displayList = ref(false);
 
     watch(
         () => route.params,
         () => {
+            currentError.value = "";
             getConfig();
         }
     );
@@ -31,8 +33,11 @@
                 entityCode: route.params.entityCode,
                 viewType: viewType
             };
+            
+            displayList.value = true;
         } catch (error) {
-            currentError.value = `Failed to get view config: ${error.message}`;
+            displayList.value = false;
+            currentError.value = error.message;
         }
     }
     
@@ -54,6 +59,7 @@
                 {{ currentError }}
             </v-alert>
             <protonList 
+                v-if="displayList"
                 :settings="listSettings"
             />
         </template>

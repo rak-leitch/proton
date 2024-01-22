@@ -9,6 +9,7 @@
     const loading = ref(true);
     const totalItems = ref(0);
     const currentError = ref("");
+    let rowPermissions = {};
     
     const itemsPerPageOptions = [
         { value: 3, title: '3' },
@@ -38,6 +39,13 @@
                 entityCode: props.settings.entityCode
             };
             configData.value = await useAjax("config/list", getParams);
+            
+            configData.value.fields.push({
+                title: 'Actions', 
+                key: 'actions', 
+                sortable: false
+            });
+            
         } catch (error) {
             currentError.value = `Failed to get list config: ${error.message}`;
         }
@@ -58,6 +66,8 @@
             const response = await useAjax("data/list", getParams);
             serverItems.value = response.data;
             totalItems.value = response.totalRows;
+            rowPermissions = response.permissions;
+            
         } catch (error) {
             serverItems.value = [];
             totalItems.value = 0;
@@ -65,6 +75,18 @@
         } finally {
             loading.value = false;
         }
+    }
+    
+    function updateItem(item) {
+        console.log(item);
+    }
+    
+    function viewItem(item) {
+        console.log(item);
+    }
+    
+    function deleteItem(item) {
+        console.log(item);
     }
 
 </script>
@@ -87,5 +109,26 @@
         @update:options="loadData"
         :items-per-page-options="itemsPerPageOptions"
         :key="configChange"
-    ></v-data-table-server>
+    >
+        <template v-slot:item.actions="{ item }">
+            <v-icon
+                v-if="rowPermissions[item.id].update"
+                icon="$pencil"
+                class="me-2"
+                @click="updateItem(item)"
+            />
+            <v-icon
+                v-if="rowPermissions[item.id].view"
+                icon="$eye"
+                class="me-2"
+                @click="viewItem(item)"
+            />
+            <v-icon
+                v-if="rowPermissions[item.id].delete"
+                icon="$rubbish"
+                class="me-2"
+                @click="deleteItem(item)"
+            />
+        </template>
+    </v-data-table-server>
 </template>

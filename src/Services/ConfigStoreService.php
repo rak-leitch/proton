@@ -28,6 +28,8 @@ class ConfigStoreService implements ConfigStoreContract
      * supplied entity code.
      * 
      * @param string $entityCode
+     * 
+     * @throws ConfigurationException
      *
      * @return string
     */

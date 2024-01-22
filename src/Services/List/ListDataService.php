@@ -3,9 +3,20 @@
 namespace Adepta\Proton\Services\List;
 
 use Adepta\Proton\Entity\Entity;
+use Illuminate\Support\Facades\Auth;
+use Adepta\Proton\Services\Auth\AuthorisationService;
 
 class ListDataService
 {    
+    /**
+     * Constructor.
+     * 
+     * @param AuthorisationService $authService
+    */
+    public function __construct(
+        private AuthorisationService $authService,
+    ) { }
+    
     /**
      * Get the list data for an entity
      * for use by the frontend.
@@ -25,10 +36,12 @@ class ListDataService
     ) : array
     {
         $data = [];
+        $permissions = [];
         $modelClass = $entity->getModel();
         $totalRows = $modelClass::count();
         $skip = ($page - 1) * $itemsPerPage;
         $collection = $modelClass::skip($skip)->take($itemsPerPage)->get();
+        $user = Auth::user();
         
         foreach($collection as $model) {
             
@@ -39,11 +52,18 @@ class ListDataService
                 $row[$fieldName] = $model->{$fieldName};
             };
             
+            $permissions[$model->id] = [
+                'update' => $this->authService->canUpdate($user, $model),
+                'view' => $this->authService->canView($user, $model),
+                'delete' => $this->authService->canDelete($user, $model),
+            ];
+            
             $data[] = $row;
         }
         
         $listData['totalRows'] = $totalRows;
         $listData['data'] = $data;
+        $listData['permissions'] = $permissions;
         
         return $listData;
     }

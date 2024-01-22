@@ -93,6 +93,8 @@ class EntityConfig implements EntityConfigContract
     /**
      * Validate the configuration
      * 
+     * @throws ConfigurationException
+     * 
      * @return void
      */
     public function validate() : void

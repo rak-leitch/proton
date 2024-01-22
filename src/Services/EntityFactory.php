@@ -25,6 +25,8 @@ class EntityFactory
      * the entity code.
      * 
      * @param string $entityCode
+     * 
+     * @throws ConfigurationException
      *
      * @return Entity
     */

@@ -85,6 +85,55 @@ class ListTest extends TestCase
                      ->where('description', 'Non-boring things to do.')
                      ->where('priority', 'normal')
             )
+            ->has('permissions', 2)
+            ->has('permissions.1', fn (AssertableJson $json) =>
+                $json->where('update', true)
+                     ->where('view', true)
+                     ->where('delete', true)
+            )
+            ->has('permissions.2', fn (AssertableJson $json) =>
+                $json->where('update', false)
+                     ->where('view', false)
+                     ->where('delete', false)
+            )
         );
     }
+    
+    /**
+     * Check the list configuration endpoint with a 
+     * user that does not have permission.
+     *
+     * @return void
+    */
+    public function test_unauthed_list_config_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(2));
+        
+        $response = $this->get(route('proton.config.list', [
+            'entity_code' => 'project',
+            'view_type' => 'entity_index',
+        ]));
+         
+        $response->assertStatus(403);
+    }
+    
+    /**
+     * Check the list data fetch endpoint with an unauthed user.
+     *
+     * @return void
+    */
+    public function test_unauthed_list_data_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(2));
+        
+        $response = $this->get(route('proton.data.list', [
+            'entity_code' => 'project',
+            'page' => 1,
+            'items_per_page' => 5,
+            'sort_by' => 'null',
+        ]));
+         
+        $response->assertStatus(403);
+    }
+    
 }

@@ -1,6 +1,7 @@
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
+import { mdiPencil, mdiEyeOutline, mdiDeleteOutline } from "@mdi/js";
 
 //TODO: Won't need to import everything
 import * as components from "vuetify/components";
@@ -11,7 +12,13 @@ const vuetify = createVuetify({
     directives: directives,
     icons: {
         defaultSet: "mdi",
-        aliases,
+        aliases: {
+            ...aliases,
+            pencil: mdiPencil,
+            eye: mdiEyeOutline,
+            rubbish: mdiDeleteOutline,
+            
+        },
         sets: {
             mdi,
         },

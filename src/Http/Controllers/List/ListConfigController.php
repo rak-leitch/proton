@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\List\ListConfigService;
+use Adepta\Proton\Services\Auth\AuthorisationService;
 
 class ListConfigController extends BaseController
 {    
@@ -15,10 +16,12 @@ class ListConfigController extends BaseController
      *
      * @param EntityFactory $entityFactory
      * @param ListConfigService $listConfigService
+     * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private ListConfigService $listConfigService,
+        private AuthorisationService $authorisationService,
     ) { }
     
     /**
@@ -34,6 +37,8 @@ class ListConfigController extends BaseController
     {
         $listConfig = [];
         $entity = $this->entityFactory->create($entityCode);
+        $this->authorisationService->canViewAny($request->user(), $entity, true);
+        
         $listConfig = $this->listConfigService->getListConfig($entity, $viewType);
         
         return response()->json($listConfig);
