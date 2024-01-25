@@ -52,6 +52,7 @@ class ListDataService
                 $row[$fieldName] = $model->{$fieldName};
             };
             
+            //TODO: Can't assume pk
             $permissions[$model->id] = [
                 'update' => $this->authService->canUpdate($user, $model),
                 'view' => $this->authService->canView($user, $model),

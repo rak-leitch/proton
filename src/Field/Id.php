@@ -15,4 +15,14 @@ final class Id extends Field
         //TODO: enum?
         return 'text';
     }
+    
+    /**
+     * Indicate this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool
+    {
+        return true;
+    }
 }

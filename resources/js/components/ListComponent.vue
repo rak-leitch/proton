@@ -1,8 +1,10 @@
 <script setup>
     import { ref, watch } from "vue";
     import { useAjax } from "../composables/ajax";
+    import { useRouter } from "vue-router";
 
-    const configData = ref({});
+    let configData = {};
+    const router = useRouter();
     const configChange = ref(false);
     const itemsPerPage = ref(5);
     const serverItems = ref([]);
@@ -35,12 +37,11 @@
     async function getConfig() {
         try {
             const getParams = {
-                viewType: props.settings.viewType,
                 entityCode: props.settings.entityCode
             };
-            configData.value = await useAjax("config/list", getParams);
+            configData = await useAjax("config/list", getParams);
             
-            configData.value.fields.push({
+            configData.fields.push({
                 title: 'Actions', 
                 key: 'actions', 
                 sortable: false
@@ -78,7 +79,17 @@
     }
     
     function updateItem(item) {
-        console.log(item);
+        
+        const primaryKeyValue = item[configData.primary_key];
+        const entityCode = props.settings.entityCode;
+        
+        router.push({ 
+            name: "entity-update", 
+            params: { 
+                entityCode: entityCode,  
+                entityId: primaryKeyValue
+            }
+        });
     }
     
     function viewItem(item) {

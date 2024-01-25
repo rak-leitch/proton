@@ -28,18 +28,17 @@ class ListConfigController extends BaseController
      * Get the configuration for an list component.
      * 
      * @param Request $request
-     * @param string $viewType
      * @param string $entityCode
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $viewType, string $entityCode) : JsonResponse
+    public function getConfig(Request $request, string $entityCode) : JsonResponse
     {
         $listConfig = [];
         $entity = $this->entityFactory->create($entityCode);
         $this->authorisationService->canViewAny($request->user(), $entity, true);
         
-        $listConfig = $this->listConfigService->getListConfig($entity, $viewType);
+        $listConfig = $this->listConfigService->getListConfig($entity);
         
         return response()->json($listConfig);
     }

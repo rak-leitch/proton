@@ -71,4 +71,14 @@ abstract class Field implements FieldContract
      * @return string
      */
     abstract public function getFrontendType() : string;
+    
+    /**
+     * Indicate whether this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool
+    {
+        return false;
+    }
 }

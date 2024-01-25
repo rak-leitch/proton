@@ -18,8 +18,7 @@ class ListTest extends TestCase
         $this->actingAs(User::findOrFail(1));
         
         $response = $this->get(route('proton.config.list', [
-            'entity_code' => 'project',
-            'view_type' => 'entity_index',
+            'entity_code' => 'project'
         ]));
          
         $response->assertStatus(200);
@@ -46,7 +45,7 @@ class ListTest extends TestCase
                 $json->where('title', 'priority')
                      ->where('key', 'priority')
                      ->where('sortable', true)
-            )
+            )->where('primary_key', 'id')
         );
     }
     
@@ -110,8 +109,7 @@ class ListTest extends TestCase
         $this->actingAs(User::findOrFail(2));
         
         $response = $this->get(route('proton.config.list', [
-            'entity_code' => 'project',
-            'view_type' => 'entity_index',
+            'entity_code' => 'project'
         ]));
          
         $response->assertStatus(403);

@@ -53,13 +53,6 @@ interface EntityConfigContract
     public function addField(FieldContract $field) : self;
     
     /**
-     * Validate the configuration
-     * 
-     * @return void
-     */
-    public function validate() : void;
-    
-    /**
      * Get the fields collection
      * 
      * @return Collection<int, FieldContract>

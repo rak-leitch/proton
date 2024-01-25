@@ -11,14 +11,14 @@ class ListConfigService
      * for use by the frontend.
      *
      * @param Entity $entity
-     * @param string $viewType
      * 
      * @return mixed[]
     */
-    public function getListConfig(Entity $entity, string $viewType) : array
+    public function getListConfig(Entity $entity) : array
     {
         $listConfig = [];
         $listConfig['fields'] = [];
+        $listConfig['primary_key'] = $entity->getPrimaryKeyField()->getFieldName(); 
         
         foreach($entity->getFields() as $field) {
             $fieldConfig = [];

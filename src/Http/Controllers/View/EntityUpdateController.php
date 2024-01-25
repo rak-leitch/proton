@@ -6,21 +6,21 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Services\ViewConfig\IndexConfigService;
+use Adepta\Proton\Services\ViewConfig\UpdateConfigService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-class EntityIndexController extends BaseController
+class EntityUpdateController extends BaseController
 {
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
-     * @param IndexConfigService $indexConfigService
+     * @param UpdateConfigService $updateConfigService
      * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
-        private IndexConfigService $indexConfigService,
+        private UpdateConfigService $updateConfigService,
         private AuthorisationService $authorisationService,
     ) { }
     
@@ -29,16 +29,18 @@ class EntityIndexController extends BaseController
      * 
      * @param Request $request
      * @param string $entityCode
+     * @param int $entityId
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $entityCode) : JsonResponse
+    public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
     {
         $viewConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $this->authorisationService->canViewAny($request->user(), $entity, true);
-        
-        $viewConfig = $this->indexConfigService->getViewConfig($entity);
+        $modelClass = $entity->getModel();
+        $model = $modelClass::findOrFail($entityId);
+        $this->authorisationService->canUpdate($request->user(), $model, true);
+        $viewConfig = $this->updateConfigService->getViewConfig($entity, $model);
         
         return response()->json($viewConfig);
     }

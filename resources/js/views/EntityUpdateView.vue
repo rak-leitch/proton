@@ -1,15 +1,13 @@
 <script setup>
-    import protonList from "../components/ListComponent.vue";
+    import protonForm from "../components/FormComponent.vue";
     import { useAjax } from "../composables/ajax";
     import { useRoute } from "vue-router";
     import { watch, ref } from "vue";
     
     const configData = ref({});
-    const listSettings = ref({});
+    const formSettings = ref({});
     const route = useRoute();
-    const viewType = route.name;
     const currentError = ref("");
-    const displayList = ref(false);
 
     watch(
         () => route.params,
@@ -23,18 +21,17 @@
         try {
             
             const getParams = {
-                entityCode: route.params.entityCode
+                entityCode: route.params.entityCode,
+                entityId: route.params.entityId,
             };
             
-            configData.value = await useAjax("config/view/entity-index", getParams);
+            configData.value = await useAjax("config/view/entity-update", getParams);
             
-            listSettings.value = {
+            formSettings.value = {
                 entityCode: configData.value.entity_code,
+                entityId: configData.value.entity_id
             };
-            
-            displayList.value = true;
         } catch (error) {
-            displayList.value = false;
             currentError.value = error.message;
         }
     }
@@ -56,9 +53,8 @@
             >
                 {{ currentError }}
             </v-alert>
-            <protonList 
-                v-if="displayList"
-                :settings="listSettings"
+            <protonForm
+                :settings="formSettings"
             />
         </template>
     </v-card>

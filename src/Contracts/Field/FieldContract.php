@@ -41,4 +41,11 @@ interface FieldContract
      * @return string
      */
     public function getFrontendType() : string;
+    
+    /**
+     * Indicate whether this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool;
 }

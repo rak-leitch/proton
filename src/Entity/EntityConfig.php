@@ -5,7 +5,6 @@ namespace Adepta\Proton\Entity;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
-use Adepta\Proton\Exceptions\ConfigurationException;
 
 class EntityConfig implements EntityConfigContract
 {
@@ -88,28 +87,6 @@ class EntityConfig implements EntityConfigContract
     {
         $this->fieldCollection->push($field);
         return $this;
-    }
-    
-    /**
-     * Validate the configuration
-     * 
-     * @throws ConfigurationException
-     * 
-     * @return void
-     */
-    public function validate() : void
-    {
-        if(strlen($this->code) === 0) {
-            throw new ConfigurationException('Entity code must be supplied with setCode()'); 
-        }
-        
-        if(strlen($this->model) === 0) {
-            throw new ConfigurationException('Entity model must be supplied with setModel()'); 
-        }
-        
-        if($this->fieldCollection->isEmpty()) {
-            throw new ConfigurationException("Please provide at least one field when defining the {$this->code} entity");
-        }
     }
     
     /**
