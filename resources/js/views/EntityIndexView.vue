@@ -22,11 +22,13 @@
     async function getConfig() {
         try {
             
-            const getParams = {
-                entityCode: route.params.entityCode
-            };
+            const requestParams = [
+                route.params.entityCode
+            ];
             
-            configData.value = await useAjax("config/view/entity-index", getParams);
+            const response = await useAjax("config/view/entity-index", requestParams);
+            
+            configData.value = response.body;
             
             listSettings.value = {
                 entityCode: configData.value.entity_code,

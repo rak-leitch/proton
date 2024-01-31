@@ -36,10 +36,12 @@
     
     async function getConfig() {
         try {
-            const getParams = {
-                entityCode: props.settings.entityCode
-            };
-            configData = await useAjax("config/list", getParams);
+            const requestParams = [
+                props.settings.entityCode
+            ];
+            const response = await useAjax("config/list", requestParams);
+            
+            configData = response.body;
             
             configData.fields.push({
                 title: 'Actions', 
@@ -58,16 +60,16 @@
         try {
             loading.value = true;
             const sortByParam = sortBy.length ? sortBy.toString() : "null";
-            const getParams = {
-                entityCode: props.settings.entityCode,
-                page: page,
-                itemsPerPage: itemsPerPage,
-                sortBy: sortByParam,
-            };
-            const response = await useAjax("data/list", getParams);
-            serverItems.value = response.data;
-            totalItems.value = response.totalRows;
-            rowPermissions = response.permissions;
+            const requestParams = [
+                props.settings.entityCode,
+                page,
+                itemsPerPage,
+                sortByParam,
+            ];
+            const response = await useAjax("data/list", requestParams);
+            serverItems.value = response.body.data;
+            totalItems.value = response.body.totalRows;
+            rowPermissions = response.body.permissions;
             
         } catch (error) {
             serverItems.value = [];

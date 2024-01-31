@@ -6,6 +6,7 @@ use Adepta\Proton\Http\Controllers\View\EntityIndexController;
 use Adepta\Proton\Http\Controllers\View\EntityUpdateController;
 use Adepta\Proton\Http\Controllers\List\ListConfigController;
 use Adepta\Proton\Http\Controllers\Form\FormConfigController;
+use Adepta\Proton\Http\Controllers\Form\FormSubmitController;
 use Adepta\Proton\Http\Controllers\List\ListDataController;
 
 Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(function () {
@@ -20,6 +21,9 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
         });
         Route::prefix('data')->name('data.')->group(function () {
             Route::get('list/{entity_code}/{page}/{items_per_page}/{sort_by}', [ListDataController::class, 'getData'])->name('list');
+        });
+        Route::prefix('submit')->name('submit.')->group(function () {
+            Route::post('form/{entity_code}/{entity_id}', [FormSubmitController::class, 'submit'])->name('form');
         }); 
     });
     Route::get('/', [ProtonController::class, 'index'])->name('index');

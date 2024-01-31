@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Index</title>
         {{ Vite::useBuildDirectory('adepta/proton/assets')->withEntryPoints('resources/js/proton.js') }}
         <script>

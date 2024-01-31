@@ -6,8 +6,8 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Services\Form\FormModelFactory;
 use Adepta\Proton\Services\Form\FormConfigService;
-use Adepta\Proton\Services\Auth\AuthorisationService;
 
 class FormConfigController extends BaseController
 {    
@@ -15,13 +15,13 @@ class FormConfigController extends BaseController
      * Constructor.
      *
      * @param EntityFactory $entityFactory
+     * @param FormModelFactory $formModelFactory
      * @param FormConfigService $formConfigService
-     * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
+        private FormModelFactory $formModelFactory,
         private FormConfigService $formConfigService,
-        private AuthorisationService $authorisationService,
     ) { }
     
     /**
@@ -35,11 +35,8 @@ class FormConfigController extends BaseController
     */
     public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
     {
-        $formConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $modelClass = $entity->getModel();
-        $model = $modelClass::findOrFail($entityId);
-        $this->authorisationService->canUpdate($request->user(), $model, true);
+        $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());
         $formConfig = $this->formConfigService->getFormConfig($entity, $model);
         
         return response()->json($formConfig);

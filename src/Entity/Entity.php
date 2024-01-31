@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
+use Illuminate\Database\Eloquent\Model;
 
 class Entity
 {
@@ -37,7 +38,7 @@ class Entity
     public function validateConfig(EntityConfigContract $entityConfig) : void
     {
         $entityCode = $entityConfig->getCode();
-        $entityModel = $entityConfig->getModel();
+        $entityClass = $entityConfig->getModel();
         $fields = $entityConfig->getFields();
         
         
@@ -45,8 +46,12 @@ class Entity
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         
-        if(strlen($entityModel) === 0) {
+        if(strlen($entityClass) === 0) {
             throw new ConfigurationException('Entity model must be supplied with setModel()'); 
+        }
+        
+        if(!is_subclass_of($entityClass, Model::class)) {
+            throw new ConfigurationException('Entity model must extend '.Model::class);
         }
         
         if($fields->isEmpty()) {

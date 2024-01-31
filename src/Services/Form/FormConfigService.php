@@ -21,7 +21,6 @@ class FormConfigService
         $formConfig = [];
         $formConfig['config'] = [];
         $formConfig['config']['fields'] = [];
-        $formConfig['config']['primary_key'] = $entity->getPrimaryKeyField()->getFieldName();
         $formConfig['data'] = [];
          
         

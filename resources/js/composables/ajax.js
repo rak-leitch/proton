@@ -1,41 +1,47 @@
 import { ref } from "vue";
 
-export async function useAjax(url, requestData = {}, method = "GET") {
+export async function useAjax(path, parameters = [], bodyData = {}, method = "GET", acceptableStatuses = []) {
 
     const baseUrl = window.protonApiBase;
-    let getParams = "";
+    let parameterString = "";
     
     const requestOptions = {
         method: method,
+        headers: {
+            "Accept": "application/json",
+        }
     };
     
-    if(method === "GET") {
-        getParams += '/';
-        for (const property in requestData) {
-            getParams += `${encodeURIComponent(requestData[property])}/`;
-        }
+    for (const parameter of parameters) {
+        parameterString += `${encodeURIComponent(parameter)}/`;
     }
     
     if(method === "POST") {
-        requestOptions["headers"] = {
+        const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+        const postHeaders = {
             "Content-Type": "application/json",
+            "X-Csrf-Token": csrfToken 
         };
-        requestOptions["body"] = JSON.stringify(requestData);
+        requestOptions["headers"] = {...requestOptions["headers"], ...postHeaders};
+        requestOptions["body"] = JSON.stringify(bodyData);
     }
     
-    const response = await fetch(`${baseUrl}/${url}${getParams}`, requestOptions);
+    const response = await fetch(`${baseUrl}/${path}/${parameterString}`, requestOptions);
     
-    const data = await response.json();
+    const body = await response.json();
     
-    if (!response.ok) {
+    if (!response.ok && (!acceptableStatuses.includes(response.status))) {
         let message = `Received ${response.status} status code.`;
         
-        if(data.hasOwnProperty('detail')) {
-            message += ` ${data.detail}`;
+        if(body.hasOwnProperty('detail')) {
+            message += ` ${body.detail}`;
         }
         
         throw new Error(message);
     }
     
-    return data;
+    return { 
+        statusCode: response.status,
+        body: body,
+    };
 }

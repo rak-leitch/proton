@@ -20,16 +20,24 @@
     async function getConfig() {
         try {
             
-            const getParams = {
-                entityCode: route.params.entityCode,
-                entityId: route.params.entityId,
-            };
+            const requestParams = [
+                route.params.entityCode,
+                route.params.entityId,
+            ];
             
-            configData.value = await useAjax("config/view/entity-update", getParams);
+            const response = await useAjax("config/view/entity-update", requestParams);
+            
+            configData.value = response.body;
             
             formSettings.value = {
                 entityCode: configData.value.entity_code,
-                entityId: configData.value.entity_id
+                entityId: configData.value.entity_id,
+                successRoute: {
+                    name: 'entity-index',
+                    params: { 
+                        entityCode: configData.value.entity_code,
+                    }  
+                }
             };
         } catch (error) {
             currentError.value = error.message;

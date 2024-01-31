@@ -5,8 +5,9 @@ use Adepta\Proton\Contracts\Field\FieldContract;
 
 abstract class Field implements FieldContract
 {
-    private string $fieldName;
-    private bool $sortable;
+    protected string $fieldName;
+    protected bool $sortable;
+    protected string $validation;
     
     /**
      * Constructor
@@ -19,6 +20,7 @@ abstract class Field implements FieldContract
     {
         $this->fieldName = $fieldName;
         $this->sortable = false;
+        $this->validation = '';
     }
     
     /**
@@ -80,5 +82,26 @@ abstract class Field implements FieldContract
     public function isPrimaryKey() : bool
     {
         return false;
+    }
+    
+    /**
+     * Set validation for this field
+     * 
+     * @return self
+     */
+    public function setValidation(string $validation) : self
+    {
+        $this->validation = $validation;
+        return $this;
+    }
+    
+    /**
+     * Get validation for this field
+     * 
+     * @return string
+     */
+    public function getValidation()
+    {
+        return $this->validation;
     }
 }

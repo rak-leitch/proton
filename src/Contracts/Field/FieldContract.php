@@ -48,4 +48,18 @@ interface FieldContract
      * @return bool
      */
     public function isPrimaryKey() : bool;
+    
+    /**
+     * Set validation for this field
+     * 
+     * @return self
+     */
+    public function setValidation(string $validation) : self;
+    
+    /**
+     * Get validation for this field
+     * 
+     * @return string
+     */
+    public function getValidation();
 }
