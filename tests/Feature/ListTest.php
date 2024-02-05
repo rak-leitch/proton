@@ -46,6 +46,7 @@ class ListTest extends TestCase
                      ->where('key', 'priority')
                      ->where('sortable', true)
             )->where('primary_key', 'id')
+            ->where('can_create', true)
         );
     }
     

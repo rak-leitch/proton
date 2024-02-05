@@ -8,9 +8,10 @@ use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\Form\FormModelFactory;
 use Adepta\Proton\Services\Form\FormSubmitService;
-use Adepta\Proton\Services\Form\FormRulesService;
+use Adepta\Proton\Services\Form\FormValidationService;
+use Adepta\Proton\Field\DisplayContext;
 
-class FormSubmitController extends BaseController
+class SubmitCreateController extends BaseController
 {    
     /**
      * Constructor.
@@ -18,13 +19,13 @@ class FormSubmitController extends BaseController
      * @param EntityFactory $entityFactory
      * @param FormModelFactory $formModelFactory
      * @param FormSubmitService $formSubmitService
-     * @param FormRulesService $formRulesService
+     * @param FormValidationService $formValidationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private FormModelFactory $formModelFactory,
         private FormSubmitService $formSubmitService,
-        private FormRulesService $formRulesService,
+        private FormValidationService $formValidationService,
     ) { }
     
     /**
@@ -32,17 +33,16 @@ class FormSubmitController extends BaseController
      * 
      * @param Request $request
      * @param string $entityCode
-     * @param int $entityId
      *
      * @return JsonResponse
     */
-    public function submit(Request $request, string $entityCode, int $entityId) : JsonResponse
+    public function submit(Request $request, string $entityCode) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
-        $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());
-        $validatedData = $request->validate($this->formRulesService->getRules($entity));
-        $result = $this->formSubmitService->submit($entity, $model, $validatedData);
+        $model = $this->formModelFactory->getCreateModel($entity, $request->user());
+        $validatedData = $request->validate($this->formValidationService->getRules(DisplayContext::CREATE, $entity));
+        $this->formSubmitService->submit(DisplayContext::CREATE, $entity, $model, $validatedData);
         
-        return response()->json($result);
+        return response()->json([]);
     }
 }

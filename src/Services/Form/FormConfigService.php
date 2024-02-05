@@ -4,6 +4,7 @@ namespace Adepta\Proton\Services\Form;
 
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Field\DisplayContext;
 
 class FormConfigService
 {    
@@ -11,12 +12,15 @@ class FormConfigService
      * Get the form config for an entity instance
      * for use by the frontend.
      *
+     * @param DisplayContext $displayContext
      * @param Entity $entity
-     * @param Model $model
      * 
      * @return mixed[]
     */
-    public function getFormConfig(Entity $entity, Model $model) : array
+    public function getFormConfig(
+        DisplayContext $displayContext, 
+        Entity $entity
+    ) : array
     {
         $formConfig = [];
         $formConfig['config'] = [];
@@ -24,16 +28,42 @@ class FormConfigService
         $formConfig['data'] = [];
          
         
-        foreach($entity->getFields() as $field) {
+        foreach($entity->getFields($displayContext) as $field) {
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
             $fieldConfig['type'] = $field->getFrontendType();
             $formConfig['config']['fields'][] = $fieldConfig;
-            $formConfig['data'][$fieldName] = $model->{$fieldName};
+            $formConfig['data'][$fieldName] = null;
         };
         
         return $formConfig;
+    }
+    
+    /**
+     * Get the form field data for an entity instance
+     * for use by the frontend.
+     *
+     * @param DisplayContext $displayContext
+     * @param Entity $entity
+     * @param Model $model
+     * 
+     * @return mixed[]
+    */
+    public function getFormData(
+        DisplayContext $displayContext, 
+        Entity $entity,
+        Model $model
+    ) : array
+    {
+        $formData = [];
+        
+        foreach($entity->getFields($displayContext) as $field) {
+            $fieldName = $field->getFieldName();
+            $formData[$fieldName] = $model->{$fieldName};
+        }
+        
+        return $formData;
     }
 }

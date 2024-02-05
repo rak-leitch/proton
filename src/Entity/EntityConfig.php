@@ -5,10 +5,15 @@ namespace Adepta\Proton\Entity;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class EntityConfig implements EntityConfigContract
 {
     private string $code;
+    
+    /**
+     * @var class-string<Model>
+     */
     private string $model;
     
     /**
@@ -22,7 +27,7 @@ class EntityConfig implements EntityConfigContract
     public function __construct()
     {
         $this->code = '';
-        $this->model = '';
+        $this->model = Model::class;
         $this->fieldCollection = collect();
     }
     
@@ -55,7 +60,7 @@ class EntityConfig implements EntityConfigContract
      * Set the model associated with this entity
      * configuration.
      *
-     * @param string $model 
+     * @param class-string<Model> $model 
      * 
      * @return self
      */
@@ -69,7 +74,7 @@ class EntityConfig implements EntityConfigContract
      * Get the model associated with this entity
      * configuration.
      * 
-     * @return string
+     * @return class-string<Model>
      */
     public function getModel() : string
     {

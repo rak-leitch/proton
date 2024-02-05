@@ -4,6 +4,7 @@ namespace Adepta\Proton\Contracts\Entity;
 
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface EntityConfigContract
 {
@@ -29,7 +30,7 @@ interface EntityConfigContract
      * Set the model associated with this entity
      * configuration.
      *
-     * @param string $model 
+     * @param class-string<Model> $model 
      * 
      * @return self
      */
@@ -39,7 +40,7 @@ interface EntityConfigContract
      * Get the model associated with this entity
      * configuration. 
      * 
-     * @return string
+     * @return class-string<Model>
      */
     public function getModel() : string;
     

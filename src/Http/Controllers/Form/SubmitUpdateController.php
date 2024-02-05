@@ -7,21 +7,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\Form\FormModelFactory;
-use Adepta\Proton\Services\Form\FormConfigService;
+use Adepta\Proton\Services\Form\FormSubmitService;
+use Adepta\Proton\Services\Form\FormValidationService;
+use Adepta\Proton\Field\DisplayContext;
 
-class FormConfigController extends BaseController
+class SubmitUpdateController extends BaseController
 {    
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
      * @param FormModelFactory $formModelFactory
-     * @param FormConfigService $formConfigService
+     * @param FormSubmitService $formSubmitService
+     * @param FormValidationService $formValidationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private FormModelFactory $formModelFactory,
-        private FormConfigService $formConfigService,
+        private FormSubmitService $formSubmitService,
+        private FormValidationService $formValidationService,
     ) { }
     
     /**
@@ -33,12 +37,13 @@ class FormConfigController extends BaseController
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
+    public function submit(Request $request, string $entityCode, int $entityId) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
         $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());
-        $formConfig = $this->formConfigService->getFormConfig($entity, $model);
+        $validatedData = $request->validate($this->formValidationService->getRules(DisplayContext::UPDATE, $entity));
+        $this->formSubmitService->submit(DisplayContext::UPDATE, $entity, $model, $validatedData);
         
-        return response()->json($formConfig);
+        return response()->json([]);
     }
 }

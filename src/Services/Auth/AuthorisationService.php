@@ -27,18 +27,27 @@ class AuthorisationService
         bool $throwException = false
     ) : bool 
     {
-        $canViewAny = true;
-        $modelClass = $entity->getModel();
-        
-        if (!$user || $user->cannot('viewAny', $modelClass)) {
-            $canViewAny = false;
-            
-            if($throwException) {
-                throw new AuthorisationException('You do not have permission to view this entity type.');
-            }
-        }
-        
-        return $canViewAny;
+        return $this->allowed('viewAny', $user, $entity->getModel(), $throwException);
+    }
+    
+    /**
+     * Check if a user can view an entity type.
+     * 
+     * @param User $user
+     * @param Entity $entity
+     * @param bool $throwException
+     * 
+     * @throws AuthorisationException
+     *
+     * @return bool
+    */
+    public function canCreate(
+        ?User $user, 
+        Entity $entity, 
+        bool $throwException = false
+    ) : bool 
+    {
+        return $this->allowed('create', $user, $entity->getModel(), $throwException);
     }
     
     /**
@@ -101,7 +110,7 @@ class AuthorisationService
      * 
      * @param string $action
      * @param User $user
-     * @param Model $model
+     * @param Model|class-string<Model> $model
      * @param bool $throwException
      * 
      * @throws AuthorisationException
@@ -111,7 +120,7 @@ class AuthorisationService
     private function allowed(
         string $action,
         ?User $user, 
-        Model $model, 
+        Model|string $model, 
         bool $throwException = false
     ) : bool 
     {
@@ -121,11 +130,10 @@ class AuthorisationService
             $allowed = false;
             
             if($throwException) {
-                throw new AuthorisationException("You do not have permission to {$action} this entity.");
+                throw new AuthorisationException("You do not have permission to {$action} for this entity type.");
             }
         }
         
         return $allowed;
     }
-         
 }

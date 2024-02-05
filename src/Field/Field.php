@@ -2,12 +2,19 @@
 
 namespace Adepta\Proton\Field;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\DisplayContext;
+use Illuminate\Support\Collection;
 
 abstract class Field implements FieldContract
 {
     protected string $fieldName;
     protected bool $sortable;
     protected string $validation;
+    
+    /**
+     * @var Collection<int, DisplayContext> $displayContexts
+     */
+    protected Collection $displayContexts;
     
     /**
      * Constructor
@@ -21,6 +28,14 @@ abstract class Field implements FieldContract
         $this->fieldName = $fieldName;
         $this->sortable = false;
         $this->validation = '';
+        
+        //Default to all display contexts
+        $this->displayContexts = collect([
+            DisplayContext::CREATE,
+            DisplayContext::UPDATE,
+            DisplayContext::VIEW,
+            DisplayContext::INDEX,
+        ]);
     }
     
     /**
@@ -103,5 +118,15 @@ abstract class Field implements FieldContract
     public function getValidation()
     {
         return $this->validation;
+    }
+    
+    /**
+     * Get the display contexts for this field
+     * 
+     * @return Collection<int, DisplayContext>
+     */
+    public function getDisplayContexts() : Collection
+    {
+        return $this->displayContexts;
     }
 }

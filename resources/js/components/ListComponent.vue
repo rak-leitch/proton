@@ -101,6 +101,15 @@
     function deleteItem(item) {
         console.log(item);
     }
+    
+    function goToCreate() {
+        router.push({
+            name: 'entity-create',
+            params: { 
+                entityCode: props.settings.entityCode,
+            }
+        });
+    }
 
 </script>
 
@@ -123,6 +132,20 @@
         :items-per-page-options="itemsPerPageOptions"
         :key="configChange"
     >
+        <template v-slot:top>
+            <v-toolbar
+                flat
+            > 
+                <v-spacer></v-spacer>
+                <v-btn
+                    v-if="configData.can_create"
+                    color="primary"
+                    @click="goToCreate"
+                >
+                    New {{ configData.entity_label }}
+                </v-btn>
+            </v-toolbar>
+        </template>
         <template v-slot:item.actions="{ item }">
             <v-icon
                 v-if="rowPermissions[item.id].update"

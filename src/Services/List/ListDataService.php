@@ -5,6 +5,7 @@ namespace Adepta\Proton\Services\List;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Support\Facades\Auth;
 use Adepta\Proton\Services\Auth\AuthorisationService;
+use Adepta\Proton\Field\DisplayContext;
 
 class ListDataService
 {    
@@ -47,13 +48,14 @@ class ListDataService
             
             $row = [];
             
-            foreach($entity->getFields() as $field) {
+            //TODO: Need indication of view/index context here?
+            foreach($entity->getFields(DisplayContext::INDEX) as $field) {
                 $fieldName = $field->getFieldName();
                 $row[$fieldName] = $model->{$fieldName};
             };
             
             //TODO: Can't assume pk
-            $permissions[$model->id] = [
+            $permissions[$model->getKey()] = [
                 'update' => $this->authService->canUpdate($user, $model),
                 'view' => $this->authService->canView($user, $model),
                 'delete' => $this->authService->canDelete($user, $model),

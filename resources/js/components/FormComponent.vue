@@ -28,11 +28,16 @@
     
     async function getConfig() {
         try {
+                    
             const requestParams = [
                 props.settings.entityCode,
-                props.settings.entityId
             ];
-            const response = await useAjax("config/form", requestParams);
+            
+            if(props.settings.entityId) {
+                requestParams.push(props.settings.entityId);
+            }
+            
+            const response = await useAjax(props.settings.configPath, requestParams);
             configData.value = response.body.config;
             formData.value = response.body.data;
             
@@ -56,10 +61,13 @@
             
             const requestParams = [
                 props.settings.entityCode,
-                props.settings.entityId
             ];
             
-            const response = await useAjax("submit/form", requestParams, formData.value, "POST", unreportableStatuses);
+            if(props.settings.entityId) {
+                requestParams.push(props.settings.entityId);
+            }
+            
+            const response = await useAjax(props.settings.submitPath, requestParams, formData.value, "POST", unreportableStatuses);
             errorMessages.value = response.body.errors ? response.body.errors : {};
             
             if(response.statusCode === successStatus) {

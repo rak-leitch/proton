@@ -47,8 +47,7 @@ class FormModelFactory
     public function getCreateModel(Entity $entity, ?User $user) : Model
     {
         $modelClass = $entity->getModel();
-        //TODO: Needs implementation
-        //$this->authorisationService->canCreate($user, $modelClass, true);
-        return $modelClass::newInstance();
+        $this->authorisationService->canCreate($user, $entity, true);
+        return $modelClass::make();
     }
 }

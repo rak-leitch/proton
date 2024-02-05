@@ -2,6 +2,9 @@
 
 namespace Adepta\Proton\Contracts\Field;
 
+use Adepta\Proton\Field\DisplayContext;
+use Illuminate\Support\Collection;
+
 interface FieldContract
 {
     /**
@@ -62,4 +65,11 @@ interface FieldContract
      * @return string
      */
     public function getValidation();
+    
+    /**
+     * Get the display contexts for this field
+     * 
+     * @return Collection<int, DisplayContext>
+     */
+    public function getDisplayContexts() : Collection;
 }

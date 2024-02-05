@@ -8,6 +8,7 @@ use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Field\DisplayContext;
 
 class Entity
 {
@@ -41,12 +42,11 @@ class Entity
         $entityClass = $entityConfig->getModel();
         $fields = $entityConfig->getFields();
         
-        
         if(strlen($entityCode) === 0) {
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         
-        if(strlen($entityClass) === 0) {
+        if($entityClass === Model::class) {
             throw new ConfigurationException('Entity model must be supplied with setModel()'); 
         }
         
@@ -69,12 +69,18 @@ class Entity
     
     /**
      * Get the fields for this entity.
+     * 
+     * @param DisplayContext $displayContext
      *
      * @return Collection<int, FieldContract>
     */
-    public function getFields() : Collection
+    public function getFields(DisplayContext $displayContext) : Collection
     {
-        return $this->entityConfig->getFields();
+        $fields = $this->entityConfig->getFields();
+        
+        return $fields->filter(function ($field) use ($displayContext) {
+            return $field->getDisplayContexts()->contains($displayContext);
+        });
     }
     
     /**
@@ -90,7 +96,7 @@ class Entity
     /**
      * Get the model for this entity.
      *
-     * @return string
+     * @return class-string<Model>
     */
     public function getModel() : string
     {

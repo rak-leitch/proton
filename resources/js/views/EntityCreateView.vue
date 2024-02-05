@@ -22,18 +22,17 @@
             
             const requestParams = [
                 route.params.entityCode,
-                route.params.entityId,
             ];
             
-            const response = await useAjax("config/view/entity-update", requestParams);
+            const response = await useAjax("config/view/entity-create", requestParams);
             
             configData.value = response.body;
             
             formSettings.value = {
                 entityCode: configData.value.entity_code,
-                entityId: configData.value.entity_id,
-                configPath: "config/form-update",
-                submitPath: "submit/form-update",
+                entityId: null,
+                configPath: "config/form-create",
+                submitPath: "submit/form-create",
                 successRoute: {
                     name: 'entity-index',
                     params: { 
