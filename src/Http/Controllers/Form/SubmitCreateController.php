@@ -11,7 +11,7 @@ use Adepta\Proton\Services\Form\FormSubmitService;
 use Adepta\Proton\Services\Form\FormValidationService;
 use Adepta\Proton\Field\DisplayContext;
 
-class SubmitCreateController extends BaseController
+final class SubmitCreateController extends BaseController
 {    
     /**
      * Constructor.

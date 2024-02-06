@@ -1,36 +1,22 @@
 <script setup>
     import protonForm from "../components/FormComponent.vue";
-    import { useAjax } from "../composables/ajax";
+    import { request } from "../utilities/request";
     import { useRoute } from "vue-router";
-    import { watch, ref } from "vue";
+    import { ref } from "vue";
     
     const configData = ref({});
     const formSettings = ref({});
     const route = useRoute();
     const currentError = ref("");
-
-    watch(
-        () => route.params,
-        () => {
-            currentError.value = "";
-            getConfig();
-        }
-    );
     
     async function getConfig() {
         try {
-            
-            const requestParams = [
+            const { json } = await request("config/view/entity-create", [
                 route.params.entityCode,
-            ];
-            
-            const response = await useAjax("config/view/entity-create", requestParams);
-            
-            configData.value = response.body;
-            
+            ]);
+            configData.value = json;
             formSettings.value = {
                 entityCode: configData.value.entity_code,
-                entityId: null,
                 configPath: "config/form-create",
                 submitPath: "submit/form-create",
                 successRoute: {
@@ -41,7 +27,7 @@
                 }
             };
         } catch (error) {
-            currentError.value = error.message;
+            currentError.value = `Failed to get config: ${error.message}`;
         }
     }
     

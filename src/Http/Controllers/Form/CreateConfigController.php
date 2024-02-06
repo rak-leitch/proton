@@ -10,7 +10,7 @@ use Adepta\Proton\Services\Form\FormConfigService;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-class CreateConfigController extends BaseController
+final class CreateConfigController extends BaseController
 {    
     /**
      * Constructor.

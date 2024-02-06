@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 
-class AuthorisationService
+final class AuthorisationService
 {
     /**
      * Check if a user can view an entity type.

@@ -1,23 +1,17 @@
 <script setup>
     import { ref, watch } from "vue";
-    import { useAjax } from "../composables/ajax";
+    import { request } from "../utilities/request";
     import { useRouter } from "vue-router";
 
-    let configData = {};
+    const configData = ref({});
     const router = useRouter();
-    const configChange = ref(false);
     const itemsPerPage = ref(5);
     const serverItems = ref([]);
     const loading = ref(true);
     const totalItems = ref(0);
     const currentError = ref("");
+    const configVersion = ref("");
     let rowPermissions = {};
-    
-    const itemsPerPageOptions = [
-        { value: 3, title: '3' },
-        { value: 5, title: '5' },
-        { value: 10, title: '10' }  
-    ];
    
     const props = defineProps({
         settings: Object,
@@ -26,9 +20,7 @@
     watch(
         () => props.settings,
         () => {
-            getConfig().then(() => {
-                configChange.value = !configChange.value;
-            })
+            getConfig()
         }, {
             deep: true,
         }
@@ -36,44 +28,32 @@
     
     async function getConfig() {
         try {
-            const requestParams = [
-                props.settings.entityCode
-            ];
-            const response = await useAjax("config/list", requestParams);
-            
-            configData = response.body;
-            
-            configData.fields.push({
-                title: 'Actions', 
-                key: 'actions', 
-                sortable: false
-            });
-            
+            const { json } = await request("config/list", [
+                props.settings.entityCode,
+            ]);
+            configData.value = json;
         } catch (error) {
             currentError.value = `Failed to get list config: ${error.message}`;
         }
     }
     
-    await getConfig();
-    
     async function loadData ({ page, itemsPerPage, sortBy }) {
         try {
             loading.value = true;
             const sortByParam = sortBy.length ? sortBy.toString() : "null";
-            const requestParams = [
+            const { json } = await request("data/list", [
                 props.settings.entityCode,
                 page,
                 itemsPerPage,
                 sortByParam,
-            ];
-            const response = await useAjax("data/list", requestParams);
-            serverItems.value = response.body.data;
-            totalItems.value = response.body.totalRows;
-            rowPermissions = response.body.permissions;
-            
+            ]);
+            serverItems.value = json.data;
+            totalItems.value = json.totalRows;
+            rowPermissions = json.permissions;
         } catch (error) {
             serverItems.value = [];
             totalItems.value = 0;
+            rowPermissions = [];
             currentError.value = `Failed to get list data: ${error.message}`;
         } finally {
             loading.value = false;
@@ -81,10 +61,8 @@
     }
     
     function updateItem(item) {
-        
-        const primaryKeyValue = item[configData.primary_key];
+        const primaryKeyValue = item[configData.value.primary_key];
         const entityCode = props.settings.entityCode;
-        
         router.push({ 
             name: "entity-update", 
             params: { 
@@ -110,6 +88,8 @@
             }
         });
     }
+    
+    await getConfig();
 
 </script>
 
@@ -129,8 +109,8 @@
         :loading="loading"
         item-value="name"
         @update:options="loadData"
-        :items-per-page-options="itemsPerPageOptions"
-        :key="configChange"
+        :items-per-page-options="configData.page_size_options"
+        :key="configData.version"
     >
         <template v-slot:top>
             <v-toolbar

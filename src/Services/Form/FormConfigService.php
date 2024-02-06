@@ -6,7 +6,7 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 
-class FormConfigService
+final class FormConfigService
 {    
     /**
      * Get the form config for an entity instance

@@ -4,7 +4,7 @@ namespace Adepta\Proton\Services\ViewConfig;
 
 use Adepta\Proton\Entity\Entity;
 
-class IndexConfigService
+final class IndexConfigService
 {    
     /**
      * Get the index page config for an entity
@@ -20,7 +20,7 @@ class IndexConfigService
         
         $pageConfig['entity_code'] = $entity->getCode();
         $pageConfig['title'] = $entity->getLabel(true);
-        
+
         return $pageConfig;
     }
 }

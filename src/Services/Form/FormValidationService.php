@@ -6,7 +6,7 @@ use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Validation\ValidationRuleParser;
 
-class FormValidationService
+final class FormValidationService
 {    
     /**
      * Get the rules for a form submit based on

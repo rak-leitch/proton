@@ -6,7 +6,7 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 
-class FormSubmitService
+final class FormSubmitService
 {    
     /**
      * Save a model on form submission given

@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\ViewConfig;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 
-class UpdateConfigService
+final class UpdateConfigService
 {    
     /**
      * Get the index page config for an entity

@@ -10,7 +10,7 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 
-class Entity
+final class Entity
 {
     private EntityConfigContract $entityConfig;
     

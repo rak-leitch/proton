@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\ViewConfig;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 
-class CreateConfigService
+final class CreateConfigService
 {    
     /**
      * Get the create page config for an entity

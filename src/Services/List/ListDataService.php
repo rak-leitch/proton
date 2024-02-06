@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Adepta\Proton\Field\DisplayContext;
 
-class ListDataService
+final class ListDataService
 {    
     /**
      * Constructor.

@@ -24,7 +24,7 @@ class ListTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->has('fields', 5)
+            $json->has('fields', 6)
             ->has('fields.0', fn (AssertableJson $json) =>
                 $json->where('title', 'id')
                      ->where('key', 'id')
@@ -47,6 +47,8 @@ class ListTest extends TestCase
                      ->where('sortable', true)
             )->where('primary_key', 'id')
             ->where('can_create', true)
+            ->where('entity_label', 'Project')
+            ->etc()
         );
     }
     

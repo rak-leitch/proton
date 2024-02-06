@@ -9,7 +9,7 @@ use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\ViewConfig\IndexConfigService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-class EntityIndexController extends BaseController
+final class EntityIndexController extends BaseController
 {
     /**
      * Constructor.

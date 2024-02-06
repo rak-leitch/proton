@@ -7,7 +7,7 @@ use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class EntityConfig implements EntityConfigContract
+final class EntityConfig implements EntityConfigContract
 {
     private string $code;
     
@@ -19,7 +19,7 @@ class EntityConfig implements EntityConfigContract
     /**
      * @var Collection<int, FieldContract> $fieldCollection
      */
-    protected Collection $fieldCollection;
+    private Collection $fieldCollection;
     
     /**
      * Constructor.

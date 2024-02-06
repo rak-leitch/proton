@@ -6,8 +6,9 @@ use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Illuminate\Foundation\Auth\User;
+use Carbon\Carbon;
 
-class ListConfigService
+final class ListConfigService
 {    
     /**
      * Constructor.
@@ -34,6 +35,14 @@ class ListConfigService
         $listConfig['primary_key'] = $entity->getPrimaryKeyField()->getFieldName(); 
         $listConfig['can_create'] = $this->authorisationService->canCreate($user, $entity);
         $listConfig['entity_label'] = $entity->getLabel();
+        $listConfig['version'] = Carbon::now()->toJSON();
+        
+        $listConfig['page_size_options'] = [
+            ['value' => 3, 'title' => '3'],
+            ['value' => 5, 'title' => '5'],
+            ['value' => 10, 'title' => '10'],
+            ['value' => 20, 'title' => '20'],
+        ];
         
         //TODO: Need indication of view/index context here?
         foreach($entity->getFields(DisplayContext::INDEX) as $field) {
@@ -43,6 +52,13 @@ class ListConfigService
             $fieldConfig['sortable'] = $field->getSortable();
             $listConfig['fields'][] = $fieldConfig;
         };
+        
+        //Actions column
+        $listConfig['fields'][] = [
+            'title' => 'Actions',
+            'key' => 'actions',
+            'sortable' => false,
+        ];
         
         return $listConfig;
     }

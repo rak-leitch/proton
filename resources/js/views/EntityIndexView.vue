@@ -1,45 +1,39 @@
 <script setup>
     import protonList from "../components/ListComponent.vue";
-    import { useAjax } from "../composables/ajax";
+    import { request } from "../utilities/request";
     import { useRoute } from "vue-router";
-    import { watch, ref } from "vue";
+    import { watch, ref, computed } from "vue";
     
     const configData = ref({});
     const listSettings = ref({});
     const route = useRoute();
-    const viewType = route.name;
     const currentError = ref("");
-    const displayList = ref(false);
 
     watch(
         () => route.params,
         () => {
-            currentError.value = "";
             getConfig();
         }
     );
     
     async function getConfig() {
         try {
-            
-            const requestParams = [
-                route.params.entityCode
-            ];
-            
-            const response = await useAjax("config/view/entity-index", requestParams);
-            
-            configData.value = response.body;
-            
+            currentError.value = "";
+            const { json } = await request("config/view/entity-index", [
+                route.params.entityCode,
+            ]);
+            configData.value = json;
             listSettings.value = {
                 entityCode: configData.value.entity_code,
             };
-            
-            displayList.value = true;
         } catch (error) {
-            displayList.value = false;
             currentError.value = error.message;
         }
     }
+    
+    const displayList = computed(() => {
+        return (Object.keys(configData.value).length && !currentError.value);
+    });
     
     await getConfig();
 

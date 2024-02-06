@@ -9,7 +9,7 @@ use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\Form\FormModelFactory;
 use Adepta\Proton\Services\ViewConfig\UpdateConfigService;
 
-class EntityUpdateController extends BaseController
+final class EntityUpdateController extends BaseController
 {
     /**
      * Constructor.

@@ -7,7 +7,7 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 
-class FormModelFactory
+final class FormModelFactory
 {    
     /**
      * Constructor.

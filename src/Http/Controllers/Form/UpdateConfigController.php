@@ -10,7 +10,7 @@ use Adepta\Proton\Services\Form\FormModelFactory;
 use Adepta\Proton\Services\Form\FormConfigService;
 use Adepta\Proton\Field\DisplayContext;
 
-class UpdateConfigController extends BaseController
+final class UpdateConfigController extends BaseController
 {    
     /**
      * Constructor.

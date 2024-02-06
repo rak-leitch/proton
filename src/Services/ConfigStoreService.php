@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services;
 use Adepta\Proton\Contracts\ConfigStoreContract;
 use Adepta\Proton\Exceptions\ConfigurationException;
 
-class ConfigStoreService implements ConfigStoreContract
+final class ConfigStoreService implements ConfigStoreContract
 {
     /**
      * @var array<string, string>|null  

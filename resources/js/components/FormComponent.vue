@@ -1,6 +1,6 @@
 <script setup>
-    import { ref, watch } from "vue";
-    import { useAjax } from "../composables/ajax";
+    import { ref } from "vue";
+    import { request } from "../utilities/request";
     import { useRouter } from "vue-router";
 
     const configData = ref({});
@@ -9,40 +9,34 @@
     const currentError = ref("");
     const submitInProgress = ref(false);
     const errorMessages = ref({});
-    const validationFailedStatus = 422;
     const successStatus = 200;
-    const unreportableStatuses = [validationFailedStatus];
    
     const props = defineProps({
         settings: Object,
     });
     
-    watch(
-        () => props.settings,
-        () => { 
-            getConfig()
-        }, {
-            deep: true,
-        }
-    );
-    
     async function getConfig() {
         try {
-                    
-            const requestParams = [
-                props.settings.entityCode,
-            ];
-            
-            if(props.settings.entityId) {
-                requestParams.push(props.settings.entityId);
-            }
-            
-            const response = await useAjax(props.settings.configPath, requestParams);
-            configData.value = response.body.config;
-            formData.value = response.body.data;
-            
+            const { json } = await request(props.settings.configPath, getRequestParams());
+            configData.value = json.config;
+            formData.value = json.data;
         } catch (error) {
             currentError.value = `Failed to get form config: ${error.message}`;
+        }
+    }
+    
+    async function submitForm() {
+        try {
+            submitInProgress.value = true;
+            const { json, status } = await request(props.settings.submitPath, getRequestParams(), formData.value);
+            errorMessages.value = json.errors ? json.errors : {};
+            if(status === successStatus) {
+                router.push(props.settings.successRoute);
+            }
+        } catch (error) {
+            currentError.value = `Failed to submit form: ${error.message}`;
+        } finally {
+            submitInProgress.value = false;
         }
     }
     
@@ -54,30 +48,14 @@
         return errorMessage;
     };
     
-    async function submitForm() {
-        try {
-            
-            submitInProgress.value = true;
-            
-            const requestParams = [
-                props.settings.entityCode,
-            ];
-            
-            if(props.settings.entityId) {
-                requestParams.push(props.settings.entityId);
-            }
-            
-            const response = await useAjax(props.settings.submitPath, requestParams, formData.value, "POST", unreportableStatuses);
-            errorMessages.value = response.body.errors ? response.body.errors : {};
-            
-            if(response.statusCode === successStatus) {
-                router.push(props.settings.successRoute);
-            }
-        } catch (error) {
-            currentError.value = `Failed to submit form: ${error.message}`;
-        } finally {
-            submitInProgress.value = false;
+    function getRequestParams() {
+        const requestParams = [
+            props.settings.entityCode,
+        ];
+        if(props.settings.entityId) {
+            requestParams.push(props.settings.entityId);
         }
+        return requestParams;
     }
     
     await getConfig();

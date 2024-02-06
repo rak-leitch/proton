@@ -9,7 +9,7 @@ use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\List\ListConfigService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-class ListConfigController extends BaseController
+final class ListConfigController extends BaseController
 {    
     /**
      * Constructor.

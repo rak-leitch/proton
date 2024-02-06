@@ -1,8 +1,10 @@
-import { ref } from "vue";
+export async function request(path, parameters = [], postData = {}) {
 
-export async function useAjax(path, parameters = [], bodyData = {}, method = "GET", acceptableStatuses = []) {
-
+    const getVerb = 'GET';
+    const postVerb = 'POST';
     const baseUrl = window.protonApiBase;
+    const method = Object.keys(postData).length ? postVerb : getVerb;
+    const acceptableErrors = [ 422 ];
     let parameterString = "";
     
     const requestOptions = {
@@ -16,32 +18,32 @@ export async function useAjax(path, parameters = [], bodyData = {}, method = "GE
         parameterString += `${encodeURIComponent(parameter)}/`;
     }
     
-    if(method === "POST") {
+    if(method === postVerb) {
         const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
         const postHeaders = {
             "Content-Type": "application/json",
             "X-Csrf-Token": csrfToken 
         };
         requestOptions["headers"] = {...requestOptions["headers"], ...postHeaders};
-        requestOptions["body"] = JSON.stringify(bodyData);
+        requestOptions["body"] = JSON.stringify(postData);
     }
     
     const response = await fetch(`${baseUrl}/${path}/${parameterString}`, requestOptions);
     
-    const body = await response.json();
+    const json = await response.json();
     
-    if (!response.ok && (!acceptableStatuses.includes(response.status))) {
+    if (!response.ok && (!acceptableErrors.includes(response.status))) {
         let message = `Received ${response.status} status code.`;
         
-        if(body.hasOwnProperty('detail')) {
-            message += ` ${body.detail}`;
+        if(json.hasOwnProperty('detail')) {
+            message += ` ${json.detail}`;
         }
         
         throw new Error(message);
     }
     
     return { 
-        statusCode: response.status,
-        body: body,
+        status: response.status,
+        json: json,
     };
 }
