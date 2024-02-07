@@ -64,7 +64,7 @@ interface FieldContract
      * 
      * @return string
      */
-    public function getValidation();
+    public function getValidation() : string;
     
     /**
      * Get the display contexts for this field

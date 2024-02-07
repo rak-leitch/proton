@@ -71,17 +71,19 @@
         {{ currentError }}
     </v-alert>
     <v-form @submit.prevent="submitForm">
-        <v-text-field v-for="(field) in configData.fields"
-            v-model="formData[field.key]"
-            :error-messages="getErrorMessage(field.key)"
-        >
-            <template v-slot:label>
-                <span>
-                    {{ field.title }} 
-                    <span v-if="field.required" class="text-red">*</span>
-                </span>
-            </template>
-        </v-text-field>
+        <template v-for="(field) in configData.fields">
+            <v-text-field v-if="field.frontend_type='text'"
+                v-model="formData[field.key]"
+                :error-messages="getErrorMessage(field.key)"
+            >
+                <template v-slot:label>
+                    <span>
+                        {{ field.title }} 
+                        <span v-if="field.required" class="text-red">*</span>
+                    </span>
+                </template>
+            </v-text-field>
+        </template>
         <v-btn
             :loading="submitInProgress"
             type="submit"

@@ -20,7 +20,7 @@ final class CreateConfigService
         $pageConfig = [];
         
         $pageConfig['entity_code'] = $entity->getCode();
-        $pageConfig['title'] = 'Create '.$entity->getLabel();
+        $pageConfig['title'] = 'New '.$entity->getLabel();
         
         return $pageConfig;
     }

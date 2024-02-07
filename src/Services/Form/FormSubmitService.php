@@ -24,7 +24,7 @@ final class FormSubmitService
         Entity $entity, 
         Model $model, 
         array $data
-    )
+    ) : void
     {       
         $expectedFields = $entity->getFields($displayContext);
         

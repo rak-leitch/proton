@@ -42,7 +42,7 @@ final class Entity
         $entityClass = $entityConfig->getModel();
         $fields = $entityConfig->getFields();
         
-        if(strlen($entityCode) === 0) {
+        if(mb_strlen($entityCode) === 0) {
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         

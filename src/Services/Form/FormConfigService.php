@@ -5,6 +5,7 @@ namespace Adepta\Proton\Services\Form;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
+use Adepta\Proton\Contracts\Field\FieldContract;
 
 final class FormConfigService
 {    
@@ -33,7 +34,8 @@ final class FormConfigService
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['type'] = $field->getFrontendType();
+            $fieldConfig['frontend_type'] = $field->getFrontendType();
+            $fieldConfig['required'] = $this->fieldRequired($field);
             $formConfig['config']['fields'][] = $fieldConfig;
             $formConfig['data'][$fieldName] = null;
         };
@@ -65,5 +67,19 @@ final class FormConfigService
         }
         
         return $formData;
+    }
+    
+    /**
+     * Check if a field is required. This is somewhat naive
+     * at the moment; it does not evaluate rules like required_if 
+     * etc
+     *
+     * @param FieldContract $field
+     * 
+     * @return bool
+    */
+    public function fieldRequired(FieldContract $field) : bool
+    {
+        return (mb_strstr($field->getValidation(), 'required') === false) ? false : true; 
     }
 }

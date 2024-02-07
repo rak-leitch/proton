@@ -115,7 +115,7 @@ abstract class Field implements FieldContract
      * 
      * @return string
      */
-    public function getValidation()
+    public function getValidation() : string
     {
         return $this->validation;
     }
