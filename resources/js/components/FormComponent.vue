@@ -75,6 +75,7 @@
             <v-text-field v-if="field.frontend_type='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
+                v-bind:dusk="`field-${field.key}`"
             >
                 <template v-slot:label>
                     <span>
@@ -90,6 +91,7 @@
             block
             class="mt-2"
             text="Submit"
+            dusk="form-submit"
         ></v-btn>
     </v-form>
 </template>

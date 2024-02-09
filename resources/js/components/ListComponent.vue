@@ -121,6 +121,7 @@
                     v-if="configData.can_create"
                     color="primary"
                     @click="goToCreate"
+                    dusk="create-entity-button"
                 >
                     New {{ configData.entity_label }}
                 </v-btn>
@@ -132,18 +133,21 @@
                 icon="$pencil"
                 class="me-2"
                 @click="updateItem(item)"
+                v-bind:dusk="`update-${item.id}`"
             />
             <v-icon
                 v-if="rowPermissions[item.id].view"
                 icon="$eye"
                 class="me-2"
                 @click="viewItem(item)"
+                v-bind:dusk="`view-${item.id}`"
             />
             <v-icon
                 v-if="rowPermissions[item.id].delete"
                 icon="$rubbish"
                 class="me-2"
                 @click="deleteItem(item)"
+                v-bind:dusk="`delete-${item.id}`"
             />
         </template>
     </v-data-table-server>
