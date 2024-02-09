@@ -9,7 +9,7 @@ use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use \ReflectionClass;
 
-class EntityFactory
+final class EntityFactory
 {    
     /**
      * Constructor.
@@ -25,6 +25,8 @@ class EntityFactory
      * the entity code.
      * 
      * @param string $entityCode
+     * 
+     * @throws ConfigurationException
      *
      * @return Entity
     */

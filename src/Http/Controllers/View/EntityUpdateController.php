@@ -6,22 +6,22 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Services\ViewConfig\IndexConfigService;
-use Adepta\Proton\Services\Auth\AuthorisationService;
+use Adepta\Proton\Services\Form\FormModelFactory;
+use Adepta\Proton\Services\ViewConfig\UpdateConfigService;
 
-final class EntityIndexController extends BaseController
+final class EntityUpdateController extends BaseController
 {
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
-     * @param IndexConfigService $indexConfigService
-     * @param AuthorisationService $authorisationService
+     * @param FormModelFactory $formModelFactory
+     * @param UpdateConfigService $updateConfigService
     */
     public function __construct(
         private EntityFactory $entityFactory,
-        private IndexConfigService $indexConfigService,
-        private AuthorisationService $authorisationService,
+        private FormModelFactory $formModelFactory,
+        private UpdateConfigService $updateConfigService,
     ) { }
     
     /**
@@ -29,16 +29,15 @@ final class EntityIndexController extends BaseController
      * 
      * @param Request $request
      * @param string $entityCode
+     * @param int $entityId
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $entityCode) : JsonResponse
+    public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
     {
-        $viewConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $this->authorisationService->canViewAny($request->user(), $entity, true);
-        
-        $viewConfig = $this->indexConfigService->getViewConfig($entity);
+        $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());
+        $viewConfig = $this->updateConfigService->getViewConfig($entity, $model);
         
         return response()->json($viewConfig);
     }

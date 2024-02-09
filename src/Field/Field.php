@@ -2,11 +2,19 @@
 
 namespace Adepta\Proton\Field;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\DisplayContext;
+use Illuminate\Support\Collection;
 
 abstract class Field implements FieldContract
 {
-    private string $fieldName;
-    private bool $sortable;
+    protected string $fieldName;
+    protected bool $sortable;
+    protected string $validation;
+    
+    /**
+     * @var Collection<int, DisplayContext> $displayContexts
+     */
+    protected Collection $displayContexts;
     
     /**
      * Constructor
@@ -19,6 +27,15 @@ abstract class Field implements FieldContract
     {
         $this->fieldName = $fieldName;
         $this->sortable = false;
+        $this->validation = '';
+        
+        //Default to all display contexts
+        $this->displayContexts = collect([
+            DisplayContext::CREATE,
+            DisplayContext::UPDATE,
+            DisplayContext::VIEW,
+            DisplayContext::INDEX,
+        ]);
     }
     
     /**
@@ -71,4 +88,45 @@ abstract class Field implements FieldContract
      * @return string
      */
     abstract public function getFrontendType() : string;
+    
+    /**
+     * Indicate whether this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool
+    {
+        return false;
+    }
+    
+    /**
+     * Set validation for this field
+     * 
+     * @return self
+     */
+    public function setValidation(string $validation) : self
+    {
+        $this->validation = $validation;
+        return $this;
+    }
+    
+    /**
+     * Get validation for this field
+     * 
+     * @return string
+     */
+    public function getValidation() : string
+    {
+        return $this->validation;
+    }
+    
+    /**
+     * Get the display contexts for this field
+     * 
+     * @return Collection<int, DisplayContext>
+     */
+    public function getDisplayContexts() : Collection
+    {
+        return $this->displayContexts;
+    }
 }

@@ -6,6 +6,7 @@ use Adepta\Proton\ProtonServiceProvider;
 use Orchestra\Testbench\Dusk\TestCase as BaseTestCase;
 use Adepta\Proton\Tests\Database\Traits\InitialiseDatabaseTrait;
 use Adepta\Proton\Tests\EntityDefinitions\Traits\InitialiseEntityConfigTrait;
+use Laravel\Dusk\Browser;
 
 class BrowserTestCase extends BaseTestCase
 {
@@ -21,8 +22,19 @@ class BrowserTestCase extends BaseTestCase
      * @return void
     */
     public function setUp(): void
-    {
+    {        
         parent::setUp();
+        
+        //Custom Browser command to clear a Vue input element
+        //See https://github.com/laravel/dusk/issues/818
+        Browser::macro('clearVue', function ($selector) {
+            /** @var Browser $this */
+            $element = $this->resolver->format($selector);
+            $this->script("document.querySelector('$element').value = ''");
+            $this->script("document.querySelector('$element').dispatchEvent(new Event('input'))");
+
+            return $this;
+        });
     }
 
     /**

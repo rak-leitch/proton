@@ -5,7 +5,7 @@ namespace Adepta\Proton\Http\Controllers;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\View\View;
 
-class ProtonController extends BaseController
+final class ProtonController extends BaseController
 {
     /**
      * Action to render main Proton template.

@@ -6,8 +6,11 @@ use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Illuminate\Support\Collection;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Str;
+use Adepta\Proton\Exceptions\ConfigurationException;
+use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Field\DisplayContext;
 
-class Entity
+final class Entity
 {
     private EntityConfigContract $entityConfig;
     
@@ -20,18 +23,64 @@ class Entity
     */
     public function initialise(EntityConfigContract $entityConfig) : void
     {
-        $entityConfig->validate();
+        $this->validateConfig($entityConfig);
         $this->entityConfig = $entityConfig;
     }
     
     /**
+     * Validate the configuration
+     * 
+     * @param EntityConfigContract $entityConfig
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    public function validateConfig(EntityConfigContract $entityConfig) : void
+    {
+        $entityCode = $entityConfig->getCode();
+        $entityClass = $entityConfig->getModel();
+        $fields = $entityConfig->getFields();
+        
+        if(mb_strlen($entityCode) === 0) {
+            throw new ConfigurationException('Entity code must be supplied with setCode()'); 
+        }
+        
+        if($entityClass === Model::class) {
+            throw new ConfigurationException('Entity model must be supplied with setModel()'); 
+        }
+        
+        if(!is_subclass_of($entityClass, Model::class)) {
+            throw new ConfigurationException('Entity model must extend '.Model::class);
+        }
+        
+        if($fields->isEmpty()) {
+            throw new ConfigurationException("Please provide at least one field when defining the {$entityCode} entity");
+        }
+        
+        $primaryKeys = $fields->filter(function ($field, $key) {
+            return $field->isPrimaryKey();
+        });
+        
+        if($primaryKeys->count() !== 1) {
+            throw new ConfigurationException('Each entity must contain a single primary key field');
+        }
+    }
+    
+    /**
      * Get the fields for this entity.
+     * 
+     * @param DisplayContext $displayContext
      *
      * @return Collection<int, FieldContract>
     */
-    public function getFields() : Collection
+    public function getFields(DisplayContext $displayContext) : Collection
     {
-        return $this->entityConfig->getFields();
+        $fields = $this->entityConfig->getFields();
+        
+        return $fields->filter(function ($field) use ($displayContext) {
+            return $field->getDisplayContexts()->contains($displayContext);
+        });
     }
     
     /**
@@ -47,7 +96,7 @@ class Entity
     /**
      * Get the model for this entity.
      *
-     * @return string
+     * @return class-string<Model>
     */
     public function getModel() : string
     {
@@ -68,5 +117,25 @@ class Entity
         }
         
         return preg_replace('/(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', $label);
+    }
+    
+    /**
+     * Get the primary key field for this entity.
+     *
+     * @return FieldContract
+    */
+    public function getPrimaryKeyField() : FieldContract
+    {
+        $primaryKeys = $this->entityConfig->getFields()->filter(function ($field, $key) {
+            return $field->isPrimaryKey();
+        });
+        
+        $pkField = $primaryKeys->first();
+        
+        if($pkField === null) {
+            throw new ConfigurationException('Each entity must contain a single primary key field');
+        }
+        
+        return $pkField;
     }
 }

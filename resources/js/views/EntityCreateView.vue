@@ -1,39 +1,35 @@
 <script setup>
-    import protonList from "../components/ListComponent.vue";
+    import protonForm from "../components/FormComponent.vue";
     import { request } from "../utilities/request";
     import { useRoute } from "vue-router";
-    import { watch, ref, computed } from "vue";
+    import { ref } from "vue";
     
     const configData = ref({});
-    const listSettings = ref({});
+    const formSettings = ref({});
     const route = useRoute();
     const currentError = ref("");
-
-    watch(
-        () => route.params,
-        () => {
-            getConfig();
-        }
-    );
     
     async function getConfig() {
         try {
-            currentError.value = "";
-            const { json } = await request("config/view/entity-index", [
+            const { json } = await request("config/view/entity-create", [
                 route.params.entityCode,
             ]);
             configData.value = json;
-            listSettings.value = {
+            formSettings.value = {
                 entityCode: configData.value.entity_code,
+                configPath: "config/form-create",
+                submitPath: "submit/form-create",
+                successRoute: {
+                    name: 'entity-index',
+                    params: { 
+                        entityCode: configData.value.entity_code,
+                    }  
+                }
             };
         } catch (error) {
-            currentError.value = error.message;
+            currentError.value = `Failed to get config: ${error.message}`;
         }
     }
-    
-    const displayList = computed(() => {
-        return (Object.keys(configData.value).length && !currentError.value);
-    });
     
     await getConfig();
 
@@ -52,9 +48,8 @@
             >
                 {{ currentError }}
             </v-alert>
-            <protonList 
-                v-if="displayList"
-                :settings="listSettings"
+            <protonForm
+                :settings="formSettings"
             />
         </template>
     </v-card>

@@ -1,5 +1,4 @@
 <script setup>
-    import { useAjax } from "../composables/ajax";
     import { useRoute } from "vue-router";
     import { ref } from "vue";
     

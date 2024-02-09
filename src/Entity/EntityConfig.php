@@ -5,17 +5,21 @@ namespace Adepta\Proton\Entity;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
-use Adepta\Proton\Exceptions\ConfigurationException;
+use Illuminate\Database\Eloquent\Model;
 
-class EntityConfig implements EntityConfigContract
+final class EntityConfig implements EntityConfigContract
 {
     private string $code;
+    
+    /**
+     * @var class-string<Model>
+     */
     private string $model;
     
     /**
      * @var Collection<int, FieldContract> $fieldCollection
      */
-    protected Collection $fieldCollection;
+    private Collection $fieldCollection;
     
     /**
      * Constructor.
@@ -23,7 +27,7 @@ class EntityConfig implements EntityConfigContract
     public function __construct()
     {
         $this->code = '';
-        $this->model = '';
+        $this->model = Model::class;
         $this->fieldCollection = collect();
     }
     
@@ -56,7 +60,7 @@ class EntityConfig implements EntityConfigContract
      * Set the model associated with this entity
      * configuration.
      *
-     * @param string $model 
+     * @param class-string<Model> $model 
      * 
      * @return self
      */
@@ -70,7 +74,7 @@ class EntityConfig implements EntityConfigContract
      * Get the model associated with this entity
      * configuration.
      * 
-     * @return string
+     * @return class-string<Model>
      */
     public function getModel() : string
     {
@@ -88,26 +92,6 @@ class EntityConfig implements EntityConfigContract
     {
         $this->fieldCollection->push($field);
         return $this;
-    }
-    
-    /**
-     * Validate the configuration
-     * 
-     * @return void
-     */
-    public function validate() : void
-    {
-        if(strlen($this->code) === 0) {
-            throw new ConfigurationException('Entity code must be supplied with setCode()'); 
-        }
-        
-        if(strlen($this->model) === 0) {
-            throw new ConfigurationException('Entity model must be supplied with setModel()'); 
-        }
-        
-        if($this->fieldCollection->isEmpty()) {
-            throw new ConfigurationException("Please provide at least one field when defining the {$this->code} entity");
-        }
     }
     
     /**

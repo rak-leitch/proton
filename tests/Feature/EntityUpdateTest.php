@@ -6,26 +6,28 @@ use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
 
-class EntityIndexTest extends TestCase
+class EntityUpdateTest extends TestCase
 {
     /**
-     * Check the entity index configuration endpoint.
+     * Check the entity update configuration endpoint.
      *
      * @return void
     */
-    public function test_entity_index_config_endpoint() : void
+    public function test_entity_update_config_endpoint() : void
     {        
         $this->actingAs(User::findOrFail(1));
         
-        $response = $this->get(route('proton.config.view.index', [
+        $response = $this->get(route('proton.config.view.update', [
             'entity_code' => 'project',
+            'entity_id' => 1
         ]));
          
         $response->assertStatus(200);
         
         $response->assertJson(fn (AssertableJson $json) =>
             $json->where('entity_code', 'project')
-                 ->where('title', 'Projects')
+                 ->where('entity_id', 1)
+                 ->where('title', 'Update Project')
         );
     }
     
@@ -34,12 +36,13 @@ class EntityIndexTest extends TestCase
      *
      * @return void
     */
-    public function test_unauthed_entity_index_config_endpoint() : void
+    public function test_unauthed_entity_update_config_endpoint() : void
     {        
         $this->actingAs(User::findOrFail(2));
         
-        $response = $this->get(route('proton.config.view.index', [
+        $response = $this->get(route('proton.config.view.update', [
             'entity_code' => 'project',
+            'entity_id' => 2,
         ]));
          
         $response->assertStatus(403);

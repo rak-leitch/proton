@@ -2,6 +2,9 @@
 
 namespace Adepta\Proton\Contracts\Field;
 
+use Adepta\Proton\Field\DisplayContext;
+use Illuminate\Support\Collection;
+
 interface FieldContract
 {
     /**
@@ -41,4 +44,32 @@ interface FieldContract
      * @return string
      */
     public function getFrontendType() : string;
+    
+    /**
+     * Indicate whether this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool;
+    
+    /**
+     * Set validation for this field
+     * 
+     * @return self
+     */
+    public function setValidation(string $validation) : self;
+    
+    /**
+     * Get validation for this field
+     * 
+     * @return string
+     */
+    public function getValidation() : string;
+    
+    /**
+     * Get the display contexts for this field
+     * 
+     * @return Collection<int, DisplayContext>
+     */
+    public function getDisplayContexts() : Collection;
 }

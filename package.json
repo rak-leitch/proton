@@ -12,6 +12,7 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@mdi/js": "^7.4.47",
         "@vitejs/plugin-vue": "^4.4.0",
         "laravel-vite-plugin": "^0.8.1",
         "vite-plugin-vuetify": "^1.0.2",

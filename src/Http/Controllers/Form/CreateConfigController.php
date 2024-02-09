@@ -1,31 +1,32 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Http\Controllers\List;
+namespace Adepta\Proton\Http\Controllers\Form;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Services\List\ListConfigService;
+use Adepta\Proton\Services\Form\FormConfigService;
+use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-final class ListConfigController extends BaseController
+final class CreateConfigController extends BaseController
 {    
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
-     * @param ListConfigService $listConfigService
+     * @param FormConfigService $formConfigService
      * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
-        private ListConfigService $listConfigService,
+        private FormConfigService $formConfigService,
         private AuthorisationService $authorisationService,
     ) { }
     
     /**
-     * Get the configuration for an list component.
+     * Get the configuration for an form component.
      * 
      * @param Request $request
      * @param string $entityCode
@@ -34,12 +35,10 @@ final class ListConfigController extends BaseController
     */
     public function getConfig(Request $request, string $entityCode) : JsonResponse
     {
-        $listConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $this->authorisationService->canViewAny($request->user(), $entity, true);
+        $this->authorisationService->canCreate($request->user(), $entity, true);
+        $formConfig = $this->formConfigService->getFormConfig(DisplayContext::CREATE, $entity);
         
-        $listConfig = $this->listConfigService->getListConfig($request->user(), $entity);
-        
-        return response()->json($listConfig);
+        return response()->json($formConfig);
     }
 }

@@ -3,14 +3,15 @@
 namespace Adepta\Proton\Services\ViewConfig;
 
 use Adepta\Proton\Entity\Entity;
+use Illuminate\Database\Eloquent\Model;
 
-final class IndexConfigService
+final class CreateConfigService
 {    
     /**
-     * Get the index page config for an entity
+     * Get the create page config for an entity
      * for use by the frontend.
      *
-     * @aparam Entity $entity
+     * @param Entity $entity
      * 
      * @return mixed[]
     */
@@ -19,8 +20,8 @@ final class IndexConfigService
         $pageConfig = [];
         
         $pageConfig['entity_code'] = $entity->getCode();
-        $pageConfig['title'] = $entity->getLabel(true);
-
+        $pageConfig['title'] = 'New '.$entity->getLabel();
+        
         return $pageConfig;
     }
 }
