@@ -4,6 +4,7 @@ namespace Adepta\Proton\Field;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 abstract class Field implements FieldContract
 {
@@ -29,14 +30,16 @@ abstract class Field implements FieldContract
         $this->sortable = false;
         $this->validation = '';
         
-        //Default to all display contexts
-        $this->displayContexts = collect([
-            DisplayContext::CREATE,
-            DisplayContext::UPDATE,
-            DisplayContext::VIEW,
-            DisplayContext::INDEX,
-        ]);
+        $this->setInitialDisplayContexts();
     }
+    
+    /**
+     * Set initial display contexts for each field 
+     * type. 
+     * 
+     * @return void
+     */
+    abstract protected function setInitialDisplayContexts() : void;
     
     /**
      * Static convenience method to create and return 
@@ -128,5 +131,15 @@ abstract class Field implements FieldContract
     public function getDisplayContexts() : Collection
     {
         return $this->displayContexts;
+    }
+    
+    /**
+     * Get the field's singular name.
+     * 
+     * @return string
+     */
+    public function getSingularSnakeName() : string
+    {
+        return Str::of($this->fieldName)->singular()->toString();
     }
 }

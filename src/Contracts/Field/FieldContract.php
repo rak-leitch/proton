@@ -72,4 +72,11 @@ interface FieldContract
      * @return Collection<int, DisplayContext>
      */
     public function getDisplayContexts() : Collection;
+    
+    /**
+     * Get the field's singular name.
+     * 
+     * @return string
+     */
+    public function getSingularSnakeName() : string;
 }

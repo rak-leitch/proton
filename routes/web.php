@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Adepta\Proton\Http\Controllers\ProtonController;
-use Adepta\Proton\Http\Controllers\View\{EntityIndexController, EntityCreateController, EntityUpdateController};
+use Adepta\Proton\Http\Controllers\View\{EntityIndexController, EntityCreateController, EntityUpdateController, EntityViewController};
 use Adepta\Proton\Http\Controllers\List\{ListConfigController, ListDataController};
 use Adepta\Proton\Http\Controllers\Form\{UpdateConfigController, CreateConfigController, SubmitUpdateController, SubmitCreateController};
 
@@ -14,6 +14,7 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
                 Route::get('entity-index/{entity_code}', [EntityIndexController::class, 'getConfig'])->name('index');
                 Route::get('entity-update/{entity_code}/{entity_id}', [EntityUpdateController::class, 'getConfig'])->name('update');
                 Route::get('entity-create/{entity_code}', [EntityCreateController::class, 'getConfig'])->name('create');
+                Route::get('entity-view/{entity_code}/{entity_id}', [EntityViewController::class, 'getConfig'])->name('view');
             });
             Route::get('list/{entity_code}', [ListConfigController::class, 'getConfig'])->name('list');
             Route::get('form-update/{entity_code}/{entity_id}', [UpdateConfigController::class, 'getConfig'])->name('form-update');

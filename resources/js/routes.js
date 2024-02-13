@@ -21,7 +21,7 @@ export default
                 name: "entity-update",
                 component: EntityUpdateView
             }, {
-                path: "entity/:entityCode/view",
+                path: "entity/:entityCode/view/:entityId",
                 name: "entity-view",
                 component: EntityViewView
             }

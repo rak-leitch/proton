@@ -28,7 +28,7 @@
     async function submitForm() {
         try {
             submitInProgress.value = true;
-            const { json, status } = await request(props.settings.submitPath, getRequestParams(), formData.value);
+            const { json, status } = await request(props.settings.submitPath, getRequestParams(), {}, formData.value);
             errorMessages.value = json.errors ? json.errors : {};
             if(status === successStatus) {
                 router.push(props.settings.successRoute);

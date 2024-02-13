@@ -2,7 +2,7 @@
 
 namespace Adepta\Proton\Field;
 
-final class Text extends Field
+final class BelongsTo extends Field
 {    
     /**
      * Get the field's frontend display type.
@@ -11,6 +11,7 @@ final class Text extends Field
      */
     public function getFrontendType() : string
     {
+        //TODO: This needs to be context specific
         return 'text';
     }
     
@@ -28,5 +29,16 @@ final class Text extends Field
             DisplayContext::VIEW,
             DisplayContext::INDEX,
         ]);
+    }
+    
+    /**
+     * Get the field's name. Guess this from the 
+     * entity code provided.
+     * 
+     * @return string
+     */
+    public function getFieldName() : string
+    {
+        return $this->fieldName.'_id';
     }
 }

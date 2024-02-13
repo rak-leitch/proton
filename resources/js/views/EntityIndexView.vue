@@ -25,6 +25,8 @@
             configData.value = json;
             listSettings.value = {
                 entityCode: configData.value.entity_code,
+                contextCode: null,
+                conectId: null
             };
         } catch (error) {
             currentError.value = error.message;

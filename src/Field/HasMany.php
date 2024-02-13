@@ -2,7 +2,7 @@
 
 namespace Adepta\Proton\Field;
 
-final class Text extends Field
+final class HasMany extends Field
 {    
     /**
      * Get the field's frontend display type.
@@ -11,7 +11,7 @@ final class Text extends Field
      */
     public function getFrontendType() : string
     {
-        return 'text';
+        return 'list';
     }
     
     /**
@@ -23,10 +23,7 @@ final class Text extends Field
     protected function setInitialDisplayContexts() : void
     {
         $this->displayContexts = collect([
-            DisplayContext::CREATE,
-            DisplayContext::UPDATE,
             DisplayContext::VIEW,
-            DisplayContext::INDEX,
         ]);
     }
 }

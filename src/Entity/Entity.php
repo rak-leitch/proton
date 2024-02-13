@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
+use ReflectionClass;
 
 final class Entity
 {
@@ -71,16 +72,29 @@ final class Entity
      * Get the fields for this entity.
      * 
      * @param DisplayContext $displayContext
+     * @param ?Collection<int, string> $fieldTypes
      *
      * @return Collection<int, FieldContract>
     */
-    public function getFields(DisplayContext $displayContext) : Collection
+    public function getFields(
+        DisplayContext $displayContext, 
+        ?Collection $fieldTypes = null
+    ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        return $fields->filter(function ($field) use ($displayContext) {
+        $fields =  $fields->filter(function ($field) use ($displayContext) {
             return $field->getDisplayContexts()->contains($displayContext);
         });
+        
+        if($fieldTypes) {
+            $fields = $fields->filter(function ($field) use ($fieldTypes) {
+                $reflection = new ReflectionClass($field);
+                return $fieldTypes->contains($reflection->getName());
+            });
+        }
+        
+        return $fields;
     }
     
     /**

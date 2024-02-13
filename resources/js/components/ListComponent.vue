@@ -41,12 +41,20 @@
         try {
             loading.value = true;
             const sortByParam = sortBy.length ? sortBy.toString() : "null";
+            const queryParams = {};
+            
+            if(props.settings.contextCode && props.settings.contextId) {
+                queryParams.contextCode = props.settings.contextCode;
+                queryParams.contextId = props.settings.contextId;
+            }
+            
             const { json } = await request("data/list", [
                 props.settings.entityCode,
                 page,
                 itemsPerPage,
                 sortByParam,
-            ]);
+            ], queryParams, {});
+            
             serverItems.value = json.data;
             totalItems.value = json.totalRows;
             rowPermissions = json.permissions;
@@ -61,23 +69,27 @@
     }
     
     function updateItem(item) {
+        pushRoute("entity-update", item);
+    }
+    
+    function viewItem(item) {
+        pushRoute("entity-view", item);
+    }
+    
+    function deleteItem(item) {
+        console.log(item);
+    }
+    
+    function pushRoute(type, item) {
         const primaryKeyValue = item[configData.value.primary_key];
         const entityCode = props.settings.entityCode;
         router.push({ 
-            name: "entity-update", 
+            name: type, 
             params: { 
                 entityCode: entityCode,  
                 entityId: primaryKeyValue
             }
         });
-    }
-    
-    function viewItem(item) {
-        console.log(item);
-    }
-    
-    function deleteItem(item) {
-        console.log(item);
     }
     
     function goToCreate() {

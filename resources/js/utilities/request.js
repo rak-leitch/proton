@@ -1,4 +1,4 @@
-export async function request(path, parameters = [], postData = {}) {
+export async function request(path, parameters = [], queryParams = {}, postData = {}) {
 
     const getVerb = 'GET';
     const postVerb = 'POST';
@@ -16,6 +16,11 @@ export async function request(path, parameters = [], postData = {}) {
     
     for (const parameter of parameters) {
         parameterString += `${encodeURIComponent(parameter)}/`;
+    }
+    
+    if(Object.keys(queryParams).length > 0) {
+        const queryString = new URLSearchParams(queryParams);
+        parameterString += `?${queryString}`;
     }
     
     if(method === postVerb) {
