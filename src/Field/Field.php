@@ -10,6 +10,7 @@ abstract class Field implements FieldContract
 {
     protected string $fieldName;
     protected bool $sortable;
+    protected bool $nameField;
     protected string $validation;
     
     /**
@@ -28,6 +29,7 @@ abstract class Field implements FieldContract
     {
         $this->fieldName = $fieldName;
         $this->sortable = false;
+        $this->nameField = false;
         $this->validation = '';
         
         $this->setInitialDisplayContexts();
@@ -66,6 +68,17 @@ abstract class Field implements FieldContract
     }
     
     /**
+     * Set the field's name property.
+     * 
+     * @return self
+     */
+    public function name() : self
+    {
+        $this->nameField = true;
+        return $this;
+    }
+    
+    /**
      * Get the field's name.
      * 
      * @return string
@@ -83,6 +96,16 @@ abstract class Field implements FieldContract
     public function getSortable() : bool
     {
         return $this->sortable;
+    }
+    
+    /**
+     * Get whether the field is the name field.
+     * 
+     * @return bool
+     */
+    public function getIsNameField() : bool
+    {
+        return $this->nameField;
     }
     
     /**
@@ -134,12 +157,28 @@ abstract class Field implements FieldContract
     }
     
     /**
-     * Get the field's singular name.
+     * Get the field's snake name.
      * 
      * @return string
      */
-    public function getSingularSnakeName() : string
+    public function getSnakeName() : string
     {
-        return Str::of($this->fieldName)->singular()->toString();
+        return $this->fieldName;
+    }
+    
+    /**
+     * Get the field's camel name.
+     * 
+     * @return string
+     */
+    public function getCamelName(bool $plural = false) : string
+    {
+        $camelName = Str::camel($this->fieldName);
+        
+        if($plural) {
+            $camelName = Str::plural($camelName);
+        }
+        
+        return $camelName;
     }
 }

@@ -34,7 +34,8 @@
                     <v-col>
                         <div class="mt-3 text-center">
                             <router-link :to="{ name: 'entity-index', params: { entityCode: 'project' }}">Projects</router-link> |
-                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'task' }}">Tasks</router-link>
+                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'task' }}">Tasks</router-link> |
+                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'user' }}">Users</router-link>
                         </div>
                     </v-col>
                 </v-row>

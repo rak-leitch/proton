@@ -73,28 +73,47 @@ final class Entity
      * 
      * @param DisplayContext $displayContext
      * @param ?Collection<int, string> $fieldTypes
+     * @param ?string $fieldName
      *
      * @return Collection<int, FieldContract>
     */
     public function getFields(
         DisplayContext $displayContext, 
-        ?Collection $fieldTypes = null
+        ?Collection $fieldTypes = null,
+        ?string $fieldName = null
     ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        $fields =  $fields->filter(function ($field) use ($displayContext) {
-            return $field->getDisplayContexts()->contains($displayContext);
+        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $fieldName) {
+            $reflection = new ReflectionClass($field);
+            $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
+            $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($reflection->getName()) : true;
+            $fieldNameOk = $fieldName ? $field->getSnakeName() === $fieldName : true;
+            return ($displayContextOk && $fieldTypeOk && $fieldNameOk);
         });
         
-        if($fieldTypes) {
-            $fields = $fields->filter(function ($field) use ($fieldTypes) {
-                $reflection = new ReflectionClass($field);
-                return $fieldTypes->contains($reflection->getName());
-            });
-        }
-        
         return $fields;
+    }
+    
+    /**
+     * Get the name field for this entity.
+     *
+     * @return FieldContract
+    */
+    public function getNameField() : FieldContract
+    {
+        $fields = $this->entityConfig->getFields();
+        
+        $fields = $fields->filter(function ($field) {
+            return $field->getIsNameField();
+        });
+        
+        if(!$fields->first()) {
+            throw new ConfigurationException('Could not find name field for '.$this->entityConfig->getCode());
+        } 
+        
+        return $fields->first();
     }
     
     /**

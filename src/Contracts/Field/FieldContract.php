@@ -25,6 +25,13 @@ interface FieldContract
     public function sortable() : self;
     
     /**
+     * Set the field's name property.
+     * 
+     * @return self
+     */
+    public function name() : self;
+    
+    /**
      * Get the field's name.
      * 
      * @return string
@@ -37,6 +44,13 @@ interface FieldContract
      * @return bool
      */
     public function getSortable() : bool;
+    
+    /**
+     * Get whether the field is the name field.
+     * 
+     * @return bool
+     */
+    public function getIsNameField() : bool;
     
     /**
      * Get the field's frontend display type.
@@ -74,9 +88,16 @@ interface FieldContract
     public function getDisplayContexts() : Collection;
     
     /**
-     * Get the field's singular name.
+     * Get the field's snake name.
      * 
      * @return string
      */
-    public function getSingularSnakeName() : string;
+    public function getSnakeName() : string;
+    
+    /**
+     * Get the field's camel name.
+     * 
+     * @return string
+     */
+    public function getCamelName(bool $plural = false) : string;
 }

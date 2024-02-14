@@ -46,9 +46,44 @@ final class ListDataController extends BaseController
         $listData = [];
         $entity = $this->entityFactory->create($entityCode);
         $this->authorisationService->canViewAny($request->user(), $entity, true);
-        
-        $listData = $this->listDataService->getData($entity, $page, $itemsPerPage, $sortBy);
+        [$contextCode, $contextId] = $this->getContext($request);
+
+        $listData = $this->listDataService->getData(
+            entity: $entity,
+            user: $request->user(), 
+            page: $page, 
+            itemsPerPage: $itemsPerPage, 
+            sortBy: $sortBy, 
+            contextCode: $contextCode, 
+            contextId: (int)$contextId
+        );
         
         return response()->json($listData);
+    }
+    
+    /**
+     * Get the context from the query string. Note that
+     * the query() function can potentially return an array.
+     * 
+     * @param Request $request
+     *
+     * @return array<string|null>
+    */
+    private function getContext($request)
+    {
+        $contextCode = null;
+        $contextId = null;
+        $requestCode = $request->query('contextCode');
+        $requestId = $request->query('contextId');
+        
+        if(is_string($requestCode) && is_string($requestId)) {
+            $contextCode = $requestCode;
+            $contextId = $requestId;
+        }
+        
+        return [
+            $contextCode,
+            $contextId,
+        ];
     }
 }

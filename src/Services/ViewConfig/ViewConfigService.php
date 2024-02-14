@@ -42,7 +42,7 @@ final class ViewConfigService
         $parentId = $model->{$parentKey};
         
         foreach($parentEntity->getFields(DisplayContext::VIEW, collect([HasMany::class])) as $field) {
-            $listEntity = $this->entityFactory->create($field->getSingularSnakeName());
+            $listEntity = $this->entityFactory->create($field->getSnakeName());
             $viewConfig['lists'][] = [
                 'title' => $listEntity->getLabel(true),
                 'listSettings' => [
