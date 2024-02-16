@@ -72,7 +72,7 @@
     </v-alert>
     <v-form @submit.prevent="submitForm">
         <template v-for="(field) in configData.fields">
-            <v-text-field v-if="field.frontend_type='text'"
+            <v-text-field v-if="field.frontend_type==='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 v-bind:dusk="`field-${field.key}`"
@@ -84,6 +84,19 @@
                     </span>
                 </template>
             </v-text-field>
+            <v-select v-if="field.frontend_type==='select'"
+                v-model="formData[field.key]"
+                :error-messages="getErrorMessage(field.key)"
+                v-bind:dusk="`field-${field.key}`"
+                :items="field.select_options"
+            >
+                <template v-slot:label>
+                    <span>
+                        {{ field.title }} 
+                        <span v-if="field.required" class="text-red">*</span>
+                    </span>
+                </template>
+            </v-select>
         </template>
         <v-btn
             :loading="submitInProgress"

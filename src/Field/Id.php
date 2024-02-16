@@ -2,6 +2,8 @@
 
 namespace Adepta\Proton\Field;
 
+use Adepta\Proton\Field\DisplayContext;
+
 final class Id extends Field
 {    
     /**
@@ -9,7 +11,7 @@ final class Id extends Field
      * 
      * @return string
      */
-    public function getFrontendType() : string
+    public function getFrontendType(DisplayContext $displayContext) : string
     {
         return 'text';
     }

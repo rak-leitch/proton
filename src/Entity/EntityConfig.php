@@ -6,10 +6,13 @@ use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Closure;
 
 final class EntityConfig implements EntityConfigContract
 {
     private string $code;
+    private Closure $queryFilter;
     
     /**
      * @var class-string<Model>
@@ -29,6 +32,7 @@ final class EntityConfig implements EntityConfigContract
         $this->code = '';
         $this->model = Model::class;
         $this->fieldCollection = collect();
+        $this->queryFilter = function(Builder $query) { };
     }
     
     /**
@@ -102,5 +106,27 @@ final class EntityConfig implements EntityConfigContract
     public function getFields() : Collection
     {
         return $this->fieldCollection;
+    }
+    
+    /**
+     * Set the query filter function
+     * 
+     * @param Closure $filter
+     * 
+     * @return void
+     */
+    public function setQueryFilter(Closure $filter) : void
+    {
+        $this->queryFilter = $filter;
+    }
+    
+    /**
+     * Get the query filter function
+     * 
+     * @return Closure
+     */
+    public function getQueryFilter() : Closure
+    {
+        return $this->queryFilter;
     }
 }

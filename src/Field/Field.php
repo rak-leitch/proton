@@ -113,7 +113,7 @@ abstract class Field implements FieldContract
      * 
      * @return string
      */
-    abstract public function getFrontendType() : string;
+    abstract public function getFrontendType(DisplayContext $displayContext) : string;
     
     /**
      * Indicate whether this field is a primary key.

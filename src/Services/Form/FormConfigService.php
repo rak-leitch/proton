@@ -6,9 +6,22 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use ReflectionClass;
+use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Exceptions\ConfigurationException;
+use Adepta\Proton\Services\EntityFactory;
 
 final class FormConfigService
 {    
+    /**
+     * Constructor.
+     * 
+     * @param EntityFactory $entityFactory
+    */
+    public function __construct(
+        private EntityFactory $entityFactory,
+    ) { }
+    
     /**
      * Get the form config for an entity instance
      * for use by the frontend.
@@ -34,13 +47,45 @@ final class FormConfigService
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['frontend_type'] = $field->getFrontendType();
+            $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);
             $fieldConfig['required'] = $this->fieldRequired($field);
+            
+            if($field->getFrontendType($displayContext) === 'select') {
+                $fieldConfig['select_options'] = $this->getSelectOptions($entity, $field);
+            }
+            
             $formConfig['config']['fields'][] = $fieldConfig;
             $formConfig['data'][$fieldName] = null;
         };
         
         return $formConfig;
+    }
+    
+    /**
+     * Get the select options for a field
+     *
+     * @param Entity $entity
+     * @param FieldContract $field
+     * 
+     * @return mixed[]
+    */
+    public function getSelectOptions( 
+        Entity $entity,
+        FieldContract $field
+    ) : array
+    {
+        $reflection = new ReflectionClass($field);
+        
+        if($reflection->getName() === BelongsTo::class) {
+            $parentEntity = $this->entityFactory->create($field->getSnakeName());
+            $keyField = $parentEntity->getPrimaryKeyField()->getFieldname();
+            $nameField = $parentEntity->getNameField()->getFieldname();
+            $modelClass = $parentEntity->getModel();
+            $query = $modelClass::select("{$keyField} as value", "{$nameField} as title");
+            $parentEntity->getQueryFilter()($query);
+            $options = $query->get()->toArray();
+            return $options;
+        }
     }
     
     /**

@@ -2,6 +2,8 @@
 
 namespace Adepta\Proton\Field;
 
+use Adepta\Proton\Field\DisplayContext;
+
 final class BelongsTo extends Field
 {    
     /**
@@ -9,10 +11,9 @@ final class BelongsTo extends Field
      * 
      * @return string
      */
-    public function getFrontendType() : string
+    public function getFrontendType(DisplayContext $displayContext) : string
     {
-        //TODO: This needs to be context specific
-        return 'text';
+        return $displayContext->mutatingContext() ? 'select' : 'text';
     }
     
     /**

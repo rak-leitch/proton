@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 final class ListDataService
 {    
@@ -69,6 +70,9 @@ final class ListDataService
                 $entity->getCode()
             );
         }
+        
+        $entity->getQueryFilter()($query);
+        $this->addBelongsToFields($entity, $displayContext, $query);
         
         $totalRows = $query->count();
         $skip = ($page - 1) * $itemsPerPage;
@@ -156,20 +160,48 @@ final class ListDataService
         if($reflection->getName() === BelongsTo::class) {
             $parentEntity = $this->entityFactory->create($field->getSnakeName());
             $parentNameField = $parentEntity->getNameField()->getFieldName();
-            $relationshipMethod = $field->getCamelName();
-            $modelReflection = new ReflectionClass($model);
-        
-            if(!$modelReflection->hasMethod($relationshipMethod)) {
-                $error = "Could not find BelongsTo method {$relationshipMethod} for parent entity {$parentEntity->getCode()}";
+            $relationName = $field->getCamelName(); //TODO: Check this
+            
+            if ($model->relationLoaded($relationName)) {
+                $relation = $model->{$relationName};
+                $fieldValue = $relation->{$parentNameField};
+            } else {
+                $error = "Could not find BelongsTo data for relation {$relationName}";
                 throw new ConfigurationException($error);
             }
-            
-            $parent = $model->{$relationshipMethod};
-            $fieldValue = $parent->{$parentNameField};
         } else {
             $fieldValue = $model->{$fieldName};
         }
         
         return $fieldValue;
+    }
+    
+    /**
+     * Join on the BelongsTo entities
+     *
+     * @param Entity $entity
+     * @param DisplayContext $displayContext 
+     * @param Builder &$query
+     * 
+     * @return void
+    */
+    private function addBelongsToFields(
+        Entity $entity, 
+        DisplayContext $displayContext,
+        Builder &$query
+    ) : void
+    {
+        foreach($entity->getFields($displayContext, collect([BelongsTo::class])) as $field) {
+            
+            $relationshipMethod = $field->getCamelName();
+            $reflection = new ReflectionClass($entity->getModel());
+        
+            if(!$reflection->hasMethod($relationshipMethod)) {
+                $error = "Could not find BelongsTo method {$relationshipMethod} for entity {$entity->getCode()}";
+                throw new ConfigurationException($error);
+            }
+            
+            $query->with($relationshipMethod);
+        }
     }
 }

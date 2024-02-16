@@ -10,6 +10,7 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use ReflectionClass;
+use Closure;
 
 final class Entity
 {
@@ -170,5 +171,15 @@ final class Entity
         }
         
         return $pkField;
+    }
+    
+    /**
+     * Get the query filter for this entity.
+     *
+     * @return Closure
+    */
+    public function getQueryFilter() : Closure
+    {
+        return $this->entityConfig->getQueryFilter();
     }
 }

@@ -5,6 +5,7 @@ namespace Adepta\Proton\Contracts\Entity;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Closure;
 
 interface EntityConfigContract
 {
@@ -59,4 +60,20 @@ interface EntityConfigContract
      * @return Collection<int, FieldContract>
      */
     public function getFields() : Collection;
+    
+    /**
+     * Set the query filter function
+     * 
+     * @param Closure $filter
+     * 
+     * @return void
+     */
+    public function setQueryFilter(Closure $filter) : void;
+    
+    /**
+     * Get the query filter function
+     * 
+     * @return Closure
+     */
+    public function getQueryFilter() : Closure;
 }

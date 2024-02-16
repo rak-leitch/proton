@@ -41,7 +41,7 @@ final class EntityViewController extends BaseController
         $model = $modelClass::findOrFail($entityId);
         $this->authorisationService->canView($request->user(), $model, true);
         
-        $viewConfig = $this->viewConfigService->getViewConfig($entity, $model);
+        $viewConfig = $this->viewConfigService->getViewConfig($request->user(), $entity, $model);
         
         return response()->json($viewConfig);
     }
