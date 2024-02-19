@@ -9,11 +9,11 @@ final class HasMany extends Field
     /**
      * Get the field's frontend display type.
      * 
-     * @return string
+     * @return ?string
      */
-    public function getFrontendType(DisplayContext $displayContext) : string
+    public function getFrontendType(DisplayContext $displayContext) : ?string
     {
-        return 'list';
+        return null;
     }
     
     /**

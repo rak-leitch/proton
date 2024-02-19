@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\List\ListDataService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
+use StdClass;
 
 final class ListDataController extends BaseController
 {    
@@ -31,7 +32,6 @@ final class ListDataController extends BaseController
      * @param string $entityCode
      * @param int $page 
      * @param int $itemsPerPage 
-     * @param string $sortBy
      *
      * @return JsonResponse
     */
@@ -39,51 +39,53 @@ final class ListDataController extends BaseController
         Request $request, 
         string $entityCode,
         int $page,
-        int $itemsPerPage,
-        string $sortBy
+        int $itemsPerPage
     ) : JsonResponse
     {
         $listData = [];
         $entity = $this->entityFactory->create($entityCode);
         $this->authorisationService->canViewAny($request->user(), $entity, true);
-        [$contextCode, $contextId] = $this->getContext($request);
+        $requestQuery = $this->getRequestQuery($request);
 
         $listData = $this->listDataService->getData(
             entity: $entity,
             user: $request->user(), 
             page: $page, 
             itemsPerPage: $itemsPerPage, 
-            sortBy: $sortBy, 
-            contextCode: $contextCode, 
-            contextId: (int)$contextId
+            requestQuery: $requestQuery
         );
         
         return response()->json($listData);
     }
     
     /**
-     * Get the context from the query string. Note that
+     * Get the values from the query string. Note that
      * the query() function can potentially return an array.
      * 
      * @param Request $request
      *
-     * @return array<string|null>
+     * @return StdClass
     */
-    private function getContext($request)
+    private function getRequestQuery($request) : StdClass
     {
-        $contextCode = null;
-        $contextId = null;
-        $requestCode = $request->query('contextCode');
-        $requestId = $request->query('contextId');
+        $requestQuery = [];
         
-        if(is_string($requestCode) && is_string($requestId)) {
-            $contextCode = $requestCode;
-            $contextId = $requestId;
+        $queryKeys = [
+            'contextCode',
+            'contextId',
+            'sortField',
+            'sortOrder'
+        ];
+        
+        foreach($queryKeys as $queryKey) {
+            $value = $request->query($queryKey);
+            if(is_string($value)) {
+                $requestQuery[$queryKey] = $value;
+            } else {
+                $requestQuery[$queryKey] = null;
+            }
         }
         
-        return [
-            $contextCode,
-            $contextId,
-        ];
+        return (object)$requestQuery;
     }
 }

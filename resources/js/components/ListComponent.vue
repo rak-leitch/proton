@@ -40,8 +40,12 @@
     async function loadData ({ page, itemsPerPage, sortBy }) {
         try {
             loading.value = true;
-            const sortByParam = sortBy.length ? sortBy.toString() : "null";
             const queryParams = {};
+            
+            if(sortBy.length) {
+                queryParams.sortField = sortBy[0].key;
+                queryParams.sortOrder = sortBy[0].order;
+            }
             
             if(props.settings.contextCode && props.settings.contextId) {
                 queryParams.contextCode = props.settings.contextCode;
@@ -51,8 +55,7 @@
             const { json } = await request("data/list", [
                 props.settings.entityCode,
                 page,
-                itemsPerPage,
-                sortByParam,
+                itemsPerPage
             ], queryParams, {});
             
             serverItems.value = json.data;

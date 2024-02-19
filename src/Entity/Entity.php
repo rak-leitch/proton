@@ -81,17 +81,19 @@ final class Entity
     public function getFields(
         DisplayContext $displayContext, 
         ?Collection $fieldTypes = null,
-        ?string $fieldName = null
+        ?string $fieldName = null,
+        ?bool $onlyDisplayable = true,
     ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $fieldName) {
+        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $fieldName, $onlyDisplayable) {
             $reflection = new ReflectionClass($field);
             $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
             $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($reflection->getName()) : true;
             $fieldNameOk = $fieldName ? $field->getSnakeName() === $fieldName : true;
-            return ($displayContextOk && $fieldTypeOk && $fieldNameOk);
+            $onlyDisplayableOk = $onlyDisplayable ? $field->getFrontendType($displayContext) !== null : true;
+            return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $onlyDisplayableOk);
         });
         
         return $fields;
@@ -181,5 +183,15 @@ final class Entity
     public function getQueryFilter() : Closure
     {
         return $this->entityConfig->getQueryFilter();
+    }
+    
+    /**
+     * Get the Studly code string for this entity.
+     *
+     * @return string
+    */
+    public function getStudlyCode() : string
+    {
+        return Str::studly($this->entityConfig->getCode());
     }
 }

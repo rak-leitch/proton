@@ -55,9 +55,9 @@ interface FieldContract
     /**
      * Get the field's frontend display type.
      * 
-     * @return string
+     * @return ?string
      */
-    public function getFrontendType(DisplayContext $displayContext) : string;
+    public function getFrontendType(DisplayContext $displayContext) : ?string;
     
     /**
      * Indicate whether this field is a primary key.

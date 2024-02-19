@@ -11,7 +11,7 @@ use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Illuminate\Foundation\Auth\User;
 
-final class ViewConfigService
+final class DisplayConfigService
 {    
     /**
      * Constructor.
@@ -47,7 +47,16 @@ final class ViewConfigService
         $parentKey = $parentEntity->getPrimaryKeyField()->getFieldName();
         $parentId = $model->{$parentKey};
         
-        foreach($parentEntity->getFields(DisplayContext::VIEW, collect([HasMany::class])) as $field) {
+        $viewConfig['displaySettings'] = [
+            'entityCode' => $parentEntity->getCode(),
+            'entityId' => $parentId,
+        ];
+        
+        foreach($parentEntity->getFields(
+            displayContext: DisplayContext::VIEW, 
+            fieldTypes: collect([HasMany::class]),
+            onlyDisplayable: false
+        ) as $field) {
             $listEntity = $this->entityFactory->create($field->getSnakeName());
             if($this->authorisationService->canViewAny($user, $listEntity)) {
                 $viewConfig['lists'][] = [

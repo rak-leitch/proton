@@ -6,21 +6,21 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Services\ViewConfig\ViewConfigService;
+use Adepta\Proton\Services\ViewConfig\DisplayConfigService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 
-final class EntityViewController extends BaseController
+final class EntityDisplayController extends BaseController
 {
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
-     * @param ViewConfigService $viewConfigService
+     * @param DisplayConfigService $displayConfigService
      * @param AuthorisationService $authorisationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
-        private ViewConfigService $viewConfigService,
+        private DisplayConfigService $displayConfigService,
         private AuthorisationService $authorisationService,
     ) { }
     
@@ -41,7 +41,7 @@ final class EntityViewController extends BaseController
         $model = $modelClass::findOrFail($entityId);
         $this->authorisationService->canView($request->user(), $model, true);
         
-        $viewConfig = $this->viewConfigService->getViewConfig($request->user(), $entity, $model);
+        $viewConfig = $this->displayConfigService->getViewConfig($request->user(), $entity, $model);
         
         return response()->json($viewConfig);
     }

@@ -111,9 +111,9 @@ abstract class Field implements FieldContract
     /**
      * Get the field's frontend display type.
      * 
-     * @return string
+     * @return ?string
      */
-    abstract public function getFrontendType(DisplayContext $displayContext) : string;
+    abstract public function getFrontendType(DisplayContext $displayContext) : ?string;
     
     /**
      * Indicate whether this field is a primary key.

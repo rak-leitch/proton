@@ -74,6 +74,7 @@ final class FormConfigService
         FieldContract $field
     ) : array
     {
+        $options = [];
         $reflection = new ReflectionClass($field);
         
         if($reflection->getName() === BelongsTo::class) {
@@ -84,8 +85,9 @@ final class FormConfigService
             $query = $modelClass::select("{$keyField} as value", "{$nameField} as title");
             $parentEntity->getQueryFilter()($query);
             $options = $query->get()->toArray();
-            return $options;
         }
+        
+        return $options;
     }
     
     /**
