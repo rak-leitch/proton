@@ -8,6 +8,14 @@ use Illuminate\Support\Collection;
 interface FieldContract
 {
     /**
+     * Get the class name of a field for
+     * comparision.
+     * 
+     * @return string
+     */
+    public function getClass() : string;
+    
+    /**
      * Static convenience method to create and return 
      * an instance of a field.
      *
@@ -55,6 +63,8 @@ interface FieldContract
     /**
      * Get the field's frontend display type.
      * 
+     * @param DisplayContext $displayContext
+     * 
      * @return ?string
      */
     public function getFrontendType(DisplayContext $displayContext) : ?string;
@@ -88,16 +98,18 @@ interface FieldContract
     public function getDisplayContexts() : Collection;
     
     /**
-     * Get the field's snake name.
+     * Get the field's related entity code.
      * 
      * @return string
      */
-    public function getSnakeName() : string;
+    public function getRelatedEntityCode() : string;
     
     /**
-     * Get the field's camel name.
+     * Get the field's relation method name.
+     * 
+     * @param bool $plural
      * 
      * @return string
      */
-    public function getCamelName(bool $plural = false) : string;
+    public function getRelationMethod(bool $plural = false) : string;
 }

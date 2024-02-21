@@ -41,7 +41,9 @@ final class FormSubmitService
         array $data
     ) : void
     {       
-        $expectedFields = $entity->getFields($displayContext);
+        $expectedFields = $entity->getFields(
+            displayContext: $displayContext
+        );
         
         foreach($expectedFields as $field) {
             $fieldName = $field->getFieldName();

@@ -3,13 +3,11 @@
 namespace Adepta\Proton\Services\List;
 
 use Adepta\Proton\Entity\Entity;
-use Illuminate\Support\Facades\Auth;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\EntityFactory;
 use Adepta\Proton\Field\HasMany;
 use Adepta\Proton\Field\BelongsTo;
-use ReflectionClass;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Exceptions\RequestException;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +16,7 @@ use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Adepta\Proton\Services\Utilities\RelationService;
 use StdClass;
 
 final class ListDataService
@@ -27,10 +26,12 @@ final class ListDataService
      * 
      * @param AuthorisationService $authService
      * @param EntityFactory $entityFactory
+     * @param RelationService $relationService
     */
     public function __construct(
         private AuthorisationService $authService,
         private EntityFactory $entityFactory,
+        private RelationService $relationService,
     ) { }
     
     /**
@@ -75,7 +76,9 @@ final class ListDataService
         $this->sort($query, $requestQuery, $entity, $displayContext);
         $totalRows = $query->count();
         $collection = $this->loadCollection($query, $page, $itemsPerPage);
-        $listFields = $entity->getFields($displayContext);
+        $listFields = $entity->getFields(
+            displayContext: $displayContext
+        );
         
         foreach($collection as $model) {            
 
@@ -118,28 +121,21 @@ final class ListDataService
     {
         $contextEntity = $this->entityFactory->create($contextCode);
         
-        $relationshipField = $contextEntity->getFields(
-            DisplayContext::VIEW, 
-            collect([HasMany::class]), 
-            $entityCode,
-            false
+        $relationField = $contextEntity->getFields(
+            displayContext: DisplayContext::VIEW, 
+            fieldTypes: collect([HasMany::class]), 
+            relatedEntityCode: $entityCode,
+            onlyDisplayable: false
         )->first();
         
-        if(!$relationshipField) {
+        if(!$relationField) {
             throw new ConfigurationException("Could not find context {$contextCode} relationship field");
         }
+
+        $contextModel = $contextEntity->getLoadedModel($contextId);
+        $relationMethod = $this->relationService->getRelationMethod($contextModel, $relationField, true);
         
-        $contextModelClass = $contextEntity->getModel();
-        $contextModel = $contextModelClass::findOrFail($contextId);
-        $relationshipMethod = $relationshipField->getCamelName(true);
-        $reflection = new ReflectionClass($contextModel);
-        
-        if(!$reflection->hasMethod($relationshipMethod)) {
-            $error = "Could not find HasMany method {$relationshipMethod} for context entity {$contextCode}";
-            throw new ConfigurationException($error);
-        }
-        
-        return $contextModel->$relationshipMethod();
+        return $contextModel->$relationMethod();
     }
     
     /**
@@ -157,20 +153,18 @@ final class ListDataService
         Builder $query
     ) : void
     {
-        foreach($entity->getFields($displayContext, collect([BelongsTo::class])) as $field) {
-            
-            $relationshipMethod = $field->getCamelName();
-            
-            $reflection = new ReflectionClass($entity->getModel());
+        $belongsToFields = $entity->getFields(
+            displayContext: $displayContext, 
+            fieldTypes: collect([BelongsTo::class])
+        );
         
-            if(!$reflection->hasMethod($relationshipMethod)) {
-                $error = "Could not find BelongsTo method {$relationshipMethod} for entity {$entity->getCode()}";
-                throw new ConfigurationException($error);
-            }
+        foreach($belongsToFields as $belongsToField) {
+            
+            $relationMethod = $this->relationService->getRelationMethod($entity->getModel(), $belongsToField);
             
             //Get all fields here so they can be 
             //used in policies without having to load the relationship.
-            $query->with($relationshipMethod);
+            $query->with($relationMethod);
         }
     }
     
@@ -195,7 +189,8 @@ final class ListDataService
             
             $sortField = $entity->getFields(
                 displayContext: $displayContext,
-                fieldName: $requestQuery->sortField,
+                //TODO: This should be on fieldname rather than entity code
+                relatedEntityCode: $requestQuery->sortField,
             )->first();
             
             if($sortField && $sortField->getSortable()) {
@@ -232,27 +227,16 @@ final class ListDataService
      * @param FieldContract $field 
      * @param Model $model
      * 
-     * @return string
+     * @return string|int|float|null
     */
-    private function getFieldValue(FieldContract $field, Model $model)
+    private function getFieldValue(FieldContract $field, Model $model) : string|int|float|null
     {
         $fieldValue = null;
-        $reflection = new ReflectionClass($field);
-        $fieldName = $field->getFieldName();
         
-        if($reflection->getName() === BelongsTo::class) {
-            $parentEntity = $this->entityFactory->create($field->getSnakeName());
-            $parentNameField = $parentEntity->getNameField()->getFieldName();
-            $relationName = $field->getCamelName();
-            
-            if ($model->relationLoaded($relationName)) {
-                $relation = $model->{$relationName};
-                $fieldValue = $relation->{$parentNameField};
-            } else {
-                $error = "Could not find BelongsTo data for relation {$relationName}";
-                throw new ConfigurationException($error);
-            }
+        if($field->getClass() === BelongsTo::class) {
+            $fieldValue = $this->relationService->getBelongsToValue($model, $field);
         } else {
+            $fieldName = $field->getFieldName();
             $fieldValue = $model->{$fieldName};
         }
         

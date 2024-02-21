@@ -37,10 +37,8 @@ final class EntityDisplayController extends BaseController
     {
         $viewConfig = [];
         $entity = $this->entityFactory->create($entityCode);
-        $modelClass = $entity->getModel();
-        $model = $modelClass::findOrFail($entityId);
+        $model = $entity->getLoadedModel($entityId);
         $this->authorisationService->canView($request->user(), $model, true);
-        
         $viewConfig = $this->displayConfigService->getViewConfig($request->user(), $entity, $model);
         
         return response()->json($viewConfig);

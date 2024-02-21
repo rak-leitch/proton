@@ -42,7 +42,7 @@
             loading.value = true;
             const queryParams = {};
             
-            if(sortBy.length) {
+            if(sortBy.length && sortBy[0]) {
                 queryParams.sortField = sortBy[0].key;
                 queryParams.sortOrder = sortBy[0].order;
             }
@@ -56,7 +56,7 @@
                 props.settings.entityCode,
                 page,
                 itemsPerPage
-            ], queryParams, {});
+            ], queryParams);
             
             serverItems.value = json.data;
             totalItems.value = json.totalRows;
@@ -96,12 +96,21 @@
     }
     
     function goToCreate() {
-        router.push({
+        const route = {
             name: 'entity-create',
             params: { 
                 entityCode: props.settings.entityCode,
             }
-        });
+        };
+        
+        if(props.settings.contextCode && props.settings.contextId) {
+            route['query'] = { 
+                contextCode: props.settings.contextCode,
+                contextId: props.settings.contextId,
+            };
+        }
+        
+        router.push(route);
     }
     
     await getConfig();

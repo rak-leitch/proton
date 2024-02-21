@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use ReflectionClass;
 use Closure;
 
 final class Entity
@@ -67,33 +66,41 @@ final class Entity
         if($primaryKeys->count() !== 1) {
             throw new ConfigurationException('Each entity must contain a single primary key field');
         }
+        
+        $nameFields = $fields->filter(function ($field, $key) {
+            return $field->getIsNameField();
+        });
+        
+        if($nameFields->count() !== 1) {
+            throw new ConfigurationException('Each entity must contain a single name field');
+        }
     }
     
     /**
-     * Get the fields for this entity.
+     * Get the (filterable) fields for this entity.
      * 
      * @param DisplayContext $displayContext
      * @param ?Collection<int, string> $fieldTypes
-     * @param ?string $fieldName
+     * @param ?string $relatedEntityCode
+     * @param ?bool $onlyDisplayable
      *
      * @return Collection<int, FieldContract>
     */
     public function getFields(
         DisplayContext $displayContext, 
         ?Collection $fieldTypes = null,
-        ?string $fieldName = null,
+        ?string $relatedEntityCode = null,
         ?bool $onlyDisplayable = true,
     ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $fieldName, $onlyDisplayable) {
-            $reflection = new ReflectionClass($field);
+        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $relatedEntityCode, $onlyDisplayable) {
             $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
-            $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($reflection->getName()) : true;
-            $fieldNameOk = $fieldName ? $field->getSnakeName() === $fieldName : true;
-            $onlyDisplayableOk = $onlyDisplayable ? $field->getFrontendType($displayContext) !== null : true;
-            return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $onlyDisplayableOk);
+            $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
+            $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
+            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== null) : true;
+            return ($displayContextOk && $fieldTypeOk && $entityCodeOk && $onlyDisplayableOk);
         });
         
         return $fields;
@@ -137,6 +144,21 @@ final class Entity
     public function getModel() : string
     {
         return $this->entityConfig->getModel();
+    }
+    
+    /**
+     * Get loaded model for this entity.
+     *
+     * @param float|int|string $key
+     * 
+     * @return Model
+    */
+    public function getLoadedModel(float|int|string $key) : Model
+    {
+        $modelClass = $this->entityConfig->getModel();
+        
+        //Assuming our ID field is the same as the model's
+        return $modelClass::findOrFail($key);
     }
     
     /**

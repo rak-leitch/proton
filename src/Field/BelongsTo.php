@@ -9,6 +9,8 @@ final class BelongsTo extends Field
     /**
      * Get the field's frontend display type.
      * 
+     * @param DisplayContext $displayContext
+     * 
      * @return ?string
      */
     public function getFrontendType(DisplayContext $displayContext) : ?string

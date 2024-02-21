@@ -10,6 +10,7 @@ use ReflectionClass;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Services\Utilities\RelationService;
 
 final class DisplayConfigService
 {    
@@ -17,9 +18,11 @@ final class DisplayConfigService
      * Constructor.
      * 
      * @param EntityFactory $entityFactory
+     * @param RelationService $relationService
     */
     public function __construct(
         private EntityFactory $entityFactory,
+        private RelationService $relationService,
     ) { }
     
     /**
@@ -36,7 +39,11 @@ final class DisplayConfigService
         $displayConfig = [];
         $displayConfig['fields'] = [];
         
-        foreach($entity->getFields(DisplayContext::VIEW) as $field) {
+        $fields = $entity->getFields(
+            displayContext: DisplayContext::VIEW,
+        );
+        
+        foreach($fields as $field) {
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
@@ -58,26 +65,14 @@ final class DisplayConfigService
      * 
      * @return string|int|float|null
     */
-    private function getValue(FieldContract $field, Model$model)
+    private function getValue(FieldContract $field, Model $model) : string|int|float|null
     {    
         $fieldValue = null;       
-        $reflection = new ReflectionClass($field);
-        $fieldName = $field->getFieldName();
         
-        if($reflection->getName() === BelongsTo::class) {
-            $parentEntity = $this->entityFactory->create($field->getSnakeName());
-            $parentNameField = $parentEntity->getNameField()->getFieldName();
-            $relationName = $field->getCamelName();
-            $modelReflection = new ReflectionClass($model);
-        
-            if(!$modelReflection->hasMethod($relationName)) {
-                $error = "Could not find BelongsTo method {$relationName}";
-                throw new ConfigurationException($error);
-            }
-            
-            $relation = $model->{$relationName};
-            $fieldValue = $relation->{$parentNameField};
+        if($field->getClass() === BelongsTo::class) {
+            $fieldValue = $this->relationService->getBelongsToValue($model, $field);
         } else {
+            $fieldName = $field->getFieldName();
             $fieldValue = $model->{$fieldName};
         }
         

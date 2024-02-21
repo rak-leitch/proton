@@ -6,7 +6,6 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Contracts\Field\FieldContract;
-use ReflectionClass;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Services\EntityFactory;
@@ -40,13 +39,18 @@ final class FormConfigService
         $formConfig['config'] = [];
         $formConfig['config']['fields'] = [];
         $formConfig['data'] = [];
-         
         
-        foreach($entity->getFields($displayContext) as $field) {
+        $fields = $entity->getFields(
+            displayContext: $displayContext
+        );
+        
+        foreach($fields as $field) {
+            $fieldClass = $field->getClass();
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
+            $fieldConfig['related_entity_code'] = ($fieldClass === BelongsTo::class) ? $field->getRelatedEntityCode() : null;
             $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);
             $fieldConfig['required'] = $this->fieldRequired($field);
             
@@ -75,10 +79,9 @@ final class FormConfigService
     ) : array
     {
         $options = [];
-        $reflection = new ReflectionClass($field);
         
-        if($reflection->getName() === BelongsTo::class) {
-            $parentEntity = $this->entityFactory->create($field->getSnakeName());
+        if($field->getClass() === BelongsTo::class) {
+            $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
             $keyField = $parentEntity->getPrimaryKeyField()->getFieldname();
             $nameField = $parentEntity->getNameField()->getFieldname();
             $modelClass = $parentEntity->getModel();
@@ -108,7 +111,11 @@ final class FormConfigService
     {
         $formData = [];
         
-        foreach($entity->getFields($displayContext) as $field) {
+        $fields = $entity->getFields(
+            displayContext: $displayContext
+        );
+        
+        foreach($fields as $field) {
             $fieldName = $field->getFieldName();
             $formData[$fieldName] = $model->{$fieldName};
         }

@@ -18,13 +18,7 @@
             formSettings.value = {
                 entityCode: configData.value.entity_code,
                 configPath: "config/form-create",
-                submitPath: "submit/form-create",
-                successRoute: {
-                    name: 'entity-index',
-                    params: { 
-                        entityCode: configData.value.entity_code,
-                    }  
-                }
+                submitPath: "submit/form-create"
             };
         } catch (error) {
             currentError.value = `Failed to get config: ${error.message}`;

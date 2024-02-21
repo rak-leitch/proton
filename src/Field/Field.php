@@ -36,6 +36,17 @@ abstract class Field implements FieldContract
     }
     
     /**
+     * Get the class name of a field for
+     * comparision.
+     * 
+     * @return string
+     */
+    public function getClass() : string
+    {
+        return static::class;
+    }
+    
+    /**
      * Set initial display contexts for each field 
      * type. 
      * 
@@ -111,6 +122,8 @@ abstract class Field implements FieldContract
     /**
      * Get the field's frontend display type.
      * 
+     * @param DisplayContext $displayContext
+     * 
      * @return ?string
      */
     abstract public function getFrontendType(DisplayContext $displayContext) : ?string;
@@ -157,21 +170,23 @@ abstract class Field implements FieldContract
     }
     
     /**
-     * Get the field's snake name.
+     * Get the field's related entity code.
      * 
      * @return string
      */
-    public function getSnakeName() : string
+    public function getRelatedEntityCode() : string
     {
         return $this->fieldName;
     }
     
     /**
-     * Get the field's camel name.
+     * Get the field's relation method name.
+     * 
+     * @param bool $plural
      * 
      * @return string
      */
-    public function getCamelName(bool $plural = false) : string
+    public function getRelationMethod(bool $plural = false) : string
     {
         $camelName = Str::camel($this->fieldName);
         

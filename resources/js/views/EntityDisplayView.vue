@@ -29,7 +29,7 @@
         }
     }
     
-    const displayLists = computed(() => {
+    const displayComponents = computed(() => {
         return (Object.keys(configData.value).length && !currentError.value);
     });
     
@@ -38,17 +38,24 @@
 </script>
 
 <template>
-    <v-card class="my-4" elevation="4">
+    <v-alert
+        v-if="currentError"
+        type="error"
+        title="Error"
+    >
+        {{ currentError }}
+    </v-alert>
+    <v-card v-if="displayComponents" class="my-4" elevation="4" >
         <template v-slot:title>
             {{ configData.title }}
         </template>
         <template v-slot:text>
-            <protonDisplay 
+            <protonDisplay
                 :settings="configData.displaySettings"
             />
         </template>
     </v-card>
-    <v-card class="my-4" elevation="4" v-if="displayLists" v-for="(listConfig) in configData.lists">
+    <v-card v-if="displayComponents" class="my-4" elevation="4" v-for="(listConfig) in configData.lists">
         <template v-slot:title>
             {{ listConfig.title }}
         </template>

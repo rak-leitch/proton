@@ -35,8 +35,7 @@ final class DisplayConfigController extends BaseController
     public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
-        $modelClass = $entity->getModel();
-        $model = $modelClass::findOrFail($entityId);
+        $model = $entity->getLoadedModel($entityId);
         $this->authorisationService->canView($request->user(), $model, true);
         $displayConfig = $this->displayConfigService->getDisplayConfig($entity, $model);
         

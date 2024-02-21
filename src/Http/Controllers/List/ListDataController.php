@@ -48,11 +48,11 @@ final class ListDataController extends BaseController
         $requestQuery = $this->getRequestQuery($request);
 
         $listData = $this->listDataService->getData(
-            entity: $entity,
-            user: $request->user(), 
-            page: $page, 
-            itemsPerPage: $itemsPerPage, 
-            requestQuery: $requestQuery
+            $entity,
+            $request->user(), 
+            $page, 
+            $itemsPerPage, 
+            $requestQuery
         );
         
         return response()->json($listData);
@@ -79,11 +79,7 @@ final class ListDataController extends BaseController
         
         foreach($queryKeys as $queryKey) {
             $value = $request->query($queryKey);
-            if(is_string($value)) {
-                $requestQuery[$queryKey] = $value;
-            } else {
-                $requestQuery[$queryKey] = null;
-            }
+            $requestQuery[$queryKey] = is_string($value) ? $value : null;
         }
         
         return (object)$requestQuery;

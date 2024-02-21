@@ -30,8 +30,7 @@ final class FormModelFactory
     */
     public function getUpdateModel(Entity $entity, int $entityId, ?User $user) : Model
     {
-        $modelClass = $entity->getModel();
-        $model = $modelClass::findOrFail($entityId);
+        $model = $entity->getLoadedModel($entityId);
         $this->authorisationService->canUpdate($user, $model, true);
         return $model;
     }

@@ -57,7 +57,7 @@ final class DisplayConfigService
             fieldTypes: collect([HasMany::class]),
             onlyDisplayable: false
         ) as $field) {
-            $listEntity = $this->entityFactory->create($field->getSnakeName());
+            $listEntity = $this->entityFactory->create($field->getRelatedEntityCode());
             if($this->authorisationService->canViewAny($user, $listEntity)) {
                 $viewConfig['lists'][] = [
                     'title' => $listEntity->getLabel(true),
