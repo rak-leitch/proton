@@ -32,7 +32,7 @@ class ProjectDefinition implements EntityDefinitionContract
             ->setModel(ProjectModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(Text::create('user_id')->sortable()->setValidation('required')) //TODO: Needs to be a relationship type later
-            ->addField(Text::create('name')->sortable()->setValidation('required'))
+            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
             ->addField(Text::create('description'))
             ->addField(Text::create('priority')->sortable()->setValidation('required'));
         

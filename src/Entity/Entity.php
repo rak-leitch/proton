@@ -81,6 +81,7 @@ final class Entity
      * 
      * @param DisplayContext $displayContext
      * @param ?Collection<int, string> $fieldTypes
+     * @param ?string $fieldName = null
      * @param ?string $relatedEntityCode
      * @param ?bool $onlyDisplayable
      *
@@ -89,18 +90,26 @@ final class Entity
     public function getFields(
         DisplayContext $displayContext, 
         ?Collection $fieldTypes = null,
+        ?string $fieldName = null,
         ?string $relatedEntityCode = null,
         ?bool $onlyDisplayable = true,
     ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        $fields = $fields->filter(function ($field) use ($displayContext, $fieldTypes, $relatedEntityCode, $onlyDisplayable) {
+        $fields = $fields->filter(function ($field) use (
+            $displayContext, 
+            $fieldTypes, 
+            $relatedEntityCode, 
+            $onlyDisplayable, 
+            $fieldName
+        ) {
             $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
             $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
+            $fieldNameOk = ($fieldName !== null) ? ($field->getFieldName() === $fieldName) : true;
             $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
             $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== null) : true;
-            return ($displayContextOk && $fieldTypeOk && $entityCodeOk && $onlyDisplayableOk);
+            return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $entityCodeOk && $onlyDisplayableOk);
         });
         
         return $fields;

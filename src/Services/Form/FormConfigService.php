@@ -8,19 +8,9 @@ use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
-use Adepta\Proton\Services\EntityFactory;
 
 final class FormConfigService
 {    
-    /**
-     * Constructor.
-     * 
-     * @param EntityFactory $entityFactory
-    */
-    public function __construct(
-        private EntityFactory $entityFactory,
-    ) { }
-    
     /**
      * Get the form config for an entity instance
      * for use by the frontend.
@@ -45,52 +35,20 @@ final class FormConfigService
         );
         
         foreach($fields as $field) {
-            $fieldClass = $field->getClass();
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['related_entity_code'] = ($fieldClass === BelongsTo::class) ? $field->getRelatedEntityCode() : null;
+            $fieldConfig['related_entity_code'] = $field->getRelatedEntityCode();
             $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);
             $fieldConfig['required'] = $this->fieldRequired($field);
-            
-            if($field->getFrontendType($displayContext) === 'select') {
-                $fieldConfig['select_options'] = $this->getSelectOptions($entity, $field);
-            }
+            $fieldConfig['select_options'] = $field->getSelectOptions();
             
             $formConfig['config']['fields'][] = $fieldConfig;
             $formConfig['data'][$fieldName] = null;
         };
         
         return $formConfig;
-    }
-    
-    /**
-     * Get the select options for a field
-     *
-     * @param Entity $entity
-     * @param FieldContract $field
-     * 
-     * @return mixed[]
-    */
-    public function getSelectOptions( 
-        Entity $entity,
-        FieldContract $field
-    ) : array
-    {
-        $options = [];
-        
-        if($field->getClass() === BelongsTo::class) {
-            $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
-            $keyField = $parentEntity->getPrimaryKeyField()->getFieldname();
-            $nameField = $parentEntity->getNameField()->getFieldname();
-            $modelClass = $parentEntity->getModel();
-            $query = $modelClass::select("{$keyField} as value", "{$nameField} as title");
-            $parentEntity->getQueryFilter()($query);
-            $options = $query->get()->toArray();
-        }
-        
-        return $options;
     }
     
     /**
@@ -116,8 +74,7 @@ final class FormConfigService
         );
         
         foreach($fields as $field) {
-            $fieldName = $field->getFieldName();
-            $formData[$fieldName] = $model->{$fieldName};
+            $formData[$field->getFieldName()] = $field->getRawValue($model);
         }
         
         return $formData;

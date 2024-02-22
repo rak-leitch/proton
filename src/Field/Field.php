@@ -5,6 +5,8 @@ use Adepta\Proton\Contracts\Field\FieldContract;
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Exceptions\ConfigurationException;
 
 abstract class Field implements FieldContract
 {
@@ -176,24 +178,61 @@ abstract class Field implements FieldContract
      */
     public function getRelatedEntityCode() : string
     {
-        return $this->fieldName;
+        return '';
     }
     
     /**
      * Get the field's relation method name.
      * 
-     * @param bool $plural
+     * @param Model|class-string $model
      * 
      * @return string
      */
-    public function getRelationMethod(bool $plural = false) : string
+    public function getRelationMethod(Model|string $model) : string
     {
-        $camelName = Str::camel($this->fieldName);
+        return '';
+    }
+    
+    /**
+     * Get the field's raw value.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getRawValue(Model $model) : string|int|float|null
+    {
+        $value = null;
+        $fieldName = $this->getFieldName();
         
-        if($plural) {
-            $camelName = Str::plural($camelName);
+        if(array_key_exists($fieldName, $model->getAttributes())) {
+            $value = $model->{$fieldName};
+        } else {
+            throw new ConfigurationException("Could not find {$fieldName} value");
         }
         
-        return $camelName;
+        return $value;
+    }
+    
+    /**
+     * Get the field's processed value for use by the frontend.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getProcessedValue(Model $model) : string|int|float|null
+    {
+        return $this->getRawValue($model);
+    }
+    
+    /**
+     * Get the field's select options.
+     * 
+     * @return Collection<int, Model>
+     */
+    public function getSelectOptions() : Collection
+    {
+        return collect([]);
     }
 }

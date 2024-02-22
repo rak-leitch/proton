@@ -16,7 +16,6 @@ use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Adepta\Proton\Services\Utilities\RelationService;
 use StdClass;
 
 final class ListDataService
@@ -26,12 +25,10 @@ final class ListDataService
      * 
      * @param AuthorisationService $authService
      * @param EntityFactory $entityFactory
-     * @param RelationService $relationService
     */
     public function __construct(
         private AuthorisationService $authService,
         private EntityFactory $entityFactory,
-        private RelationService $relationService,
     ) { }
     
     /**
@@ -85,7 +82,7 @@ final class ListDataService
             $row = [];
 
             foreach($listFields as $field) {
-                $row[$field->getFieldName()] = $this->getFieldValue($field, $model);
+                $row[$field->getFieldName()] = $field->getProcessedValue($model);
             };
             
             $rowData[] = $row;
@@ -133,7 +130,7 @@ final class ListDataService
         }
 
         $contextModel = $contextEntity->getLoadedModel($contextId);
-        $relationMethod = $this->relationService->getRelationMethod($contextModel, $relationField, true);
+        $relationMethod = $relationField->getRelationMethod($contextModel);
         
         return $contextModel->$relationMethod();
     }
@@ -160,7 +157,7 @@ final class ListDataService
         
         foreach($belongsToFields as $belongsToField) {
             
-            $relationMethod = $this->relationService->getRelationMethod($entity->getModel(), $belongsToField);
+            $relationMethod = $belongsToField->getRelationMethod($entity->getModel());
             
             //Get all fields here so they can be 
             //used in policies without having to load the relationship.
@@ -189,8 +186,7 @@ final class ListDataService
             
             $sortField = $entity->getFields(
                 displayContext: $displayContext,
-                //TODO: This should be on fieldname rather than entity code
-                relatedEntityCode: $requestQuery->sortField,
+                fieldName: $requestQuery->sortField,
             )->first();
             
             if($sortField && $sortField->getSortable()) {
@@ -218,28 +214,5 @@ final class ListDataService
     {
         $skip = ($page - 1) * $itemsPerPage;
         return $query->skip($skip)->take($itemsPerPage)->get();
-    }
-    
-    /**
-     * Get the field value given a
-     * field and model.
-     *
-     * @param FieldContract $field 
-     * @param Model $model
-     * 
-     * @return string|int|float|null
-    */
-    private function getFieldValue(FieldContract $field, Model $model) : string|int|float|null
-    {
-        $fieldValue = null;
-        
-        if($field->getClass() === BelongsTo::class) {
-            $fieldValue = $this->relationService->getBelongsToValue($model, $field);
-        } else {
-            $fieldName = $field->getFieldName();
-            $fieldValue = $model->{$fieldName};
-        }
-        
-        return $fieldValue;
     }
 }

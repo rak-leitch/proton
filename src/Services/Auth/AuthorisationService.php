@@ -135,7 +135,7 @@ final class AuthorisationService
     ) : bool 
     {
         $allowed = false;
-        
+
         if($fieldValue === null) {
             $allowed = true;
         } else {

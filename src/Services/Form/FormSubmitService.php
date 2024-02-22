@@ -6,7 +6,6 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use ReflectionClass;
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Field\BelongsTo;
 
@@ -48,10 +47,9 @@ final class FormSubmitService
         foreach($expectedFields as $field) {
             $fieldName = $field->getFieldName();
             $fieldValue = $data[$fieldName];
-            $reflection = new ReflectionClass($field);
             
             //Check they are allowed to add this entity to a parent
-            if($reflection->getName() === BelongsTo::class) {
+            if($field->getClass() === BelongsTo::class) {
                 $this->authService->canAdd($user, $entity, $field, $fieldValue, true);
             }
             

@@ -4,6 +4,7 @@ namespace Adepta\Proton\Contracts\Field;
 
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface FieldContract
 {
@@ -107,9 +108,34 @@ interface FieldContract
     /**
      * Get the field's relation method name.
      * 
-     * @param bool $plural
+     * @param Model|class-string $model
      * 
      * @return string
      */
-    public function getRelationMethod(bool $plural = false) : string;
+    public function getRelationMethod(Model|string $model) : string;
+    
+    /**
+     * Get the field's raw value.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getRawValue(Model $model) : string|int|float|null;
+    
+    /**
+     * Get the field's processed value for use by the frontend.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getProcessedValue(Model $model) : string|int|float|null;
+    
+    /**
+     * Get the field's select options.
+     * 
+     * @return Collection<int, Model>
+     */
+    public function getSelectOptions() : Collection;
 }
