@@ -36,7 +36,7 @@ class EntityIndexTest extends TestCase
     */
     public function test_unauthed_entity_index_config_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.config.view.index', [
             'entity_code' => 'project',

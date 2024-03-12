@@ -139,7 +139,8 @@ final class AuthorisationService
         if($fieldValue === null) {
             $allowed = true;
         } else {
-            $parentModel = $this->entityFactory->create($field->getRelatedEntityCode())->getLoadedModel($fieldValue);
+            $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
+            $parentModel = $parentEntity->getLoadedModel($fieldValue);
             $policyName = 'add'.$entity->getStudlyCode();
             $allowed = $this->allowed($policyName, $user, $parentModel, $throwException);
         }

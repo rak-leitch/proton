@@ -4,14 +4,15 @@ namespace Adepta\Proton\Tests\EntityDefinitions;
 
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
-use Adepta\Proton\Tests\Models\Task as TaskModel;
 use Adepta\Proton\Field\Id;
 use Adepta\Proton\Field\Text;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Field\HasMany;
+use Adepta\Proton\Tests\Models\User as UserModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class TaskDefinition implements EntityDefinitionContract
+
+class UserDefinition implements EntityDefinitionContract
 {
     /**
      * Constructor
@@ -30,20 +31,19 @@ class TaskDefinition implements EntityDefinitionContract
     public function getEntityConfig() : EntityConfigContract
     {
         $this->entityConfig
-            ->setCode('task')
-            ->setModel(TaskModel::class)
+            ->setCode('user')
+            ->setModel(UserModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(BelongsTo::create('project')->setValidation('required'))
+            ->addField(HasMany::create('project'))
             ->addField(Text::create('name')->sortable()->setValidation('required')->name())
-            ->addField(Text::create('description'))
             ->setQueryFilter(function(Builder $query) {
-                /** @var \Adepta\Proton\Tests\Models\User $user */
+                /** @var UserModel $user */
                 $user = Auth::user();
                 if(!$user->is_admin) {
-                    $query->whereRelation('project.user', 'id', $user->id);
+                    $query->where('id', $user->id);
                 }
             });
-            
+        
         return $this->entityConfig;
     }
 }

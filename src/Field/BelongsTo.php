@@ -63,10 +63,10 @@ final class BelongsTo extends Field
     {
         $entityFactory = app()->make(EntityFactory::class);
         $parentEntity = $entityFactory->create($this->getRelatedEntityCode());
-        $parentNameField = $parentEntity->getNameField()->getFieldName();
+        $parentNameField = $parentEntity->getNameField();
         $relationName = $this->getRelationMethod($model);
         $relation = $model->{$relationName};
-        return $relation ? ($relation->{$parentNameField}) : null;
+        return $relation ? $parentNameField->getProcessedValue($relation) : null;
     }
     
     /**

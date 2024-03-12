@@ -15,8 +15,9 @@ class FormTest extends TestCase
      * @return void
     */
     public function test_form_create_config_endpoint() : void
-    {        
-        $this->actingAs(User::findOrFail(1));
+    {
+        $user = User::findOrFail(1);
+        $this->actingAs($user);
         
         $response = $this->get(route('proton.config.form-create', [
             'entity_code' => 'project',
@@ -26,7 +27,7 @@ class FormTest extends TestCase
 
         $response->assertJson(fn (AssertableJson $json) =>
             $json->has('config', fn (AssertableJson $json) =>
-                $this->checkFormConfigFields($json)
+                $this->checkFormConfigFields($json, $user)
             )->has('data', fn (AssertableJson $json) =>
                 $json->where('user_id', null)
                      ->where('name', null)
@@ -43,7 +44,8 @@ class FormTest extends TestCase
     */
     public function test_form_update_config_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(1));
+        $user = User::findOrFail(1);
+        $this->actingAs($user);
         
         $response = $this->get(route('proton.config.form-update', [
             'entity_code' => 'project',
@@ -54,7 +56,7 @@ class FormTest extends TestCase
 
         $response->assertJson(fn (AssertableJson $json) =>
             $json->has('config', fn (AssertableJson $json) =>
-                $this->checkFormConfigFields($json)
+                $this->checkFormConfigFields($json, $user)
             )->has('data', fn (AssertableJson $json) =>
                 $json->where('user_id', 1)
                      ->where('name', 'Do it yourself')
@@ -121,6 +123,31 @@ class FormTest extends TestCase
     }
     
     /**
+     * Check the form update submission with an invalid user_id
+     *
+     * @return void
+    */
+    public function test_update_submit_with_other_user_id() : void
+    { 
+        $this->actingAs(User::findOrFail(1));
+        $entityId = 1;
+        
+        $fieldValues = [
+            'name' => 'Changed user',
+            'user_id' => 2,
+            'description' => 'Changed to another user without permision.',
+            'priority' => 'normal',
+        ];
+        
+        $response = $this->postJson(route('proton.submit.form-update', [
+            'entity_code' => 'project',
+            'entity_id' => 1,
+        ]), $fieldValues);
+        
+        $response->assertStatus(403);
+    }
+    
+    /**
      * Check failed validation response for create
      *
      * @return void
@@ -169,7 +196,7 @@ class FormTest extends TestCase
     */
     public function test_unauthed_create_config_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.config.form-create', [
             'entity_code' => 'project'
@@ -204,7 +231,7 @@ class FormTest extends TestCase
     */
     public function test_unauthed_create_submit_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->postJson(route('proton.submit.form-create', [
             'entity_code' => 'project',
@@ -237,29 +264,42 @@ class FormTest extends TestCase
      *
      * @return void
     */
-    private function checkFormConfigFields(AssertableJson $json) : void
+    private function checkFormConfigFields(AssertableJson $json, User $user) : void
     {
         $json->has('fields', 4)
             ->has('fields.0', fn (AssertableJson $json) =>
                 $json->where('title', 'user_id')
                     ->where('key', 'user_id')
-                    ->where('frontend_type', 'text')
+                    ->where('related_entity_code', 'user')
+                    ->where('frontend_type', 'select')
                     ->where('required', true)
+                    ->where('select_options.0.value', 1)
+                    ->has('select_options', 1)
+                    ->has('select_options.0', fn (AssertableJson $json) =>
+                        $json->where('value', 1)
+                             ->where('title', $user->name)
+                    )
             )->has('fields.1', fn (AssertableJson $json) =>
                 $json->where('title', 'name')
                     ->where('key', 'name')
+                    ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')
                     ->where('required', true)
+                    ->has('select_options', 0)
             )->has('fields.2', fn (AssertableJson $json) =>
                 $json->where('title', 'description')
                     ->where('key', 'description')
+                    ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')
                     ->where('required', false)
+                    ->has('select_options', 0)
             )->has('fields.3', fn (AssertableJson $json) =>
                 $json->where('title', 'priority')
                     ->where('key', 'priority')
+                    ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')
                     ->where('required', true)
+                    ->has('select_options', 0)
             );
     }
     

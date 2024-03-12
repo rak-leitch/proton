@@ -28,11 +28,13 @@ class EntityCreateTest extends BrowserTestCase
                 ->click('@create-entity-button')
                 //Wait for form to load and fill it in
                 ->waitFor('form.v-form')
-                ->type('@field-user_id', '1')
                 //Submit before required fields filled in
                 ->click('@form-submit')
-                ->waitFor('form.v-form .v-messages__message')
-                ->assertSeeIn('form.v-form .v-messages__message', 'The name field is required.')
+                ->waitFor('form.v-form:first-child .v-messages__message')
+                ->assertSeeIn('form.v-form:first-child .v-messages__message', 'The user id field is required.')
+                ->click('.v-form:first-child .v-select__menu-icon')
+                ->waitFor('.v-overlay-container .v-list:first-child')
+                ->click('.v-overlay-container .v-list:first-child')
                 ->type('@field-name', self::PROJECT_NAME)
                 ->type('@field-description', self::PROJECT_DESC)
                 ->type('@field-priority', 'urgent')

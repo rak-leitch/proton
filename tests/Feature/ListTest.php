@@ -32,7 +32,7 @@ class ListTest extends TestCase
             )->has('fields.1', fn (AssertableJson $json) =>
                 $json->where('title', 'user_id')
                      ->where('key', 'user_id')
-                     ->where('sortable', true)
+                     ->where('sortable', false)
             )->has('fields.2', fn (AssertableJson $json) =>
                 $json->where('title', 'name')
                      ->where('key', 'name')
@@ -58,8 +58,9 @@ class ListTest extends TestCase
      * @return void
     */
     public function test_list_data_endpoint() : void
-    {        
-        $this->actingAs(User::findOrFail(1));
+    { 
+        $user = User::findOrFail(1);
+        $this->actingAs($user);
         
         $response = $this->get(route('proton.data.list', [
             'entity_code' => 'project',
@@ -75,14 +76,14 @@ class ListTest extends TestCase
             ->has('data', 2)
             ->has('data.0', fn (AssertableJson $json) =>
                 $json->where('id', 1)
-                     ->where('user_id', 1)
+                     ->where('user_id', $user->name)
                      ->where('name', 'Do it yourself')
                      ->where('description', 'All the DIY jobs that need to be done.')
                      ->where('priority', 'normal')
             )
             ->has('data.1', fn (AssertableJson $json) =>
                 $json->where('id', 2)
-                     ->where('user_id', 1)
+                     ->where('user_id', $user->name)
                      ->where('name', 'Fun')
                      ->where('description', 'Non-boring things to do.')
                      ->where('priority', 'normal')
@@ -109,7 +110,7 @@ class ListTest extends TestCase
     */
     public function test_unauthed_list_config_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.config.list', [
             'entity_code' => 'project'
@@ -125,7 +126,7 @@ class ListTest extends TestCase
     */
     public function test_unauthed_list_data_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.data.list', [
             'entity_code' => 'project',

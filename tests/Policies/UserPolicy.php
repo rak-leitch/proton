@@ -1,11 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
 
 namespace Adepta\Proton\Tests\Policies;
 
-use Adepta\Proton\Tests\Models\Task;
 use Illuminate\Foundation\Auth\User;
+use Adepta\Proton\Tests\Models\User as UserModel;
 
-class TaskPolicy
+class UserPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -16,20 +16,22 @@ class TaskPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can view the model.
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function view(User $user, Task $task): bool
+    public function view(User $user, UserModel $userModel): bool
     {
-        return $this->checkOwnership($user, $task);
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
 
     /**
@@ -41,72 +43,76 @@ class TaskPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function update(User $user, Task $task): bool
+    public function update(User $user, UserModel $userModel): bool
     {
-        return $this->checkOwnership($user, $task);
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can delete the model.
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function delete(User $user, Task $task): bool
+    public function delete(User $user, UserModel $userModel): bool
     {
-        return $this->checkOwnership($user, $task);
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can restore the model.
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function restore(User $user, Task $task): bool
+    public function restore(User $user, UserModel $userModel): bool
     {
-        return $this->checkOwnership($user, $task);
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function forceDelete(User $user, Task $task): bool
+    public function forceDelete(User $user, UserModel $userModel): bool
     {
-        return $this->checkOwnership($user, $task);
+        /** @var UserModel $user */
+        return $user->is_admin;
     }
     
     /**
-     * Check the user can perform the action
+     * Determine whether the user can add a Project to this user
      * 
      * @param User $user
-     * @param Task $task
+     * @param UserModel $userModel
      * 
      * @return bool
      */
-    private function checkOwnership(User $user, Task $task) : bool
+    public function addProject(User $user, UserModel $userModel): bool
     {
-        /** @var \Adepta\Proton\Tests\Models\User $user */
-        return $user->is_admin || ($task->project && ($task->project->user_id === $user->id));
+        /** @var UserModel $user */
+        return $user->is_admin || ($userModel->id === $user->id);
     }
 }

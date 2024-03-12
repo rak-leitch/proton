@@ -7,7 +7,10 @@ use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Tests\Models\Project as ProjectModel;
 use Adepta\Proton\Field\Id;
 use Adepta\Proton\Field\Text;
-
+use Adepta\Proton\Field\HasMany;
+use Adepta\Proton\Field\BelongsTo;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectDefinition implements EntityDefinitionContract
 {
@@ -31,10 +34,18 @@ class ProjectDefinition implements EntityDefinitionContract
             ->setCode('project')
             ->setModel(ProjectModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(Text::create('user_id')->sortable()->setValidation('required')) //TODO: Needs to be a relationship type later
+            ->addField(BelongsTo::create('user')->setValidation('required'))
+            ->addField(HasMany::create('task'))
             ->addField(Text::create('name')->sortable()->setValidation('required')->name())
             ->addField(Text::create('description'))
-            ->addField(Text::create('priority')->sortable()->setValidation('required'));
+            ->addField(Text::create('priority')->sortable()->setValidation('required'))
+            ->setQueryFilter(function(Builder $query) {
+                /** @var \Adepta\Proton\Tests\Models\User $user */
+                $user = Auth::user();
+                if(!$user->is_admin) {
+                    $query->whereRelation('user', 'id', $user->id);
+                }
+            });
         
         return $this->entityConfig;
     }
