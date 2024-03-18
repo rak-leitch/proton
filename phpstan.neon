@@ -10,8 +10,9 @@ parameters:
     # Level 9 is the highest level
     level: 9
 
-#    ignoreErrors:
-#        - '#PHPDoc tag @var#'
+    ignoreErrors:
+        #PHPStan doesn't currently handle browser macros etc
+        - '#^Call to an undefined method Laravel\\Dusk\\Browser\:\:[a-zA-Z]+\(\)\.$#'
 #
 #    excludePaths:
 #        - ./*/*/FileToBeExcluded.php

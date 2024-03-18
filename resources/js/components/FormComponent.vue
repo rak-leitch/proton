@@ -87,7 +87,7 @@
             <v-text-field v-if="field.frontend_type==='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
-                v-bind:dusk="`field-${field.key}`"
+                :class="`field-${field.key}`"
             >
                 <template v-slot:label>
                     <span>
@@ -99,7 +99,7 @@
             <v-select v-if="field.frontend_type==='select'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
-                v-bind:dusk="`field-${field.key}`"
+                :class="`field-${field.key}`"
                 :items="field.select_options"
             >
                 <template v-slot:label>
@@ -114,9 +114,8 @@
             :loading="submitInProgress"
             type="submit"
             block
-            class="mt-2"
+            class="mt-2 form-submit"
             text="Submit"
-            dusk="form-submit"
         ></v-btn>
     </v-form>
 </template>

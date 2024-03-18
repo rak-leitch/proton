@@ -62,12 +62,14 @@ class ListTest extends TestCase
         $user = User::findOrFail(1);
         $this->actingAs($user);
         
-        $response = $this->get(route('proton.data.list', [
+        $response = $this->call('GET', route('proton.data.list', [
             'entity_code' => 'project',
             'page' => 1,
             'items_per_page' => 5,
-            'sort_by' => 'null',
-        ]));
+        ]), [
+            'sortField' => 'id',
+            'sortOrder' => 'desc'
+        ]);
          
         $response->assertStatus(200);
         
@@ -75,17 +77,17 @@ class ListTest extends TestCase
             $json->where('totalRows', 2)
             ->has('data', 2)
             ->has('data.0', fn (AssertableJson $json) =>
-                $json->where('id', 1)
-                     ->where('user_id', $user->name)
-                     ->where('name', 'Do it yourself')
-                     ->where('description', 'All the DIY jobs that need to be done.')
-                     ->where('priority', 'normal')
-            )
-            ->has('data.1', fn (AssertableJson $json) =>
                 $json->where('id', 2)
                      ->where('user_id', $user->name)
                      ->where('name', 'Fun')
                      ->where('description', 'Non-boring things to do.')
+                     ->where('priority', 'normal')
+            )
+            ->has('data.1', fn (AssertableJson $json) =>
+                $json->where('id', 1)
+                     ->where('user_id', $user->name)
+                     ->where('name', 'Do it yourself')
+                     ->where('description', 'All the DIY jobs that need to be done.')
                      ->where('priority', 'normal')
             )
             ->has('permissions', 2)

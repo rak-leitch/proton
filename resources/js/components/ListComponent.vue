@@ -118,61 +118,62 @@
 </script>
 
 <template>
-    <v-alert
-        v-if="currentError"
-        type="error"
-        title="Error"
+    <div
+        :dusk="`list-${props.settings.entityCode}`"
     >
-        {{ currentError }}
-    </v-alert>
-    <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        :headers="configData.fields"
-        :items-length="totalItems"
-        :items="serverItems"
-        :loading="loading"
-        item-value="name"
-        @update:options="loadData"
-        :items-per-page-options="configData.page_size_options"
-        :key="configData.version"
-    >
-        <template v-slot:top>
-            <v-toolbar
-                flat
-            > 
-                <v-spacer></v-spacer>
-                <v-btn
-                    v-if="configData.can_create"
-                    color="primary"
-                    @click="goToCreate"
-                    dusk="create-entity-button"
-                >
-                    New {{ configData.entity_label }}
-                </v-btn>
-            </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-            <v-icon
-                v-if="rowPermissions[item.id].update"
-                icon="$pencil"
-                class="me-2"
-                @click="updateItem(item)"
-                v-bind:dusk="`update-${item.id}`"
-            />
-            <v-icon
-                v-if="rowPermissions[item.id].view"
-                icon="$eye"
-                class="me-2"
-                @click="viewItem(item)"
-                v-bind:dusk="`view-${item.id}`"
-            />
-            <v-icon
-                v-if="rowPermissions[item.id].delete"
-                icon="$rubbish"
-                class="me-2"
-                @click="deleteItem(item)"
-                v-bind:dusk="`delete-${item.id}`"
-            />
-        </template>
-    </v-data-table-server>
+        <v-alert
+            v-if="currentError"
+            type="error"
+            title="Error"
+        >
+            {{ currentError }}
+        </v-alert>
+        <v-data-table-server
+            v-model:items-per-page="itemsPerPage"
+            :headers="configData.fields"
+            :items-length="totalItems"
+            :items="serverItems"
+            :loading="loading"
+            item-value="name"
+            @update:options="loadData"
+            :items-per-page-options="configData.page_size_options"
+            :key="configData.version"
+        >
+            <template v-slot:top>
+                <v-toolbar
+                    flat
+                > 
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        v-if="configData.can_create"
+                        color="primary"
+                        @click="goToCreate"
+                        class="create-entity-button"
+                    >
+                        New {{ configData.entity_label }}
+                    </v-btn>
+                </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+                <v-icon
+                    v-if="rowPermissions[item.id].update"
+                    icon="$pencil"
+                    class="update-button me-2"
+                    @click="updateItem(item)"
+                />
+                <v-icon
+                    v-if="rowPermissions[item.id].view"
+                    icon="$eye"
+                    class="display-button me-2"
+                    @click="viewItem(item)"
+                />
+                <v-icon
+                    v-if="rowPermissions[item.id].delete"
+                    icon="$rubbish"
+                    class="delete-button me-2"
+                    @click="deleteItem(item)"
+                />
+            </template>
+        </v-data-table-server>
+    </div>
 </template>
