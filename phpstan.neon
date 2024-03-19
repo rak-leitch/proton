@@ -7,7 +7,7 @@ parameters:
         - src/
         - tests/
 
-    # Level 9 is the highest level
+    # Level 9 is the current highest level
     level: 9
 
     ignoreErrors:

@@ -40,18 +40,14 @@ final class Entity
     public function validateConfig(EntityConfigContract $entityConfig) : void
     {
         $entityCode = $entityConfig->getCode();
-        $entityClass = $entityConfig->getModel();
+        $modelClass = $entityConfig->getModel();
         $fields = $entityConfig->getFields();
         
         if(mb_strlen($entityCode) === 0) {
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         
-        if($entityClass === Model::class) {
-            throw new ConfigurationException('Entity model must be supplied with setModel()'); 
-        }
-        
-        if(!is_subclass_of($entityClass, Model::class)) {
+        if(!is_subclass_of($modelClass, Model::class)) {
             throw new ConfigurationException('Entity model must extend '.Model::class);
         }
         

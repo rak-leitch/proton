@@ -44,4 +44,25 @@ class EntityCreateTest extends BrowserTestCase
                 });
         });
     }
+    
+    /**
+     * Check project dropdown is prefilled
+     * when creating a task from the project display.
+     *
+     * @return void
+    */
+    public function test_task_create_from_project_view(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $browser
+                ->loginAs(User::findOrFail(1))
+                ->visit(url('proton/entity/project/display/1'))
+                ->within(new ListComponent('@list-task'), function (Browser $browser) {
+                    $browser->click('@create-entity-button');
+                })
+                ->within(new FormComponent(), function (Browser $browser) {
+                    $browser->assertFieldValue('project_id', '1');
+                });
+        });
+    }
 }
