@@ -29,7 +29,7 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        return true;
+        return $this->checkOwnership($user, $task);
     }
 
     /**
@@ -54,7 +54,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return true;
+        return $this->checkOwnership($user, $task);
     }
 
     /**
@@ -67,7 +67,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return true;
+        return $this->checkOwnership($user, $task);
     }
 
     /**
@@ -80,7 +80,7 @@ class TaskPolicy
      */
     public function restore(User $user, Task $task): bool
     {
-        return true;
+        return $this->checkOwnership($user, $task);
     }
 
     /**
@@ -93,6 +93,20 @@ class TaskPolicy
      */
     public function forceDelete(User $user, Task $task): bool
     {
-        return true;
+        return $this->checkOwnership($user, $task);
+    }
+    
+    /**
+     * Check the user can perform the action
+     * 
+     * @param User $user
+     * @param Task $task
+     * 
+     * @return bool
+     */
+    private function checkOwnership(User $user, Task $task) : bool
+    {
+        /** @var \Adepta\Proton\Tests\Models\User $user */
+        return $user->is_admin || ($task->project && ($task->project->user_id === $user->id));
     }
 }

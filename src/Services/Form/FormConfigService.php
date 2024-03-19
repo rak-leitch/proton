@@ -6,6 +6,8 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Exceptions\ConfigurationException;
 
 final class FormConfigService
 {    
@@ -27,15 +29,21 @@ final class FormConfigService
         $formConfig['config'] = [];
         $formConfig['config']['fields'] = [];
         $formConfig['data'] = [];
-         
         
-        foreach($entity->getFields($displayContext) as $field) {
+        $fields = $entity->getFields(
+            displayContext: $displayContext
+        );
+        
+        foreach($fields as $field) {
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $fieldName;
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['frontend_type'] = $field->getFrontendType();
+            $fieldConfig['related_entity_code'] = $field->getRelatedEntityCode();
+            $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);
             $fieldConfig['required'] = $this->fieldRequired($field);
+            $fieldConfig['select_options'] = $field->getSelectOptions();
+            
             $formConfig['config']['fields'][] = $fieldConfig;
             $formConfig['data'][$fieldName] = null;
         };
@@ -61,9 +69,12 @@ final class FormConfigService
     {
         $formData = [];
         
-        foreach($entity->getFields($displayContext) as $field) {
-            $fieldName = $field->getFieldName();
-            $formData[$fieldName] = $model->{$fieldName};
+        $fields = $entity->getFields(
+            displayContext: $displayContext
+        );
+        
+        foreach($fields as $field) {
+            $formData[$field->getFieldName()] = $field->getRawValue($model);
         }
         
         return $formData;

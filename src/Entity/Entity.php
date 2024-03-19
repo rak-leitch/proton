@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
+use Closure;
 
 final class Entity
 {
@@ -39,18 +40,14 @@ final class Entity
     public function validateConfig(EntityConfigContract $entityConfig) : void
     {
         $entityCode = $entityConfig->getCode();
-        $entityClass = $entityConfig->getModel();
+        $modelClass = $entityConfig->getModel();
         $fields = $entityConfig->getFields();
         
         if(mb_strlen($entityCode) === 0) {
             throw new ConfigurationException('Entity code must be supplied with setCode()'); 
         }
         
-        if($entityClass === Model::class) {
-            throw new ConfigurationException('Entity model must be supplied with setModel()'); 
-        }
-        
-        if(!is_subclass_of($entityClass, Model::class)) {
+        if(!is_subclass_of($modelClass, Model::class)) {
             throw new ConfigurationException('Entity model must extend '.Model::class);
         }
         
@@ -65,22 +62,73 @@ final class Entity
         if($primaryKeys->count() !== 1) {
             throw new ConfigurationException('Each entity must contain a single primary key field');
         }
+        
+        $nameFields = $fields->filter(function ($field, $key) {
+            return $field->getIsNameField();
+        });
+        
+        if($nameFields->count() !== 1) {
+            throw new ConfigurationException('Each entity must contain a single name field');
+        }
     }
     
     /**
-     * Get the fields for this entity.
+     * Get the (filterable) fields for this entity.
      * 
      * @param DisplayContext $displayContext
+     * @param ?Collection<int, string> $fieldTypes
+     * @param ?string $fieldName = null
+     * @param ?string $relatedEntityCode
+     * @param ?bool $onlyDisplayable
      *
      * @return Collection<int, FieldContract>
     */
-    public function getFields(DisplayContext $displayContext) : Collection
+    public function getFields(
+        DisplayContext $displayContext, 
+        ?Collection $fieldTypes = null,
+        ?string $fieldName = null,
+        ?string $relatedEntityCode = null,
+        ?bool $onlyDisplayable = true,
+    ) : Collection
     {
         $fields = $this->entityConfig->getFields();
         
-        return $fields->filter(function ($field) use ($displayContext) {
-            return $field->getDisplayContexts()->contains($displayContext);
+        $fields = $fields->filter(function ($field) use (
+            $displayContext, 
+            $fieldTypes, 
+            $relatedEntityCode, 
+            $onlyDisplayable, 
+            $fieldName
+        ) {
+            $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
+            $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
+            $fieldNameOk = ($fieldName !== null) ? ($field->getFieldName() === $fieldName) : true;
+            $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
+            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== null) : true;
+            return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $entityCodeOk && $onlyDisplayableOk);
         });
+        
+        return $fields;
+    }
+    
+    /**
+     * Get the name field for this entity.
+     *
+     * @return FieldContract
+    */
+    public function getNameField() : FieldContract
+    {
+        $fields = $this->entityConfig->getFields();
+        
+        $fields = $fields->filter(function ($field) {
+            return $field->getIsNameField();
+        });
+        
+        if(!$fields->first()) {
+            throw new ConfigurationException('Could not find name field for '.$this->entityConfig->getCode());
+        } 
+        
+        return $fields->first();
     }
     
     /**
@@ -101,6 +149,21 @@ final class Entity
     public function getModel() : string
     {
         return $this->entityConfig->getModel();
+    }
+    
+    /**
+     * Get loaded model for this entity.
+     *
+     * @param float|int|string $key
+     * 
+     * @return Model
+    */
+    public function getLoadedModel(float|int|string $key) : Model
+    {
+        $modelClass = $this->entityConfig->getModel();
+        
+        //Assuming our ID field is the same as the model's
+        return $modelClass::findOrFail($key);
     }
     
     /**
@@ -137,5 +200,25 @@ final class Entity
         }
         
         return $pkField;
+    }
+    
+    /**
+     * Get the query filter for this entity.
+     *
+     * @return Closure
+    */
+    public function getQueryFilter() : Closure
+    {
+        return $this->entityConfig->getQueryFilter();
+    }
+    
+    /**
+     * Get the Studly code string for this entity.
+     *
+     * @return string
+    */
+    public function getStudlyCode() : string
+    {
+        return Str::studly($this->entityConfig->getCode());
     }
 }

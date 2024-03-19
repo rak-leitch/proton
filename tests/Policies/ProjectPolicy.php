@@ -7,6 +7,9 @@ use Illuminate\Foundation\Auth\User;
 
 class ProjectPolicy
 {
+    const CANNOT_INTERACT_PROJECT_ID = 2;
+    const NO_PERMISSION_USER_ID = 3;
+    
     /**
      * Determine whether the user can view any models.
      * 
@@ -16,7 +19,7 @@ class ProjectPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->id === 2 ? false : true;
+        return $user->id === self::NO_PERMISSION_USER_ID ? false : true;
     }
 
     /**
@@ -28,8 +31,8 @@ class ProjectPolicy
      * @return bool
      */
     public function view(User $user, Project $project): bool
-    {
-        return $project->id === 2 ? false : true;
+    {   
+        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
 
     /**
@@ -41,7 +44,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return $user->id === 2 ? false : true;
+        return $user->id === self::NO_PERMISSION_USER_ID ? false : true;
     }
 
     /**
@@ -54,7 +57,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $project->id === 2 ? false : true;
+        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
 
     /**
@@ -67,7 +70,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        return $project->id === 2 ? false : true;
+        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
 
     /**
@@ -80,7 +83,7 @@ class ProjectPolicy
      */
     public function restore(User $user, Project $project): bool
     {
-        return true;
+        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
 
     /**
@@ -93,6 +96,33 @@ class ProjectPolicy
      */
     public function forceDelete(User $user, Project $project): bool
     {
-        return true;
+        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
+    }
+    
+    /**
+     * Determine whether the user can add a Task to this Project
+     * 
+     * @param User $user
+     * @param Project $project
+     * 
+     * @return bool
+     */
+    public function addTask(User $user, Project $project): bool
+    {
+        return $this->checkOwnership($user, $project);
+    }
+    
+    /**
+     * Check the user can perform the action
+     * 
+     * @param User $user
+     * @param Project $project
+     * 
+     * @return bool
+     */
+    private function checkOwnership(User $user, Project $project) : bool
+    {
+        /** @var \Adepta\Proton\Tests\Models\User $user */
+        return $user->is_admin || ($project->user_id === $user->id);
     }
 }

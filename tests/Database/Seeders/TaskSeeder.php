@@ -37,5 +37,11 @@ class TaskSeeder extends Seeder
             'name' => 'Go to the beach.',
             'description' => 'Hope the weather is good.',
         ]);
+        
+        Task::factory()->create([
+            'project_id' => 3,
+            'name' => 'Top secret task',
+            'description' => 'Only user 2 is able to interact.',
+        ]);
     }
 }

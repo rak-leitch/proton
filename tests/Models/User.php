@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Adepta\Proton\Tests\Models\Project;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Adepta\Proton\Tests\Models\User
+ * 
+ * @property string $name
+ * @property bool $is_admin
+ */
 class User extends Authenticatable
 {
     use HasFactory;

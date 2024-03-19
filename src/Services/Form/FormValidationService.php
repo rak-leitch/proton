@@ -22,7 +22,9 @@ final class FormValidationService
     {
         $rules = [];
         
-        $validationFields = $entity->getFields($displayContext);
+        $validationFields = $entity->getFields(
+            displayContext: $displayContext
+        );
         
         foreach($validationFields as $field) {
             $validationString = $field->getValidation();

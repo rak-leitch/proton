@@ -4,9 +4,18 @@ namespace Adepta\Proton\Contracts\Field;
 
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface FieldContract
 {
+    /**
+     * Get the class name of a field for
+     * comparision.
+     * 
+     * @return string
+     */
+    public function getClass() : string;
+    
     /**
      * Static convenience method to create and return 
      * an instance of a field.
@@ -25,6 +34,13 @@ interface FieldContract
     public function sortable() : self;
     
     /**
+     * Set the field's name property.
+     * 
+     * @return self
+     */
+    public function name() : self;
+    
+    /**
      * Get the field's name.
      * 
      * @return string
@@ -39,11 +55,20 @@ interface FieldContract
     public function getSortable() : bool;
     
     /**
+     * Get whether the field is the name field.
+     * 
+     * @return bool
+     */
+    public function getIsNameField() : bool;
+    
+    /**
      * Get the field's frontend display type.
      * 
-     * @return string
+     * @param DisplayContext $displayContext
+     * 
+     * @return ?string
      */
-    public function getFrontendType() : string;
+    public function getFrontendType(DisplayContext $displayContext) : ?string;
     
     /**
      * Indicate whether this field is a primary key.
@@ -72,4 +97,45 @@ interface FieldContract
      * @return Collection<int, DisplayContext>
      */
     public function getDisplayContexts() : Collection;
+    
+    /**
+     * Get the field's related entity code.
+     * 
+     * @return string
+     */
+    public function getRelatedEntityCode() : string;
+    
+    /**
+     * Get the field's relation method name.
+     * 
+     * @param Model|class-string $model
+     * 
+     * @return string
+     */
+    public function getRelationMethod(Model|string $model) : string;
+    
+    /**
+     * Get the field's raw value.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getRawValue(Model $model) : string|int|float|null;
+    
+    /**
+     * Get the field's processed value for use by the frontend.
+     * 
+     * @param Model $model
+     * 
+     * @return string|int|float|null
+     */
+    public function getProcessedValue(Model $model) : string|int|float|null;
+    
+    /**
+     * Get the field's select options.
+     * 
+     * @return Collection<int, Model>
+     */
+    public function getSelectOptions() : Collection;
 }

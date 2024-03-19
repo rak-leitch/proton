@@ -10,7 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Adepta\Proton\Tests\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-
+/**
+ * Adepta\Proton\Tests\Models\Project
+ * 
+ * @property int $user_id
+ */
 class Project extends Model
 {
     use HasFactory;

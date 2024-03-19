@@ -5,7 +5,8 @@ namespace Adepta\Proton\Tests\Browser;
 use Laravel\Dusk\Browser;
 use Adepta\Proton\Tests\BrowserTestCase;
 use Adepta\Proton\Tests\Models\User;
-use Adepta\Proton\Tests\Browser\Utilities\Selector;
+use Adepta\Proton\Tests\Browser\Components\ListComponent;
+use Adepta\Proton\Tests\Browser\Components\FormComponent;
  
 class EntityCreateTest extends BrowserTestCase
 {
@@ -22,26 +23,46 @@ class EntityCreateTest extends BrowserTestCase
         $this->browse(function (Browser $browser) {
             $browser
                 ->loginAs(User::findOrFail(1))
-                //Go to project index page and click 'New Project'
                 ->visit(url('proton/entity/project/index'))
-                ->waitFor('@create-entity-button')
-                ->click('@create-entity-button')
-                //Wait for form to load and fill it in
-                ->waitFor('form.v-form')
-                ->type('@field-user_id', '1')
-                //Submit before required fields filled in
-                ->click('@form-submit')
-                ->waitFor('form.v-form .v-messages__message')
-                ->assertSeeIn('form.v-form .v-messages__message', 'The name field is required.')
-                ->type('@field-name', self::PROJECT_NAME)
-                ->type('@field-description', self::PROJECT_DESC)
-                ->type('@field-priority', 'urgent')
-                ->click('@form-submit')
-                //Check the new Project appears in the list
-                ->waitFor('.v-data-table tbody tr')
-                ->assertSeeIn(Selector::listCell(3, 3), self::PROJECT_NAME)
-                ->assertSeeIn(Selector::listCell(3, 4), self::PROJECT_DESC);
-                
+                ->within(new ListComponent('@list-project'), function (Browser $browser) {
+                    $browser->click('@create-entity-button');
+                })
+                ->within(new FormComponent(), function (Browser $browser) {
+                    $browser->click('@form-submit')
+                        ->assertFieldError('user_id', 'The user id field is required.')
+                        ->assertFieldError('name', 'The name field is required.')
+                        ->assertFieldError('priority', 'The priority field is required.')
+                        ->changeSelectField('user_id', 1)
+                        ->typeInField('name', self::PROJECT_NAME)
+                        ->typeInField('description', self::PROJECT_DESC)
+                        ->typeInField('priority', 'urgent')
+                        ->click('@form-submit');
+                })
+                ->within(new ListComponent('@list-project'), function (Browser $browser) {
+                    $browser->assertCellText(3, 3, self::PROJECT_NAME)
+                        ->assertCellText(3, 4, self::PROJECT_DESC);
+                });
+        });
+    }
+    
+    /**
+     * Check project dropdown is prefilled
+     * when creating a task from the project display.
+     *
+     * @return void
+    */
+    public function test_task_create_from_project_view(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $browser
+                ->loginAs(User::findOrFail(1))
+                ->visit(url('proton/entity/project/display/1'))
+                ->within(new ListComponent('@list-task'), function (Browser $browser) {
+                    $browser->click('@create-entity-button');
+                })
+                ->within(new FormComponent(), function (Browser $browser) {
+                    $browser->assertFieldValue('project_id', '1');
+                });
         });
     }
 }

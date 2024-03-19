@@ -7,6 +7,9 @@ use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Tests\Models\Task as TaskModel;
 use Adepta\Proton\Field\Id;
 use Adepta\Proton\Field\Text;
+use Adepta\Proton\Field\BelongsTo;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class TaskDefinition implements EntityDefinitionContract
 {
@@ -30,9 +33,16 @@ class TaskDefinition implements EntityDefinitionContract
             ->setCode('task')
             ->setModel(TaskModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(Text::create('project_id')->sortable()) //TODO: Needs to be a relationship type later
-            ->addField(Text::create('name')->sortable())
-            ->addField(Text::create('description'));
+            ->addField(BelongsTo::create('project')->setValidation('required'))
+            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
+            ->addField(Text::create('description'))
+            ->setQueryFilter(function(Builder $query) {
+                /** @var \Adepta\Proton\Tests\Models\User $user */
+                $user = Auth::user();
+                if(!$user->is_admin) {
+                    $query->whereRelation('project.user', 'id', $user->id);
+                }
+            });
             
         return $this->entityConfig;
     }

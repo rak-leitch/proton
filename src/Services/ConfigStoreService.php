@@ -8,9 +8,9 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 final class ConfigStoreService implements ConfigStoreContract
 {
     /**
-     * @var array<string, string>|null  
+     * @var array<string, class-string> 
     */
-    private ?array $definitionClasses;
+    private array $definitionClasses;
     
     /**
      * Constructor
@@ -19,8 +19,7 @@ final class ConfigStoreService implements ConfigStoreContract
     */
     public function __construct()
     {
-        /** @phpstan-ignore-next-line  */
-        $this->definitionClasses = config('proton.definition_classes');
+        $this->readDefinitionConfig();
     }
 
     /**
@@ -35,14 +34,39 @@ final class ConfigStoreService implements ConfigStoreContract
     */
     public function getDefinitionClass(string $entityCode) : string
     {
-        if($this->definitionClasses === null) {
-            throw new ConfigurationException('Failed to find Proton config');
-        }
-        
         if(empty($this->definitionClasses[$entityCode])) {
             throw new ConfigurationException("No entity definition class found for {$entityCode}");
         }
         
         return $this->definitionClasses[$entityCode];
+    }
+    
+    /**
+     * Read and do some basic verification on the 
+     * entity definition config.
+     * 
+     * @throws ConfigurationException
+     *
+     * @return void
+    */
+    private function readDefinitionConfig()
+    {
+        $definitionConfig = config('proton.definition_classes');
+        
+        if(is_array($definitionConfig)) {
+            foreach($definitionConfig as $code => $class) {
+                if(is_string($code)) {
+                    if(class_exists($class)) {
+                        $this->definitionClasses[$code] = $class;
+                    } else {
+                        throw new ConfigurationException("Entity definition class {$class} does not exist.");
+                    }
+                } else {
+                    throw new ConfigurationException("Entity definition code {$code} must be a string.");
+                }
+            } 
+        } else {
+            throw new ConfigurationException('Entity definition config must be an array');
+        }
     }
 }

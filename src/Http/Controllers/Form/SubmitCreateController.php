@@ -41,7 +41,14 @@ final class SubmitCreateController extends BaseController
         $entity = $this->entityFactory->create($entityCode);
         $model = $this->formModelFactory->getCreateModel($entity, $request->user());
         $validatedData = $request->validate($this->formValidationService->getRules(DisplayContext::CREATE, $entity));
-        $this->formSubmitService->submit(DisplayContext::CREATE, $entity, $model, $validatedData);
+        
+        $this->formSubmitService->submit(
+            $request->user(), 
+            DisplayContext::CREATE, 
+            $entity, 
+            $model, 
+            $validatedData
+        );
         
         return response()->json([]);
     }

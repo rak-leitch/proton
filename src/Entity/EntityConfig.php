@@ -6,15 +6,19 @@ use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Adepta\Proton\Exceptions\ConfigurationException;
+use Closure;
 
 final class EntityConfig implements EntityConfigContract
 {
-    private string $code;
+    private ?string $code;
+    private Closure $queryFilter;
     
     /**
-     * @var class-string<Model>
+     * @var ?class-string<Model>
      */
-    private string $model;
+    private ?string $model;
     
     /**
      * @var Collection<int, FieldContract> $fieldCollection
@@ -26,9 +30,8 @@ final class EntityConfig implements EntityConfigContract
     */
     public function __construct()
     {
-        $this->code = '';
-        $this->model = Model::class;
         $this->fieldCollection = collect();
+        $this->queryFilter = function(Builder $query) { };
     }
     
     /**
@@ -53,6 +56,10 @@ final class EntityConfig implements EntityConfigContract
      */
     public function getCode() : string
     {
+        if($this->code === null) {
+            throw new ConfigurationException('No entity code configured'); 
+        }
+        
         return $this->code;
     }
     
@@ -78,6 +85,10 @@ final class EntityConfig implements EntityConfigContract
      */
     public function getModel() : string
     {
+        if($this->model === null) {
+            throw new ConfigurationException('No model class name configured'); 
+        }
+        
         return $this->model;
     }
     
@@ -102,5 +113,27 @@ final class EntityConfig implements EntityConfigContract
     public function getFields() : Collection
     {
         return $this->fieldCollection;
+    }
+    
+    /**
+     * Set the query filter function
+     * 
+     * @param Closure $filter
+     * 
+     * @return void
+     */
+    public function setQueryFilter(Closure $filter) : void
+    {
+        $this->queryFilter = $filter;
+    }
+    
+    /**
+     * Get the query filter function
+     * 
+     * @return Closure
+     */
+    public function getQueryFilter() : Closure
+    {
+        return $this->queryFilter;
     }
 }

@@ -5,6 +5,7 @@ namespace Adepta\Proton\Tests\Feature;
 use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
+use Adepta\Proton\Tests\Models\Project;
 
 class ListTest extends TestCase
 {
@@ -32,7 +33,7 @@ class ListTest extends TestCase
             )->has('fields.1', fn (AssertableJson $json) =>
                 $json->where('title', 'user_id')
                      ->where('key', 'user_id')
-                     ->where('sortable', true)
+                     ->where('sortable', false)
             )->has('fields.2', fn (AssertableJson $json) =>
                 $json->where('title', 'name')
                      ->where('key', 'name')
@@ -48,7 +49,8 @@ class ListTest extends TestCase
             )->where('primary_key', 'id')
             ->where('can_create', true)
             ->where('entity_label', 'Project')
-            ->etc()
+            ->has('version')
+            ->has('page_size_options')
         );
     }
     
@@ -58,15 +60,18 @@ class ListTest extends TestCase
      * @return void
     */
     public function test_list_data_endpoint() : void
-    {        
-        $this->actingAs(User::findOrFail(1));
+    { 
+        $user = User::findOrFail(1);
+        $this->actingAs($user);
         
-        $response = $this->get(route('proton.data.list', [
+        $response = $this->call('GET', route('proton.data.list', [
             'entity_code' => 'project',
             'page' => 1,
             'items_per_page' => 5,
-            'sort_by' => 'null',
-        ]));
+        ]), [
+            'sortField' => 'id',
+            'sortOrder' => 'desc'
+        ]);
          
         $response->assertStatus(200);
         
@@ -74,17 +79,17 @@ class ListTest extends TestCase
             $json->where('totalRows', 2)
             ->has('data', 2)
             ->has('data.0', fn (AssertableJson $json) =>
-                $json->where('id', 1)
-                     ->where('user_id', 1)
-                     ->where('name', 'Do it yourself')
-                     ->where('description', 'All the DIY jobs that need to be done.')
+                $json->where('id', 2)
+                     ->where('user_id', $user->name)
+                     ->where('name', 'Fun')
+                     ->where('description', 'Non-boring things to do.')
                      ->where('priority', 'normal')
             )
             ->has('data.1', fn (AssertableJson $json) =>
-                $json->where('id', 2)
-                     ->where('user_id', 1)
-                     ->where('name', 'Fun')
-                     ->where('description', 'Non-boring things to do.')
+                $json->where('id', 1)
+                     ->where('user_id', $user->name)
+                     ->where('name', 'Do it yourself')
+                     ->where('description', 'All the DIY jobs that need to be done.')
                      ->where('priority', 'normal')
             )
             ->has('permissions', 2)
@@ -102,6 +107,43 @@ class ListTest extends TestCase
     }
     
     /**
+     * Check the list data fetch endpoint when a context
+     * has been applied.
+     *
+     * @return void
+    */
+    public function test_filtered_list_data_endpoint() : void
+    { 
+        $user = User::findOrFail(1);
+        $this->actingAs($user);
+        
+        $response = $this->call('GET', route('proton.data.list', [
+            'entity_code' => 'task',
+            'page' => 1,
+            'items_per_page' => 5,
+        ]), [
+            'contextCode' => 'project',
+            'contextId' => '1',
+        ]);
+         
+        $response->assertStatus(200);
+        
+        $response->assertJson(fn (AssertableJson $json) =>
+            $json->where('totalRows', 2)
+            ->has('data', 2)
+            ->has('data.0', fn (AssertableJson $json) =>
+                $json->where('id', 1)
+                    ->etc()
+            )
+            ->has('data.1', fn (AssertableJson $json) =>
+                $json->where('id', 2)
+                    ->etc()
+            )
+            ->etc()
+        );
+    }
+    
+    /**
      * Check the list configuration endpoint with a 
      * user that does not have permission.
      *
@@ -109,7 +151,7 @@ class ListTest extends TestCase
     */
     public function test_unauthed_list_config_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.config.list', [
             'entity_code' => 'project'
@@ -125,7 +167,7 @@ class ListTest extends TestCase
     */
     public function test_unauthed_list_data_endpoint() : void
     {        
-        $this->actingAs(User::findOrFail(2));
+        $this->actingAs(User::findOrFail(3));
         
         $response = $this->get(route('proton.data.list', [
             'entity_code' => 'project',

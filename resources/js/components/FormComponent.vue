@@ -1,11 +1,12 @@
 <script setup>
     import { ref } from "vue";
     import { request } from "../utilities/request";
-    import { useRouter } from "vue-router";
+    import { useRouter, useRoute } from "vue-router";
 
     const configData = ref({});
     const formData = ref({});
     const router = useRouter();
+    const route = useRoute();
     const currentError = ref("");
     const submitInProgress = ref(false);
     const errorMessages = ref({});
@@ -20,6 +21,7 @@
             const { json } = await request(props.settings.configPath, getRequestParams());
             configData.value = json.config;
             formData.value = json.data;
+            selectRelatedField();
         } catch (error) {
             currentError.value = `Failed to get form config: ${error.message}`;
         }
@@ -28,10 +30,10 @@
     async function submitForm() {
         try {
             submitInProgress.value = true;
-            const { json, status } = await request(props.settings.submitPath, getRequestParams(), formData.value);
+            const { json, status } = await request(props.settings.submitPath, getRequestParams(), {}, formData.value);
             errorMessages.value = json.errors ? json.errors : {};
             if(status === successStatus) {
-                router.push(props.settings.successRoute);
+                router.push(router.options.history.state['back']);
             }
         } catch (error) {
             currentError.value = `Failed to submit form: ${error.message}`;
@@ -58,6 +60,16 @@
         return requestParams;
     }
     
+    function selectRelatedField() {
+        const contextCode = route.query.contextCode;
+        const contextId = route.query.contextId;
+        
+        if(contextCode && contextId) {
+            const contextField = configData.value.fields.find(field => field.related_entity_code === contextCode);
+            formData.value[contextField.key] = parseInt(contextId);
+        }
+    }
+    
     await getConfig();
 
 </script>
@@ -72,10 +84,10 @@
     </v-alert>
     <v-form @submit.prevent="submitForm">
         <template v-for="(field) in configData.fields">
-            <v-text-field v-if="field.frontend_type='text'"
+            <v-text-field v-if="field.frontend_type==='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
-                v-bind:dusk="`field-${field.key}`"
+                :class="`field-${field.key}`"
             >
                 <template v-slot:label>
                     <span>
@@ -84,14 +96,26 @@
                     </span>
                 </template>
             </v-text-field>
+            <v-select v-if="field.frontend_type==='select'"
+                v-model="formData[field.key]"
+                :error-messages="getErrorMessage(field.key)"
+                :class="`field-${field.key}`"
+                :items="field.select_options"
+            >
+                <template v-slot:label>
+                    <span>
+                        {{ field.title }} 
+                        <span v-if="field.required" class="text-red">*</span>
+                    </span>
+                </template>
+            </v-select>
         </template>
         <v-btn
             :loading="submitInProgress"
             type="submit"
             block
-            class="mt-2"
+            class="mt-2 form-submit"
             text="Submit"
-            dusk="form-submit"
         ></v-btn>
     </v-form>
 </template>

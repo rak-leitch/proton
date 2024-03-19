@@ -20,13 +20,7 @@
                 entityCode: configData.value.entity_code,
                 entityId: configData.value.entity_id,
                 configPath: "config/form-update",
-                submitPath: "submit/form-update",
-                successRoute: {
-                    name: 'entity-index',
-                    params: { 
-                        entityCode: configData.value.entity_code,
-                    }  
-                }
+                submitPath: "submit/form-update"
             };
         } catch (error) {
             currentError.value = error.message;

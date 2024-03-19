@@ -3,13 +3,23 @@
 namespace Adepta\Proton\Services\Auth;
 
 use Adepta\Proton\Exceptions\AuthorisationException;
-
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Services\EntityFactory;
 
 final class AuthorisationService
 {
+    /**
+     * Constructor.
+     * 
+     * @param EntityFactory $entityFactory
+    */
+    public function __construct(
+        private EntityFactory $entityFactory,
+    ) { }
+    
     /**
      * Check if a user can view an entity type.
      * 
@@ -105,6 +115,40 @@ final class AuthorisationService
     }
     
     /**
+     * Check if a user can add an entity
+     * to its parent (BelongsTo).
+     * 
+     * @param ?User $user 
+     * @param Entity $entity
+     * @param FieldContract $field 
+     * @param string|int|float|null $fieldValue
+     * @param bool $throwException = false
+     *
+     * @return bool
+    */
+    public function canAdd(
+        ?User $user, 
+        Entity $entity,
+        FieldContract $field, 
+        string|int|float|null $fieldValue,
+        bool $throwException = false
+    ) : bool 
+    {
+        $allowed = false;
+
+        if($fieldValue === null) {
+            $allowed = true;
+        } else {
+            $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
+            $parentModel = $parentEntity->getLoadedModel($fieldValue);
+            $policyName = 'add'.$entity->getStudlyCode();
+            $allowed = $this->allowed($policyName, $user, $parentModel, $throwException);
+        }
+        
+        return $allowed;
+    }
+    
+    /**
      * Check if a user is allowed to perform an action
      * on a particular entity.
      * 
@@ -130,7 +174,7 @@ final class AuthorisationService
             $allowed = false;
             
             if($throwException) {
-                throw new AuthorisationException("You do not have permission to {$action} for this entity type.");
+                throw new AuthorisationException("You do not have permission to {$action}.");
             }
         }
         

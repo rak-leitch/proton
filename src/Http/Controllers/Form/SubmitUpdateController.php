@@ -42,7 +42,14 @@ final class SubmitUpdateController extends BaseController
         $entity = $this->entityFactory->create($entityCode);
         $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());
         $validatedData = $request->validate($this->formValidationService->getRules(DisplayContext::UPDATE, $entity));
-        $this->formSubmitService->submit(DisplayContext::UPDATE, $entity, $model, $validatedData);
+        
+        $this->formSubmitService->submit(
+            $request->user(),
+            DisplayContext::UPDATE, 
+            $entity, 
+            $model, 
+            $validatedData
+        );
         
         return response()->json([]);
     }

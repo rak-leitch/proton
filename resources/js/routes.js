@@ -1,7 +1,7 @@
 import EntityIndexView from "./views/EntityIndexView.vue";
 import EntityCreateView from "./views/EntityCreateView.vue";
 import EntityUpdateView from "./views/EntityUpdateView.vue";
-import EntityViewView from "./views/EntityViewView.vue";
+import EntityDisplayView from "./views/EntityDisplayView.vue";
 
 export default 
 [
@@ -21,9 +21,9 @@ export default
                 name: "entity-update",
                 component: EntityUpdateView
             }, {
-                path: "entity/:entityCode/view",
+                path: "entity/:entityCode/display/:entityId",
                 name: "entity-view",
-                component: EntityViewView
+                component: EntityDisplayView
             }
         ]
     }
