@@ -5,7 +5,6 @@ namespace Adepta\Proton\Services\Display;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Contracts\Field\FieldContract;
 use ReflectionClass;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;

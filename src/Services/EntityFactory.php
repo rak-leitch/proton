@@ -7,6 +7,7 @@ use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Entity\EntityDefinition;
 use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Exceptions\ConfigurationException;
+use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use \ReflectionClass;
 
 final class EntityFactory
@@ -44,9 +45,13 @@ final class EntityFactory
         }
         
         $entityDefinition = app()->make($defintionClass);
-        $entityConfig = $entityDefinition->getEntityConfig();
-        $entity = app()->make(Entity::class);
-        $entity->initialise($entityConfig);
+        $entityConfig = app()->make(EntityConfigContract::class);
+        $entityConfig = $entityDefinition->getEntityConfig($entityConfig);
+        $entity = app()->make(Entity::class, [
+            'entityCode' => $entityCode,
+            'entityConfig' => $entityConfig,
+        ]);
+        
         return $entity;
     }
 }

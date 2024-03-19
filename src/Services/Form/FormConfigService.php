@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\Form;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\Field;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 
@@ -85,11 +85,11 @@ final class FormConfigService
      * at the moment; it does not evaluate rules like required_if 
      * etc
      *
-     * @param FieldContract $field
+     * @param Field $field
      * 
      * @return bool
     */
-    public function fieldRequired(FieldContract $field) : bool
+    public function fieldRequired(Field $field) : bool
     {
         return (mb_strstr($field->getValidation(), 'required') === false) ? false : true; 
     }

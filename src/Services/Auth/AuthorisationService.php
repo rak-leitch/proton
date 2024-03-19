@@ -6,7 +6,7 @@ use Adepta\Proton\Exceptions\AuthorisationException;
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
-use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\Field;
 use Adepta\Proton\Services\EntityFactory;
 
 final class AuthorisationService
@@ -120,7 +120,7 @@ final class AuthorisationService
      * 
      * @param ?User $user 
      * @param Entity $entity
-     * @param FieldContract $field 
+     * @param Field $field 
      * @param string|int|float|null $fieldValue
      * @param bool $throwException = false
      *
@@ -129,7 +129,7 @@ final class AuthorisationService
     public function canAdd(
         ?User $user, 
         Entity $entity,
-        FieldContract $field, 
+        Field $field, 
         string|int|float|null $fieldValue,
         bool $throwException = false
     ) : bool 

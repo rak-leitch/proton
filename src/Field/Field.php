@@ -1,41 +1,24 @@
 <?php declare(strict_types = 1);
 
 namespace Adepta\Proton\Field;
-use Adepta\Proton\Contracts\Field\FieldContract;
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Exceptions\ConfigurationException;
+use Adepta\Proton\Contracts\Field\FieldConfigContract;
 
-abstract class Field implements FieldContract
+abstract class Field
 {
-    protected string $fieldName;
-    protected bool $sortable;
-    protected bool $nameField;
-    protected string $validation;
-    
-    /**
-     * @var Collection<int, DisplayContext> $displayContexts
-     */
-    protected Collection $displayContexts;
-    
     /**
      * Constructor
-     *
-     * @param string $fieldName 
      * 
-     * @return void
+     * @param FieldConfigContract $fieldConfig
+     * 
+     * @return string
      */
-    final public function __construct(string $fieldName)
-    {
-        $this->fieldName = $fieldName;
-        $this->sortable = false;
-        $this->nameField = false;
-        $this->validation = '';
-        
-        $this->setInitialDisplayContexts();
-    }
+    public function __construct(
+        protected FieldConfigContract $fieldConfig
+    ) { }
     
     /**
      * Get the class name of a field for
@@ -49,56 +32,13 @@ abstract class Field implements FieldContract
     }
     
     /**
-     * Set initial display contexts for each field 
-     * type. 
-     * 
-     * @return void
-     */
-    abstract protected function setInitialDisplayContexts() : void;
-    
-    /**
-     * Static convenience method to create and return 
-     * an instance of a field.
-     *
-     * @param string $fieldName 
-     * 
-     * @return self
-     */
-    public static function create(string $fieldName) : self
-    {
-        return new static($fieldName);
-    }
-    
-    /**
-     * Set the field's sortable property.
-     * 
-     * @return self
-     */
-    public function sortable() : self
-    {
-        $this->sortable = true;
-        return $this;
-    }
-    
-    /**
-     * Set the field's name property.
-     * 
-     * @return self
-     */
-    public function name() : self
-    {
-        $this->nameField = true;
-        return $this;
-    }
-    
-    /**
      * Get the field's name.
      * 
      * @return string
      */
     public function getFieldName() : string
     {
-        return $this->fieldName;
+        return $this->fieldConfig->getFieldName();
     }
     
     /**
@@ -108,7 +48,7 @@ abstract class Field implements FieldContract
      */
     public function getSortable() : bool
     {
-        return $this->sortable;
+        return $this->fieldConfig->getSortable();
     }
     
     /**
@@ -118,7 +58,7 @@ abstract class Field implements FieldContract
      */
     public function getIsNameField() : bool
     {
-        return $this->nameField;
+        return $this->fieldConfig->getIsNameField();
     }
     
     /**
@@ -141,24 +81,13 @@ abstract class Field implements FieldContract
     }
     
     /**
-     * Set validation for this field
-     * 
-     * @return self
-     */
-    public function setValidation(string $validation) : self
-    {
-        $this->validation = $validation;
-        return $this;
-    }
-    
-    /**
      * Get validation for this field
      * 
      * @return string
      */
     public function getValidation() : string
     {
-        return $this->validation;
+        return $this->fieldConfig->getValidation();
     }
     
     /**
@@ -168,7 +97,7 @@ abstract class Field implements FieldContract
      */
     public function getDisplayContexts() : Collection
     {
-        return $this->displayContexts;
+        return $this->fieldConfig->getDisplayContexts();
     }
     
     /**

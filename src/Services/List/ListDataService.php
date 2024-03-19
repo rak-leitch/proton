@@ -13,7 +13,6 @@ use Adepta\Proton\Exceptions\RequestException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Foundation\Auth\User;
-use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use StdClass;

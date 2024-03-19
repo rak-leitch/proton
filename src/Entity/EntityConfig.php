@@ -3,7 +3,7 @@
 namespace Adepta\Proton\Entity;
 
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
-use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Contracts\Field\FieldConfigContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -12,7 +12,6 @@ use Closure;
 
 final class EntityConfig implements EntityConfigContract
 {
-    private ?string $code;
     private Closure $queryFilter;
     
     /**
@@ -21,7 +20,7 @@ final class EntityConfig implements EntityConfigContract
     private ?string $model;
     
     /**
-     * @var Collection<int, FieldContract> $fieldCollection
+     * @var Collection<int, FieldConfigContract> $fieldCollection
      */
     private Collection $fieldCollection;
     
@@ -32,35 +31,6 @@ final class EntityConfig implements EntityConfigContract
     {
         $this->fieldCollection = collect();
         $this->queryFilter = function(Builder $query) { };
-    }
-    
-    /**
-     * Set the entity code that matches a code 
-     * defined in the Proton config.
-     *
-     * @param string $code 
-     * 
-     * @return self
-     */
-    public function setCode(string $code) : self
-    {
-        $this->code = $code;
-        return $this;
-    }
-    
-    /**
-     * Get the entity code that matches a code 
-     * defined in the Proton config. 
-     * 
-     * @return string
-     */
-    public function getCode() : string
-    {
-        if($this->code === null) {
-            throw new ConfigurationException('No entity code configured'); 
-        }
-        
-        return $this->code;
     }
     
     /**
@@ -95,11 +65,11 @@ final class EntityConfig implements EntityConfigContract
     /**
      * Add a field to the configuration
      *
-     * @param FieldContract $field 
+     * @param FieldConfigContract $field 
      * 
      * @return self
      */
-    public function addField(FieldContract $field) : self
+    public function addField(FieldConfigContract $field) : self
     {
         $this->fieldCollection->push($field);
         return $this;
@@ -108,7 +78,7 @@ final class EntityConfig implements EntityConfigContract
     /**
      * Get the fields collection
      * 
-     * @return Collection<int, FieldContract>
+     * @return Collection<int, FieldConfigContract>
      */
     public function getFields() : Collection
     {

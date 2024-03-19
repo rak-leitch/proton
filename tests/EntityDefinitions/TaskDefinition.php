@@ -5,32 +5,24 @@ namespace Adepta\Proton\Tests\EntityDefinitions;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Tests\Models\Task as TaskModel;
-use Adepta\Proton\Field\Id;
-use Adepta\Proton\Field\Text;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Field\Config\Id;
+use Adepta\Proton\Field\Config\Text;
+use Adepta\Proton\Field\Config\BelongsTo;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class TaskDefinition implements EntityDefinitionContract
 {
     /**
-     * Constructor
+     * Define and return the entity's configuration.
      * 
      * @param EntityConfigContract $entityConfig
-    */
-    public function __construct(
-        private EntityConfigContract $entityConfig
-    ) { }
-    
-    /**
-     * Define and return the entity's configuration.
      * 
      * @return EntityConfigContract $entityConfig
     */
-    public function getEntityConfig() : EntityConfigContract
+    public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract
     {
-        $this->entityConfig
-            ->setCode('task')
+        $entityConfig
             ->setModel(TaskModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(BelongsTo::create('project')->setValidation('required'))
@@ -44,6 +36,6 @@ class TaskDefinition implements EntityDefinitionContract
                 }
             });
             
-        return $this->entityConfig;
+        return $entityConfig;
     }
 }

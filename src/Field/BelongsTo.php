@@ -2,16 +2,33 @@
 
 namespace Adepta\Proton\Field;
 
+use Adepta\Proton\Field\Field;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Traits\ChecksRelationExistence;
 use Illuminate\Support\Str;
 use Adepta\Proton\Services\EntityFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Adepta\Proton\Contracts\Field\FieldConfigContract;
 
 final class BelongsTo extends Field
 {    
     use ChecksRelationExistence;
+    
+    /**
+     * Constructor
+     * 
+     * @param FieldConfigContract $fieldConfig
+     * @param EntityFactory $entityFactory
+     * 
+     * @return string
+     */
+    public function __construct(
+        FieldConfigContract $fieldConfig,
+        protected EntityFactory $entityFactory,
+    ) { 
+        parent::__construct($fieldConfig);    
+    }
     
     /**
      * Get the field's frontend display type.
@@ -26,22 +43,6 @@ final class BelongsTo extends Field
     }
     
     /**
-     * Set initial display contexts for this field
-     * type.
-     * 
-     * @return void
-     */
-    protected function setInitialDisplayContexts() : void
-    {
-        $this->displayContexts = collect([
-            DisplayContext::CREATE,
-            DisplayContext::UPDATE,
-            DisplayContext::VIEW,
-            DisplayContext::INDEX,
-        ]);
-    }
-    
-    /**
      * Get the field's name. Guess this from the 
      * entity code provided.
      * 
@@ -49,7 +50,7 @@ final class BelongsTo extends Field
      */
     public function getFieldName() : string
     {
-        return $this->fieldName.'_id';
+        return $this->fieldConfig->getFieldName().'_id';
     }
     
     /**
@@ -61,8 +62,7 @@ final class BelongsTo extends Field
      */
     public function getProcessedValue(Model $model) : string|int|float|null
     {
-        $entityFactory = app()->make(EntityFactory::class);
-        $parentEntity = $entityFactory->create($this->getRelatedEntityCode());
+        $parentEntity = $this->entityFactory->create($this->getRelatedEntityCode());
         $parentNameField = $parentEntity->getNameField();
         $relationName = $this->getRelationMethod($model);
         $relation = $model->{$relationName};
@@ -78,7 +78,7 @@ final class BelongsTo extends Field
      */
     public function getRelationMethod(Model|string $model) : string
     {
-        $relationMethod = Str::camel($this->fieldName);
+        $relationMethod = Str::camel($this->fieldConfig->getFieldName());
         $this->checkModelRelation($model, $relationMethod);
         return $relationMethod;
     }
@@ -90,7 +90,7 @@ final class BelongsTo extends Field
      */
     public function getRelatedEntityCode() : string
     {
-        return $this->fieldName;
+        return $this->fieldConfig->getFieldName();
     }
     
     /**
@@ -100,8 +100,7 @@ final class BelongsTo extends Field
      */
     public function getSelectOptions() : Collection
     {
-        $entityFactory = app()->make(EntityFactory::class);
-        $parentEntity = $entityFactory->create($this->getRelatedEntityCode());
+        $parentEntity = $this->entityFactory->create($this->getRelatedEntityCode());
         $keyField = $parentEntity->getPrimaryKeyField()->getFieldname();
         $nameField = $parentEntity->getNameField()->getFieldname();
         $modelClass = $parentEntity->getModel();

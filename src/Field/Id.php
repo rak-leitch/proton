@@ -2,6 +2,7 @@
 
 namespace Adepta\Proton\Field;
 
+use Adepta\Proton\Field\Field;
 use Adepta\Proton\Field\DisplayContext;
 
 final class Id extends Field
@@ -26,19 +27,5 @@ final class Id extends Field
     public function isPrimaryKey() : bool
     {
         return true;
-    }
-    
-    /**
-     * Set initial display contexts for this field
-     * type.
-     * 
-     * @return void
-     */
-    protected function setInitialDisplayContexts() : void
-    {
-        $this->displayContexts = collect([
-            DisplayContext::VIEW,
-            DisplayContext::INDEX,
-        ]);
     }
 }

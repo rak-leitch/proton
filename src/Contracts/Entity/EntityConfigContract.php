@@ -2,31 +2,13 @@
 
 namespace Adepta\Proton\Contracts\Entity;
 
-use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Contracts\Field\FieldConfigContract;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Closure;
 
 interface EntityConfigContract
-{
-    /**
-     * Set the entity code that matches a code 
-     * defined in the Proton config.
-     *
-     * @param string $code 
-     * 
-     * @return self
-     */
-    public function setCode(string $code) : self;
-    
-    /**
-     * Get the entity code that matches a code 
-     * defined in the Proton config. 
-     * 
-     * @return string
-     */
-    public function getCode() : string;
-    
+{    
     /**
      * Set the model associated with this entity
      * configuration.
@@ -48,16 +30,16 @@ interface EntityConfigContract
     /**
      * Add a field to the configuration
      *
-     * @param FieldContract $field 
+     * @param FieldConfigContract $field 
      * 
      * @return self
      */
-    public function addField(FieldContract $field) : self;
+    public function addField(FieldConfigContract $field) : self;
     
     /**
      * Get the fields collection
      * 
-     * @return Collection<int, FieldContract>
+     * @return Collection<int, FieldConfigContract>
      */
     public function getFields() : Collection;
     

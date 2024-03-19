@@ -2,6 +2,7 @@
 
 namespace Adepta\Proton\Field;
 
+use Adepta\Proton\Field\Field;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Traits\ChecksRelationExistence;
 use Illuminate\Support\Str;
@@ -24,19 +25,6 @@ final class HasMany extends Field
     }
     
     /**
-     * Set initial display contexts for this field
-     * type.
-     * 
-     * @return void
-     */
-    protected function setInitialDisplayContexts() : void
-    {
-        $this->displayContexts = collect([
-            DisplayContext::VIEW,
-        ]);
-    }
-    
-    /**
      * Get the field's relation method name.
      * 
      * @param Model|class-string $model
@@ -45,7 +33,7 @@ final class HasMany extends Field
      */
     public function getRelationMethod(Model|string $model) : string 
     {
-        $relationMethod = Str::camel(str::plural($this->fieldName));
+        $relationMethod = Str::camel(str::plural($this->fieldConfig->getFieldName()));
         $this->checkModelRelation($model, $relationMethod);
         return $relationMethod;
     }
@@ -57,6 +45,6 @@ final class HasMany extends Field
      */
     public function getRelatedEntityCode() : string
     {
-        return $this->fieldName;
+        return $this->fieldConfig->getFieldName();
     }
 }
