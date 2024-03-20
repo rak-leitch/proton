@@ -4,17 +4,17 @@ namespace Adepta\Proton\Field\Config;
 
 use Adepta\Proton\Field\Config\FieldConfig;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Field\BelongsTo as BelongsToField;
+use Adepta\Proton\Field\Internal\BelongsTo as BelongsToField;
 
 final class BelongsTo extends FieldConfig
 {
     /**
-     * Indication of the field class this config 
+     * Indication of the internal field class this config 
      * object corresponds to
      * 
      * @return class-string
      */
-    public static function getFieldClass() : string
+    public function getInternalFieldClass() : string
     {
         return BelongsToField::class;
     }

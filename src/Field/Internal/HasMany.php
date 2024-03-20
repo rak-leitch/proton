@@ -1,8 +1,8 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Field;
+namespace Adepta\Proton\Field\Internal;
 
-use Adepta\Proton\Field\Field;
+use Adepta\Proton\Field\Internal\Field;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Traits\ChecksRelationExistence;
 use Illuminate\Support\Str;

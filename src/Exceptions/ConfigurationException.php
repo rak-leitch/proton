@@ -4,9 +4,9 @@ namespace Adepta\Proton\Exceptions;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use \Exception;
+use Exception;
 
-class ConfigurationException extends Exception
+final class ConfigurationException extends Exception
 {
     /**
      * Custom JSON response for frontend

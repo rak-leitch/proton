@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\Form;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Field\Field;
+use Adepta\Proton\Field\Internal\Field;
 use Adepta\Proton\Field\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 
@@ -37,7 +37,7 @@ final class FormConfigService
         foreach($fields as $field) {
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
-            $fieldConfig['title'] = $fieldName;
+            $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $fieldName;
             $fieldConfig['related_entity_code'] = $field->getRelatedEntityCode();
             $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);

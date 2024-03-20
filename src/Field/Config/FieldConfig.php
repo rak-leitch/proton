@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 abstract class FieldConfig implements FieldConfigContract
 {
     protected string $fieldName;
+    protected ?string $title;
     protected bool $sortable;
     protected bool $nameField;
     protected string $validation;
@@ -28,28 +29,13 @@ abstract class FieldConfig implements FieldConfigContract
     final public function __construct(string $fieldName)
     {
         $this->fieldName = $fieldName;
+        $this->title = null;
         $this->sortable = false;
         $this->nameField = false;
         $this->validation = '';
         
         $this->setInitialDisplayContexts();
     }
-    
-    /**
-     * Indication of the field class this config 
-     * object corresponds to
-     * 
-     * @return class-string
-     */
-    abstract public static function getFieldClass() : string;
-    
-    /**
-     * Set initial display contexts for each field 
-     * type. 
-     * 
-     * @return void
-     */
-    abstract protected function setInitialDisplayContexts() : void;
     
     /**
      * Static convenience method to create and return 
@@ -64,6 +50,19 @@ abstract class FieldConfig implements FieldConfigContract
         return app()->make(static::class, [
             'fieldName' => $fieldName
         ]);
+    }
+    
+    /**
+     * Set the field's title property.
+     * 
+     * @param string $title
+     * 
+     * @return self
+     */
+    public function title(string $title) : self
+    {
+        $this->title = $title;
+        return $this;
     }
     
     /**
@@ -93,7 +92,7 @@ abstract class FieldConfig implements FieldConfigContract
      * 
      * @return self
      */
-    public function setValidation(string $validation) : self
+    public function validation(string $validation) : self
     {
         $this->validation = $validation;
         return $this;
@@ -107,6 +106,16 @@ abstract class FieldConfig implements FieldConfigContract
     public function getFieldName() : string
     {
         return $this->fieldName;
+    }
+    
+    /**
+     * Get the field's title.
+     * 
+     * @return ?string
+     */
+    public function getTitle() : ?string
+    {
+        return $this->title;
     }
     
     /**
@@ -148,5 +157,21 @@ abstract class FieldConfig implements FieldConfigContract
     {
         return $this->displayContexts;
     }
+    
+    /**
+     * Indication of the internal field class this config 
+     * object corresponds to
+     * 
+     * @return class-string
+     */
+    abstract public function getInternalFieldClass() : string;
+    
+    /**
+     * Set initial display contexts for each field 
+     * type. 
+     * 
+     * @return void
+     */
+    abstract protected function setInitialDisplayContexts() : void;
     
 }

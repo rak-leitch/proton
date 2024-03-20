@@ -4,18 +4,16 @@ namespace Adepta\Proton\Entity;
 
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Illuminate\Support\Collection;
-use Adepta\Proton\Field\Field;
+use Adepta\Proton\Field\Internal\Field;
 use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
+use Adepta\Proton\Field\Internal\FieldFactory;
 use Closure;
 
 final class Entity
-{
-    private EntityConfigContract $entityConfig;
-    private string $entityCode;
-    
+{    
     /**
      * @var Collection<int, Field> $fieldCollection
      */
@@ -26,16 +24,16 @@ final class Entity
      * 
      * @param string $entityCode
      * @param EntityConfigContract $entityConfig
+     * @param FieldFactory $fieldFactory
      *
     */
     public function __construct(
-        string $entityCode,
-        EntityConfigContract $entityConfig
+        private string $entityCode,
+        private EntityConfigContract $entityConfig,
+        private FieldFactory $fieldFactory
     )
     {
         $this->fieldCollection = collect();
-        $this->entityCode = $entityCode;
-        $this->entityConfig = $entityConfig;
         $this->initialiseFields();
         $this->validateEntityCode();
         $this->validateModelClass();
@@ -53,12 +51,8 @@ final class Entity
      */
     private function initialiseFields() : void
     {
-        //TODO: Move this to a factory
         foreach($this->entityConfig->getFields() as $fieldConfig) {
-            $fieldClass = $fieldConfig->getFieldClass();
-            $field = app()->make($fieldClass, [
-                'fieldConfig' => $fieldConfig,
-            ]);
+            $field = $this->fieldFactory->create($fieldConfig);
             $this->fieldCollection->push($field);
         } 
     }

@@ -25,8 +25,8 @@ class TaskDefinition implements EntityDefinitionContract
         $entityConfig
             ->setModel(TaskModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(BelongsTo::create('project')->setValidation('required'))
-            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
+            ->addField(BelongsTo::create('project')->validation('required'))
+            ->addField(Text::create('name')->sortable()->validation('required')->name())
             ->addField(Text::create('description'))
             ->setQueryFilter(function(Builder $query) {
                 /** @var \Adepta\Proton\Tests\Models\User $user */

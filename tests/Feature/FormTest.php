@@ -268,7 +268,7 @@ class FormTest extends TestCase
     {
         $json->has('fields', 4)
             ->has('fields.0', fn (AssertableJson $json) =>
-                $json->where('title', 'user_id')
+                $json->where('title', 'User')
                     ->where('key', 'user_id')
                     ->where('related_entity_code', 'user')
                     ->where('frontend_type', 'select')
@@ -280,21 +280,21 @@ class FormTest extends TestCase
                              ->where('title', $user->name)
                     )
             )->has('fields.1', fn (AssertableJson $json) =>
-                $json->where('title', 'name')
+                $json->where('title', 'Name')
                     ->where('key', 'name')
                     ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')
                     ->where('required', true)
                     ->has('select_options', 0)
             )->has('fields.2', fn (AssertableJson $json) =>
-                $json->where('title', 'description')
+                $json->where('title', 'Project Description')
                     ->where('key', 'description')
                     ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')
                     ->where('required', false)
                     ->has('select_options', 0)
             )->has('fields.3', fn (AssertableJson $json) =>
-                $json->where('title', 'priority')
+                $json->where('title', 'Priority')
                     ->where('key', 'priority')
                     ->where('related_entity_code', '')
                     ->where('frontend_type', 'text')

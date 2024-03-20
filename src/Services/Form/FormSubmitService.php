@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Illuminate\Foundation\Auth\User;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Field\Internal\BelongsTo;
 
 final class FormSubmitService
 {    

@@ -44,10 +44,9 @@ final class ListConfigService
             ['value' => 20, 'title' => '20'],
         ];
         
-        //TODO: Need indication of view/index context here?
         foreach($entity->getFields(DisplayContext::INDEX) as $field) {
             $fieldConfig = [];
-            $fieldConfig['title'] = $field->getFieldName();
+            $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $field->getFieldName();
             $fieldConfig['sortable'] = $field->getSortable();
             $listConfig['fields'][] = $fieldConfig;

@@ -7,15 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 interface FieldConfigContract
-{    
-    /**
-     * Indication of the field class this config 
-     * object corresponds to
-     * 
-     * @return class-string
-     */
-    public static function getFieldClass() : string;
-    
+{        
     /**
      * Static convenience method to create and return 
      * an instance of a field.
@@ -25,6 +17,15 @@ interface FieldConfigContract
      * @return self
      */
     public static function create(string $fieldName) : self;
+    
+    /**
+     * Set the field's title property.
+     * 
+     * @param string $title
+     * 
+     * @return self
+     */
+    public function title(string $title) : self;
     
     /**
      * Set the field's sortable property.
@@ -45,7 +46,7 @@ interface FieldConfigContract
      * 
      * @return self
      */
-    public function setValidation(string $validation) : self;
+    public function validation(string $validation) : self;
     
     /**
      * Get the field's name.
@@ -53,6 +54,13 @@ interface FieldConfigContract
      * @return string
      */
     public function getFieldName() : string;
+    
+    /**
+     * Get the field's title.
+     * 
+     * @return ?string
+     */
+    public function getTitle() : ?string;
     
     /**
      * Get whether the field is sortable.
@@ -81,4 +89,12 @@ interface FieldConfigContract
      * @return Collection<int, DisplayContext>
      */
     public function getDisplayContexts() : Collection;
+    
+    /**
+     * Indication of the internal field class this config 
+     * object corresponds to
+     * 
+     * @return class-string
+     */
+    public function getInternalFieldClass() : string;
 }

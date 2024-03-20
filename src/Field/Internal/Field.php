@@ -1,11 +1,12 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Field;
+namespace Adepta\Proton\Field\Internal;
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Contracts\Field\FieldConfigContract;
+use Illuminate\Support\Str;
 
 abstract class Field
 {
@@ -42,6 +43,26 @@ abstract class Field
     }
     
     /**
+     * Get the field's title.
+     * 
+     * @return string
+     */
+    public function getTitle() : string
+    {
+        $title = null;
+        $configuredTitle = $this->fieldConfig->getTitle();
+        
+        if($configuredTitle) {
+            $title = $configuredTitle;
+        } else {
+            $fieldName = $this->fieldConfig->getFieldName();
+            $title = Str::of($fieldName)->replace('_', ' ')->title()->toString();
+        }
+        
+        return $title;
+    }
+    
+    /**
      * Get whether the field is sortable.
      * 
      * @return bool
@@ -62,25 +83,6 @@ abstract class Field
     }
     
     /**
-     * Get the field's frontend display type.
-     * 
-     * @param DisplayContext $displayContext
-     * 
-     * @return ?string
-     */
-    abstract public function getFrontendType(DisplayContext $displayContext) : ?string;
-    
-    /**
-     * Indicate whether this field is a primary key.
-     * 
-     * @return bool
-     */
-    public function isPrimaryKey() : bool
-    {
-        return false;
-    }
-    
-    /**
      * Get validation for this field
      * 
      * @return string
@@ -98,6 +100,25 @@ abstract class Field
     public function getDisplayContexts() : Collection
     {
         return $this->fieldConfig->getDisplayContexts();
+    }
+    
+    /**
+     * Get the field's frontend display type.
+     * 
+     * @param DisplayContext $displayContext
+     * 
+     * @return ?string
+     */
+    abstract public function getFrontendType(DisplayContext $displayContext) : ?string;
+    
+    /**
+     * Indicate whether this field is a primary key.
+     * 
+     * @return bool
+     */
+    public function isPrimaryKey() : bool
+    {
+        return false;
     }
     
     /**

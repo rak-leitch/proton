@@ -6,8 +6,8 @@ use Adepta\Proton\Exceptions\AuthorisationException;
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
-use Adepta\Proton\Field\Field;
-use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Field\Internal\Field;
+use Adepta\Proton\Entity\EntityFactory;
 
 final class AuthorisationService
 {

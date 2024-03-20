@@ -27,7 +27,7 @@ class UserDefinition implements EntityDefinitionContract
             ->setModel(UserModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(HasMany::create('project'))
-            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
+            ->addField(Text::create('name')->sortable()->validation('required')->name())
             ->setQueryFilter(function(Builder $query) {
                 /** @var UserModel $user */
                 $user = Auth::user();

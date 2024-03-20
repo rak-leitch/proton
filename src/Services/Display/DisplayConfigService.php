@@ -6,7 +6,7 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use ReflectionClass;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Field\Internal\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 
 final class DisplayConfigService
@@ -32,7 +32,7 @@ final class DisplayConfigService
         foreach($fields as $field) {
             $fieldConfig = [];
             $fieldName = $field->getFieldName();
-            $fieldConfig['title'] = $fieldName;
+            $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $fieldName;
             $fieldConfig['frontend_type'] = $field->getFrontendType(DisplayContext::VIEW);
             $fieldConfig['value'] = $field->getProcessedValue($model);

@@ -5,8 +5,8 @@ namespace Adepta\Proton\Services\ViewConfig;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Field\HasMany;
-use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Field\Internal\HasMany;
+use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Illuminate\Foundation\Auth\User;
 

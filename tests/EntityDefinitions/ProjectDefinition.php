@@ -26,11 +26,11 @@ class ProjectDefinition implements EntityDefinitionContract
         $entityConfig
             ->setModel(ProjectModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(BelongsTo::create('user')->setValidation('required'))
+            ->addField(BelongsTo::create('user')->validation('required'))
             ->addField(HasMany::create('task'))
-            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
-            ->addField(Text::create('description'))
-            ->addField(Text::create('priority')->sortable()->setValidation('required'))
+            ->addField(Text::create('name')->sortable()->validation('required')->name())
+            ->addField(Text::create('description')->title('Project Description'))
+            ->addField(Text::create('priority')->sortable()->validation('required'))
             ->setQueryFilter(function(Builder $query) {
                 /** @var \Adepta\Proton\Tests\Models\User $user */
                 $user = Auth::user();
