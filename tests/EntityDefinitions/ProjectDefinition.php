@@ -7,6 +7,7 @@ use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Tests\Models\Project as ProjectModel;
 use Adepta\Proton\Field\Config\Id;
 use Adepta\Proton\Field\Config\Text;
+use Adepta\Proton\Field\Config\TextArea;
 use Adepta\Proton\Field\Config\HasMany;
 use Adepta\Proton\Field\Config\BelongsTo;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -29,7 +30,7 @@ class ProjectDefinition implements EntityDefinitionContract
             ->addField(BelongsTo::create('user')->validation('required'))
             ->addField(HasMany::create('task'))
             ->addField(Text::create('name')->sortable()->validation('required')->name())
-            ->addField(Text::create('description')->title('Project Description'))
+            ->addField(TextArea::create('description')->title('Project Description'))
             ->addField(Text::create('priority')->sortable()->validation('required'))
             ->setQueryFilter(function(Builder $query) {
                 /** @var \Adepta\Proton\Tests\Models\User $user */

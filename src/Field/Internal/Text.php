@@ -4,6 +4,7 @@ namespace Adepta\Proton\Field\Internal;
 
 use Adepta\Proton\Field\Internal\Field;
 use Adepta\Proton\Field\DisplayContext;
+use Adepta\Proton\Field\FrontendType;
 
 final class Text extends Field
 {    
@@ -12,10 +13,10 @@ final class Text extends Field
      * 
      * @param DisplayContext $displayContext
      * 
-     * @return ?string
+     * @return FrontendType
      */
-    public function getFrontendType(DisplayContext $displayContext) : ?string
+    public function getFrontendType(DisplayContext $displayContext) : FrontendType
     {
-        return 'text';
+        return FrontendType::TEXT;
     }
 }

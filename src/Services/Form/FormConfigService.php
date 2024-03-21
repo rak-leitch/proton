@@ -40,7 +40,7 @@ final class FormConfigService
             $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $fieldName;
             $fieldConfig['related_entity_code'] = $field->getRelatedEntityCode();
-            $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext);
+            $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext)->value;
             $fieldConfig['required'] = $this->fieldRequired($field);
             $fieldConfig['select_options'] = $field->getSelectOptions();
             

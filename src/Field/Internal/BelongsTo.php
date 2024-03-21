@@ -10,6 +10,7 @@ use Adepta\Proton\Entity\EntityFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Adepta\Proton\Contracts\Field\FieldConfigContract;
+use Adepta\Proton\Field\FrontendType;
 
 final class BelongsTo extends Field
 {    
@@ -35,11 +36,11 @@ final class BelongsTo extends Field
      * 
      * @param DisplayContext $displayContext
      * 
-     * @return ?string
+     * @return FrontendType
      */
-    public function getFrontendType(DisplayContext $displayContext) : ?string
+    public function getFrontendType(DisplayContext $displayContext) : FrontendType
     {
-        return $displayContext->mutatingContext() ? 'select' : 'text';
+        return $displayContext->mutatingContext() ? FrontendType::SELECT : FrontendType::TEXT;
     }
     
     /**

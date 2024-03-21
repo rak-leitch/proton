@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Contracts\Field\FieldConfigContract;
 use Illuminate\Support\Str;
+use Adepta\Proton\Field\FrontendType;
 
 abstract class Field
 {
@@ -107,9 +108,9 @@ abstract class Field
      * 
      * @param DisplayContext $displayContext
      * 
-     * @return ?string
+     * @return FrontendType
      */
-    abstract public function getFrontendType(DisplayContext $displayContext) : ?string;
+    abstract public function getFrontendType(DisplayContext $displayContext) : FrontendType;
     
     /**
      * Indicate whether this field is a primary key.

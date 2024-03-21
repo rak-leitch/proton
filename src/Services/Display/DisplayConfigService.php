@@ -34,7 +34,7 @@ final class DisplayConfigService
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['frontend_type'] = $field->getFrontendType(DisplayContext::VIEW);
+            $fieldConfig['frontend_type'] = $field->getFrontendType(DisplayContext::VIEW)->value;
             $fieldConfig['value'] = $field->getProcessedValue($model);
             
             $displayConfig['fields'][] = $fieldConfig;

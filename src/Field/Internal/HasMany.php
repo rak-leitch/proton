@@ -7,6 +7,7 @@ use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Traits\ChecksRelationExistence;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Field\FrontendType;
 
 final class HasMany extends Field
 {    
@@ -17,11 +18,11 @@ final class HasMany extends Field
      * 
      * @param DisplayContext $displayContext
      * 
-     * @return ?string
+     * @return FrontendType
      */
-    public function getFrontendType(DisplayContext $displayContext) : ?string
+    public function getFrontendType(DisplayContext $displayContext) : FrontendType
     {
-        return null;
+        return FrontendType::NONE;
     }
     
     /**

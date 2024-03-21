@@ -290,7 +290,7 @@ class FormTest extends TestCase
                 $json->where('title', 'Project Description')
                     ->where('key', 'description')
                     ->where('related_entity_code', '')
-                    ->where('frontend_type', 'text')
+                    ->where('frontend_type', 'textarea')
                     ->where('required', false)
                     ->has('select_options', 0)
             )->has('fields.3', fn (AssertableJson $json) =>

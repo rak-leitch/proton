@@ -34,7 +34,7 @@ class EntityCreateTest extends BrowserTestCase
                         ->assertFieldError('priority', 'The priority field is required.')
                         ->changeSelectField('user_id', 1)
                         ->typeInField('name', self::PROJECT_NAME)
-                        ->typeInField('description', self::PROJECT_DESC)
+                        ->typeInArea('description', self::PROJECT_DESC)
                         ->typeInField('priority', 'urgent')
                         ->click('@form-submit');
                 })

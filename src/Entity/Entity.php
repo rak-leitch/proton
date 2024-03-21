@@ -10,6 +10,7 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Internal\FieldFactory;
+use Adepta\Proton\Field\FrontendType;
 use Closure;
 
 final class Entity
@@ -87,7 +88,7 @@ final class Entity
             $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
             $fieldNameOk = ($fieldName !== null) ? ($field->getFieldName() === $fieldName) : true;
             $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
-            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== null) : true;
+            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== FrontendType::NONE) : true;
             return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $entityCodeOk && $onlyDisplayableOk);
         });
         

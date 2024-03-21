@@ -96,6 +96,18 @@
                     </span>
                 </template>
             </v-text-field>
+            <v-textarea v-if="field.frontend_type==='textarea'"
+                v-model="formData[field.key]"
+                :error-messages="getErrorMessage(field.key)"
+                :class="`field-${field.key}`"
+            >
+                <template v-slot:label>
+                    <span>
+                        {{ field.title }} 
+                        <span v-if="field.required" class="text-red">*</span>
+                    </span>
+                </template>
+            </v-textarea>
             <v-select v-if="field.frontend_type==='select'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
