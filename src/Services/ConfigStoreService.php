@@ -4,6 +4,7 @@ namespace Adepta\Proton\Services;
 
 use Adepta\Proton\Contracts\ConfigStoreContract;
 use Adepta\Proton\Exceptions\ConfigurationException;
+use Adepta\Proton\Exceptions\EntityNotFoundException;
 use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use ReflectionClass;
 
@@ -37,7 +38,7 @@ final class ConfigStoreService implements ConfigStoreContract
     public function getDefinitionClass(string $entityCode) : string
     {
         if(empty($this->definitionClasses[$entityCode])) {
-            throw new ConfigurationException("No entity definition class found for {$entityCode}");
+            throw new EntityNotFoundException("No entity definition class found for {$entityCode}");
         }
         
         $defintionClass = $this->definitionClasses[$entityCode];

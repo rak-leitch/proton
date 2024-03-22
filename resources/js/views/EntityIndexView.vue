@@ -1,26 +1,27 @@
 <script setup>
     import protonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
-    import { useRoute } from "vue-router";
-    import { watch, ref, computed } from "vue";
+    import { watch, ref, computed, toRefs } from "vue";
     
     const configData = ref({});
     const listSettings = ref({});
-    const route = useRoute();
     const currentError = ref("");
-
-    watch(
-        () => route.params,
-        () => {
-            getConfig();
-        }
-    );
+    
+    const props = defineProps({
+        entityCode: String,
+    });
+    
+    const { entityCode } = toRefs(props);
+    
+    watch(entityCode, async () => {
+        getConfig();
+    });
     
     async function getConfig() {
         try {
             currentError.value = "";
             const { json } = await request("config/view/entity-index", [
-                route.params.entityCode,
+                entityCode.value,
             ]);
             configData.value = json;
             listSettings.value = {

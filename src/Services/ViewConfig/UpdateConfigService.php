@@ -14,7 +14,11 @@ final class UpdateConfigService
      * @param Entity $entity
      * @param Model $model
      * 
-     * @return mixed[]
+     * @return array{
+     *     entity_code: string, 
+     *     entity_id: int|string, 
+     *     title: string
+     * }
     */
     public function getViewConfig(Entity $entity, Model $model) : array
     {

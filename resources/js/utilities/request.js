@@ -40,7 +40,7 @@ export async function request(path, parameters = [], queryParams = {}, postData 
     if (!response.ok && (!acceptableErrors.includes(response.status))) {
         let message = `Received ${response.status} status code.`;
         
-        if(json.hasOwnProperty('detail')) {
+        if(Object.hasOwn(json, 'detail')) {
             message += ` ${json.detail}`;
         }
         

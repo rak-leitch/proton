@@ -26,7 +26,21 @@ final class ListConfigService
      * @param ?User $user
      * @param Entity $entity
      * 
-     * @return mixed[]
+     * @return array{
+     *     fields: array<int, array{
+     *         title: string, 
+     *         key: string,     
+     *         sortable: bool
+     *     }>, 
+     *     primary_key: string, 
+     *     can_create: bool, 
+     *     entity_label: string, 
+     *     version: string, 
+     *     page_size_options: array<int, array{
+     *         value: int, 
+     *         title: string
+     *     }>
+     * }
     */
     public function getListConfig(?User $user, Entity $entity) : array
     {

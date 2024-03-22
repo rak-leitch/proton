@@ -2,6 +2,7 @@ import EntityIndexView from "./views/EntityIndexView.vue";
 import EntityCreateView from "./views/EntityCreateView.vue";
 import EntityUpdateView from "./views/EntityUpdateView.vue";
 import EntityDisplayView from "./views/EntityDisplayView.vue";
+import NotFoundView from "./views/NotFoundView.vue";
 
 export default 
 [
@@ -11,19 +12,27 @@ export default
             {
                 path: "entity/:entityCode/index",
                 name: "entity-index",
-                component: EntityIndexView
+                component: EntityIndexView,
+                props: true
             }, {
                 path: "entity/:entityCode/create",
                 name: "entity-create",
-                component: EntityCreateView
+                component: EntityCreateView,
+                props: true
             }, {
                 path: "entity/:entityCode/update/:entityId",
                 name: "entity-update",
-                component: EntityUpdateView
+                component: EntityUpdateView,
+                props: true
             }, {
                 path: "entity/:entityCode/display/:entityId",
                 name: "entity-view",
-                component: EntityDisplayView
+                component: EntityDisplayView,
+                props: true
+            }, {
+                path: ':pathMatch(.*)*',
+                name: "not-found-view",
+                component: NotFoundView
             }
         ]
     }

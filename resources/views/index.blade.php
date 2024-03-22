@@ -7,7 +7,6 @@
         <title>Index</title>
         {{ Vite::useBuildDirectory('adepta/proton/assets')->withEntryPoints('resources/js/proton.js') }}
         <script>
-            <!-- TODO: is there a better way? -->
             window.protonApiBase = '{{ url('proton/api') }}';
         </script>
     </head>

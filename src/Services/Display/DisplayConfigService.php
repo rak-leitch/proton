@@ -18,7 +18,14 @@ final class DisplayConfigService
      * @param Entity $entity
      * @param Model $model
      * 
-     * @return mixed[]
+     * @return array{
+     *     fields: array<int, array{
+     *         title: string, 
+     *         key: string, 
+     *         frontend_type: string, 
+     *         value: float|int|string|null
+     *     }>
+     * }
     */
     public function getDisplayConfig(Entity $entity, Model $model) : array
     {

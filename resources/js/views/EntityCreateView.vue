@@ -1,18 +1,22 @@
 <script setup>
     import protonForm from "../components/FormComponent.vue";
     import { request } from "../utilities/request";
+    import { ref, computed } from "vue";
     import { useRoute } from "vue-router";
-    import { ref } from "vue";
     
     const configData = ref({});
     const formSettings = ref({});
-    const route = useRoute();
     const currentError = ref("");
+    const route = useRoute();
+    
+    const props = defineProps({
+        entityCode: String,
+    });
     
     async function getConfig() {
         try {
             const { json } = await request("config/view/entity-create", [
-                route.params.entityCode,
+                props.entityCode,
             ]);
             configData.value = json;
             formSettings.value = {
@@ -20,10 +24,18 @@
                 configPath: "config/form-create",
                 submitPath: "submit/form-create"
             };
+            if(route.query.contextCode && route.query.contextId) {
+                formSettings.value['contextCode'] = route.query.contextCode;
+                formSettings.value['contextId'] = route.query.contextId;
+            }
         } catch (error) {
             currentError.value = `Failed to get config: ${error.message}`;
         }
     }
+    
+    const displayForm = computed(() => {
+        return (Object.keys(configData.value).length && !currentError.value);
+    });
     
     await getConfig();
 
@@ -43,6 +55,7 @@
                 {{ currentError }}
             </v-alert>
             <protonForm
+                v-if="displayForm"
                 :settings="formSettings"
             />
         </template>

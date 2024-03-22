@@ -18,8 +18,8 @@ final class RequestException extends Exception
     public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'error' => 'Invalid request',
-            'detail' => $this->getMessage()
+            'error' => 'Bad request',
+            'detail' => app()->hasDebugModeEnabled() ? $this->getMessage() : ''
         ], 400);
     }
 

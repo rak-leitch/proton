@@ -18,8 +18,8 @@ final class AuthorisationException extends Exception
     public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'error' => 'Authorisation issue',
-            'detail' => $this->getMessage()
+            'error' => 'Forbidden',
+            'detail' => app()->hasDebugModeEnabled() ? $this->getMessage() : ''
         ], 403);
     }
 

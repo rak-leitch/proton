@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 use StdClass;
 
 final class ListDataService
-{    
+{ 
     /**
      * Constructor.
      * 
@@ -40,7 +40,15 @@ final class ListDataService
      * @param int $itemsPerPage 
      * @param StdClass $requestQuery
      * 
-     * @return mixed[]
+     * @return array{
+     *     totalRows: int, 
+     *     data: array<int, array<string, float|int|string|null>>, 
+     *     permissions: array<int|string, array{
+     *         update: bool, 
+     *         view: bool, 
+     *         delete: bool
+     *     }>
+     * }
     */
     public function getData(
         Entity $entity,

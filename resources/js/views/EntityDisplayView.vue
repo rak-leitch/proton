@@ -2,26 +2,28 @@
     import protonDisplay from "../components/DisplayComponent.vue";
     import protonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
-    import { useRoute } from "vue-router";
-    import { watch, ref, computed } from "vue";
+    import { watch, ref, computed, toRefs } from "vue";
     
     const configData = ref({});
-    const route = useRoute();
     const currentError = ref("");
+    
+    const props = defineProps({
+        entityCode: String,
+        entityId: Number
+    });
+    
+    const { entityCode, entityId } = toRefs(props);
 
-    watch(
-        () => route.params,
-        () => {
-            getConfig();
-        }
-    );
+    watch([entityCode, entityId], async () => {
+        getConfig();
+    });
     
     async function getConfig() {
         try {
             currentError.value = "";
             const { json } = await request("config/view/entity-display", [
-                route.params.entityCode,
-                route.params.entityId,
+                entityCode.value,
+                entityId.value,
             ]);
             configData.value = json;
         } catch (error) {

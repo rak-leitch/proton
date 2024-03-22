@@ -151,17 +151,17 @@ final class Entity
     /**
      * Get the label for this entity.
      *
-     * @return ?string
+     * @return string
     */
-    public function getLabel(bool $plural = false) : ?string
+    public function getLabel(bool $plural = false) : string
     {
-        $label = Str::studly($this->entityCode);
+        $label = Str::of($this->entityCode)->replace('_', ' ');
         
         if($plural) {
-            $label = Str::pluralStudly($label);
+            $label = $label->plural();
         }
         
-        return preg_replace('/(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', $label);
+        return $label->title()->toString();
     }
     
     /**
@@ -214,7 +214,7 @@ final class Entity
     private function validateEntityCode() : void
     {        
         if(mb_strlen($this->entityCode) === 0) {
-            throw new ConfigurationException('Entity code must be supplied with setCode()'); 
+            throw new ConfigurationException('Non-empty entity code must be supplied in config'); 
         }
     }
     

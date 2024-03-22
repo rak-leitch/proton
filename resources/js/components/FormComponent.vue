@@ -1,12 +1,11 @@
 <script setup>
     import { ref } from "vue";
     import { request } from "../utilities/request";
-    import { useRouter, useRoute } from "vue-router";
+    import { useRouter } from "vue-router";
 
     const configData = ref({});
     const formData = ref({});
     const router = useRouter();
-    const route = useRoute();
     const currentError = ref("");
     const submitInProgress = ref(false);
     const errorMessages = ref({});
@@ -23,7 +22,7 @@
             formData.value = json.data;
             selectRelatedField();
         } catch (error) {
-            currentError.value = `Failed to get form config: ${error.message}`;
+            currentError.value = `Failed to setup form: ${error.message}`;
         }
     }
     
@@ -44,7 +43,7 @@
     
     function getErrorMessage(fieldKey) {
         let errorMessage = null;
-        if(errorMessages.value.hasOwnProperty(fieldKey)) {
+        if(Object.hasOwn(errorMessages.value, fieldKey)) {
             errorMessage = errorMessages.value[fieldKey].join(" ");
         }
         return errorMessage;
@@ -61,8 +60,8 @@
     }
     
     function selectRelatedField() {
-        const contextCode = route.query.contextCode;
-        const contextId = route.query.contextId;
+        const contextCode = props.settings.contextCode;
+        const contextId = props.settings.contextId;
         
         if(contextCode && contextId) {
             const contextField = configData.value.fields.find(field => field.related_entity_code === contextCode);
