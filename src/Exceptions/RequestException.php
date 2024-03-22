@@ -4,9 +4,9 @@ namespace Adepta\Proton\Exceptions;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use \Exception;
+use Exception;
 
-class RequestException extends Exception
+final class RequestException extends Exception
 {
     /**
      * Custom JSON response for frontend
@@ -18,8 +18,8 @@ class RequestException extends Exception
     public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'error' => 'Invalid request',
-            'detail' => $this->getMessage()
+            'error' => 'Bad request',
+            'detail' => app()->hasDebugModeEnabled() ? $this->getMessage() : ''
         ], 400);
     }
 

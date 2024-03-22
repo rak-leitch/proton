@@ -26,7 +26,21 @@ final class ListConfigService
      * @param ?User $user
      * @param Entity $entity
      * 
-     * @return mixed[]
+     * @return array{
+     *     fields: array<int, array{
+     *         title: string, 
+     *         key: string,     
+     *         sortable: bool
+     *     }>, 
+     *     primary_key: string, 
+     *     can_create: bool, 
+     *     entity_label: string, 
+     *     version: string, 
+     *     page_size_options: array<int, array{
+     *         value: int, 
+     *         title: string
+     *     }>
+     * }
     */
     public function getListConfig(?User $user, Entity $entity) : array
     {
@@ -44,10 +58,9 @@ final class ListConfigService
             ['value' => 20, 'title' => '20'],
         ];
         
-        //TODO: Need indication of view/index context here?
         foreach($entity->getFields(DisplayContext::INDEX) as $field) {
             $fieldConfig = [];
-            $fieldConfig['title'] = $field->getFieldName();
+            $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $field->getFieldName();
             $fieldConfig['sortable'] = $field->getSortable();
             $listConfig['fields'][] = $fieldConfig;

@@ -27,23 +27,23 @@ class ListTest extends TestCase
         $response->assertJson(fn (AssertableJson $json) =>
             $json->has('fields', 6)
             ->has('fields.0', fn (AssertableJson $json) =>
-                $json->where('title', 'id')
+                $json->where('title', 'Id')
                      ->where('key', 'id')
                      ->where('sortable', true)
             )->has('fields.1', fn (AssertableJson $json) =>
-                $json->where('title', 'user_id')
+                $json->where('title', 'User')
                      ->where('key', 'user_id')
                      ->where('sortable', false)
             )->has('fields.2', fn (AssertableJson $json) =>
-                $json->where('title', 'name')
+                $json->where('title', 'Name')
                      ->where('key', 'name')
                      ->where('sortable', true)
             )->has('fields.3', fn (AssertableJson $json) =>
-                $json->where('title', 'description')
+                $json->where('title', 'Project Description')
                      ->where('key', 'description')
                      ->where('sortable', false)
             )->has('fields.4', fn (AssertableJson $json) =>
-                $json->where('title', 'priority')
+                $json->where('title', 'Priority')
                      ->where('key', 'priority')
                      ->where('sortable', true)
             )->where('primary_key', 'id')

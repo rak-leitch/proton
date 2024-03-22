@@ -1,11 +1,13 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Field;
+namespace Adepta\Proton\Field\Internal;
 
+use Adepta\Proton\Field\Internal\Field;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Traits\ChecksRelationExistence;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Adepta\Proton\Field\FrontendType;
 
 final class HasMany extends Field
 {    
@@ -16,24 +18,11 @@ final class HasMany extends Field
      * 
      * @param DisplayContext $displayContext
      * 
-     * @return ?string
+     * @return FrontendType
      */
-    public function getFrontendType(DisplayContext $displayContext) : ?string
+    public function getFrontendType(DisplayContext $displayContext) : FrontendType
     {
-        return null;
-    }
-    
-    /**
-     * Set initial display contexts for this field
-     * type.
-     * 
-     * @return void
-     */
-    protected function setInitialDisplayContexts() : void
-    {
-        $this->displayContexts = collect([
-            DisplayContext::VIEW,
-        ]);
+        return FrontendType::NONE;
     }
     
     /**
@@ -45,7 +34,7 @@ final class HasMany extends Field
      */
     public function getRelationMethod(Model|string $model) : string 
     {
-        $relationMethod = Str::camel(str::plural($this->fieldName));
+        $relationMethod = Str::camel(str::plural($this->fieldConfig->getFieldName()));
         $this->checkModelRelation($model, $relationMethod);
         return $relationMethod;
     }
@@ -57,6 +46,6 @@ final class HasMany extends Field
      */
     public function getRelatedEntityCode() : string
     {
-        return $this->fieldName;
+        return $this->fieldConfig->getFieldName();
     }
 }

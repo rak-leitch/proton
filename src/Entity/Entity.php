@@ -4,72 +4,58 @@ namespace Adepta\Proton\Entity;
 
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Illuminate\Support\Collection;
-use Adepta\Proton\Contracts\Field\FieldContract;
+use Adepta\Proton\Field\Internal\Field;
 use Illuminate\Support\Str;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
+use Adepta\Proton\Field\Internal\FieldFactory;
+use Adepta\Proton\Field\FrontendType;
 use Closure;
 
 final class Entity
-{
-    private EntityConfigContract $entityConfig;
+{    
+    /**
+     * @var Collection<int, Field> $fieldCollection
+     */
+    private Collection $fieldCollection;
     
     /**
-     * Set the configuration object on the entity.
+     * Constructor
      * 
+     * @param string $entityCode
      * @param EntityConfigContract $entityConfig
+     * @param FieldFactory $fieldFactory
      *
-     * @return void
     */
-    public function initialise(EntityConfigContract $entityConfig) : void
+    public function __construct(
+        private string $entityCode,
+        private EntityConfigContract $entityConfig,
+        private FieldFactory $fieldFactory
+    )
     {
-        $this->validateConfig($entityConfig);
-        $this->entityConfig = $entityConfig;
+        $this->fieldCollection = collect();
+        $this->initialiseFields();
+        $this->validateEntityCode();
+        $this->validateModelClass();
+        $this->validateFieldExistence();
+        $this->validatePrimaryKey();
+        $this->validateNameField();
     }
     
     /**
-     * Validate the configuration
-     * 
-     * @param EntityConfigContract $entityConfig
+     * Initialise the fields based on the field config.
      * 
      * @throws ConfigurationException
      * 
      * @return void
      */
-    public function validateConfig(EntityConfigContract $entityConfig) : void
+    private function initialiseFields() : void
     {
-        $entityCode = $entityConfig->getCode();
-        $modelClass = $entityConfig->getModel();
-        $fields = $entityConfig->getFields();
-        
-        if(mb_strlen($entityCode) === 0) {
-            throw new ConfigurationException('Entity code must be supplied with setCode()'); 
-        }
-        
-        if(!is_subclass_of($modelClass, Model::class)) {
-            throw new ConfigurationException('Entity model must extend '.Model::class);
-        }
-        
-        if($fields->isEmpty()) {
-            throw new ConfigurationException("Please provide at least one field when defining the {$entityCode} entity");
-        }
-        
-        $primaryKeys = $fields->filter(function ($field, $key) {
-            return $field->isPrimaryKey();
-        });
-        
-        if($primaryKeys->count() !== 1) {
-            throw new ConfigurationException('Each entity must contain a single primary key field');
-        }
-        
-        $nameFields = $fields->filter(function ($field, $key) {
-            return $field->getIsNameField();
-        });
-        
-        if($nameFields->count() !== 1) {
-            throw new ConfigurationException('Each entity must contain a single name field');
-        }
+        foreach($this->entityConfig->getFields() as $fieldConfig) {
+            $field = $this->fieldFactory->create($fieldConfig);
+            $this->fieldCollection->push($field);
+        } 
     }
     
     /**
@@ -81,7 +67,7 @@ final class Entity
      * @param ?string $relatedEntityCode
      * @param ?bool $onlyDisplayable
      *
-     * @return Collection<int, FieldContract>
+     * @return Collection<int, Field>
     */
     public function getFields(
         DisplayContext $displayContext, 
@@ -91,9 +77,7 @@ final class Entity
         ?bool $onlyDisplayable = true,
     ) : Collection
     {
-        $fields = $this->entityConfig->getFields();
-        
-        $fields = $fields->filter(function ($field) use (
+        $fields = $this->fieldCollection->filter(function ($field) use (
             $displayContext, 
             $fieldTypes, 
             $relatedEntityCode, 
@@ -104,7 +88,7 @@ final class Entity
             $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
             $fieldNameOk = ($fieldName !== null) ? ($field->getFieldName() === $fieldName) : true;
             $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
-            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== null) : true;
+            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== FrontendType::NONE) : true;
             return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $entityCodeOk && $onlyDisplayableOk);
         });
         
@@ -114,18 +98,16 @@ final class Entity
     /**
      * Get the name field for this entity.
      *
-     * @return FieldContract
+     * @return Field
     */
-    public function getNameField() : FieldContract
+    public function getNameField() : Field
     {
-        $fields = $this->entityConfig->getFields();
-        
-        $fields = $fields->filter(function ($field) {
+        $fields = $this->fieldCollection->filter(function ($field) {
             return $field->getIsNameField();
         });
         
         if(!$fields->first()) {
-            throw new ConfigurationException('Could not find name field for '.$this->entityConfig->getCode());
+            throw new ConfigurationException('Could not find name field for '.$this->entityCode);
         } 
         
         return $fields->first();
@@ -138,7 +120,7 @@ final class Entity
     */
     public function getCode() : string
     {
-        return $this->entityConfig->getCode();
+        return $this->entityCode;
     }
     
     /**
@@ -169,34 +151,34 @@ final class Entity
     /**
      * Get the label for this entity.
      *
-     * @return ?string
+     * @return string
     */
-    public function getLabel(bool $plural = false) : ?string
+    public function getLabel(bool $plural = false) : string
     {
-        $label = Str::studly($this->entityConfig->getCode());
+        $label = Str::of($this->entityCode)->replace('_', ' ');
         
         if($plural) {
-            $label = Str::pluralStudly($label);
+            $label = $label->plural();
         }
         
-        return preg_replace('/(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', $label);
+        return $label->title()->toString();
     }
     
     /**
      * Get the primary key field for this entity.
      *
-     * @return FieldContract
+     * @return Field
     */
-    public function getPrimaryKeyField() : FieldContract
+    public function getPrimaryKeyField() : Field
     {
-        $primaryKeys = $this->entityConfig->getFields()->filter(function ($field, $key) {
+        $primaryKeys = $this->fieldCollection->filter(function ($field, $key) {
             return $field->isPrimaryKey();
         });
         
         $pkField = $primaryKeys->first();
         
         if($pkField === null) {
-            throw new ConfigurationException('Each entity must contain a single primary key field');
+            throw new ConfigurationException('Each entity must contain a primary key field');
         }
         
         return $pkField;
@@ -219,6 +201,84 @@ final class Entity
     */
     public function getStudlyCode() : string
     {
-        return Str::studly($this->entityConfig->getCode());
+        return Str::studly($this->entityCode);
+    }
+    
+    /**
+     * Validate the entityCode
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function validateEntityCode() : void
+    {        
+        if(mb_strlen($this->entityCode) === 0) {
+            throw new ConfigurationException('Non-empty entity code must be supplied in config'); 
+        }
+    }
+    
+    /**
+     * Validate the entityCode
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function validateModelClass() : void
+    {
+        if(!is_subclass_of($this->entityConfig->getModel(), Model::class)) {
+            throw new ConfigurationException('Entity model must extend '.Model::class);
+        }
+    }
+    
+    /**
+     * Check at least one field exists
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function validateFieldExistence() : void
+    {
+        if($this->fieldCollection->isEmpty()) {
+            throw new ConfigurationException("Please provide at least one field when defining the {$this->entityCode} entity");
+        }
+    }
+    
+    /**
+     * Check one primary key exists
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function validatePrimaryKey() : void
+    {
+        $primaryKeys = $this->fieldCollection->filter(function ($field, $key) {
+            return $field->isPrimaryKey();
+        });
+        
+        if($primaryKeys->count() !== 1) {
+            throw new ConfigurationException('Each entity must contain a single primary key field');
+        }
+    }
+    
+    /**
+     * Check one name field exists
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function validateNameField() : void
+    {
+        $nameFields = $this->fieldCollection->filter(function ($field, $key) {
+            return $field->getIsNameField();
+        });
+        
+        if($nameFields->count() !== 1) {
+            throw new ConfigurationException('Each entity must contain a single name field');
+        }
     }
 }

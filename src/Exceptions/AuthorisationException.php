@@ -4,9 +4,9 @@ namespace Adepta\Proton\Exceptions;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use \Exception;
+use Exception;
 
-class AuthorisationException extends Exception
+final class AuthorisationException extends Exception
 {
     /**
      * Custom JSON response for frontend
@@ -18,8 +18,8 @@ class AuthorisationException extends Exception
     public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'error' => 'Authorisation issue',
-            'detail' => $this->getMessage()
+            'error' => 'Forbidden',
+            'detail' => app()->hasDebugModeEnabled() ? $this->getMessage() : ''
         ], 403);
     }
 

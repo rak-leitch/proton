@@ -6,7 +6,7 @@ use Adepta\Proton\Tests\TestCase;
 use Adepta\Proton\Contracts\ConfigStoreContract;
 use Adepta\Proton\Tests\EntityDefinitions\ProjectDefinition;
 use Adepta\Proton\Tests\EntityDefinitions\TaskDefinition;
-use Adepta\Proton\Exceptions\ConfigurationException;
+use Adepta\Proton\Exceptions\EntityNotFoundException;
 
 class ConfigTest extends TestCase
 {
@@ -56,7 +56,7 @@ class ConfigTest extends TestCase
     */
     public function test_invalid_entity_definition_config() : void
     {
-        $this->expectException(ConfigurationException::class);
+        $this->expectException(EntityNotFoundException::class);
         $this->configService->getDefinitionClass('wizzer');
     }
 }

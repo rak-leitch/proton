@@ -5,9 +5,8 @@ namespace Adepta\Proton\Services\ViewConfig;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Contracts\Field\FieldContract;
-use Adepta\Proton\Field\HasMany;
-use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Field\Internal\HasMany;
+use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Illuminate\Foundation\Auth\User;
 
@@ -32,7 +31,21 @@ final class DisplayConfigService
      * @param Entity $parentEntity
      * @param Model $model
      * 
-     * @return mixed[]
+     * @return array{
+     *     title: string, 
+     *     lists: array<int, array{
+     *         title: string,  
+     *         listSettings: array{
+     *             entityCode: string, 
+     *             contextCode: string, 
+     *             contextId: int|string
+     *          }
+     *      }>, 
+     *      displaySettings: array{
+     *          entityCode: string, 
+     *          entityId: int|string
+     *      }
+     *  }
     */
     public function getViewConfig(
         ?User $user,

@@ -89,6 +89,40 @@ final class FormComponent extends BaseComponent
     public function typeInField(Browser $browser, string $field, string $value)
     {
         $fieldInputSelector = ".field-{$field} input";
+        $this->typeInElement($browser, $fieldInputSelector, $field, $value);
+    }
+    
+    /**
+     * Type in a textarea
+     * 
+     * @param Browser $browser
+     * @param string $field
+     * @param string $value
+     *
+     * @return void
+     */
+    public function typeInArea(Browser $browser, string $field, string $value)
+    {
+        $fieldInputSelector = ".field-{$field} textarea";
+        $this->typeInElement($browser, $fieldInputSelector, $field, $value);
+    }
+    
+    /**
+     * Type in selected element 
+     * 
+     * @param Browser $browser
+     * @param string $fieldInputSelector
+     * @param string $field
+     * @param string $value
+     *
+     * @return void
+     */
+    private function typeInElement(
+        Browser $browser, 
+        string $fieldInputSelector, 
+        string $field, 
+        string $value
+    ) {
         $browser->assertPresent($fieldInputSelector);
         $element = $browser->element($fieldInputSelector);
         if($element) {
@@ -110,6 +144,21 @@ final class FormComponent extends BaseComponent
     public function assertFieldValue(Browser $browser, string $field, string $value)
     {
         $fieldInputSelector = ".field-{$field} input";
+        $browser->assertValue($fieldInputSelector, $value);
+    }
+    
+    /**
+     * Assert area value
+     * 
+     * @param Browser $browser
+     * @param string $field
+     * @param string $value
+     *
+     * @return void
+     */
+    public function assertAreaValue(Browser $browser, string $field, string $value)
+    {
+        $fieldInputSelector = ".field-{$field} textarea";
         $browser->assertValue($fieldInputSelector, $value);
     }
     

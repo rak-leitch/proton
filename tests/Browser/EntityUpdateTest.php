@@ -30,7 +30,7 @@ class EntityUpdateTest extends BrowserTestCase
                     $browser
                         ->assertFieldValue('user_id', '1')
                         ->assertFieldValue('name', 'Do it yourself')
-                        ->assertFieldValue('description', 'All the DIY jobs that need to be done.')
+                        ->assertAreaValue('description', 'All the DIY jobs that need to be done.')
                         ->clearTextFieldValue('name')
                         ->typeInField('name', self::PROJECT_NAME)
                         ->click('@form-submit');

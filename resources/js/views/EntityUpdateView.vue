@@ -1,19 +1,22 @@
 <script setup>
     import protonForm from "../components/FormComponent.vue";
     import { request } from "../utilities/request";
-    import { useRoute } from "vue-router";
-    import { ref } from "vue";
+    import { ref, computed } from "vue";
     
     const configData = ref({});
     const formSettings = ref({});
-    const route = useRoute();
     const currentError = ref("");
+    
+    const props = defineProps({
+        entityCode: String,
+        entityId: Number
+    });
     
     async function getConfig() {
         try {
             const { json } = await request("config/view/entity-update", [
-                route.params.entityCode,
-                route.params.entityId,
+                props.entityCode,
+                props.entityId,
             ]);
             configData.value = json;
             formSettings.value = {
@@ -26,6 +29,10 @@
             currentError.value = error.message;
         }
     }
+    
+    const displayForm = computed(() => {
+        return (Object.keys(configData.value).length && !currentError.value);
+    });
     
     await getConfig();
 
@@ -45,6 +52,7 @@
                 {{ currentError }}
             </v-alert>
             <protonForm
+                v-if="displayForm"
                 :settings="formSettings"
             />
         </template>

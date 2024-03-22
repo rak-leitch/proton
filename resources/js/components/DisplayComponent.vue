@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from "vue";
+    import { ref, watch, toRefs } from "vue";
     import { request } from "../utilities/request";
 
     const configData = ref({});
@@ -9,24 +9,21 @@
         settings: Object,
     });
     
-    watch(
-        () => props.settings,
-        () => {
-            getConfigData()
-        }, {
-            deep: true,
-        }
-    );
+    const { settings } = toRefs(props);
+    
+    watch(settings, () => {
+        getConfigData();
+    });
     
     async function getConfigData() {
         try {
             const { json } = await request("config/display", [
-                props.settings.entityCode,
-                props.settings.entityId,
+                settings.value.entityCode,
+                settings.value.entityId,
             ]);
             configData.value = json;
         } catch (error) {
-            currentError.value = `Failed to get display config: ${error.message}`;
+            currentError.value = `Failed to set up display: ${error.message}`;
         }
     }
     

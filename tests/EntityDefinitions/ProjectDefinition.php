@@ -5,40 +5,33 @@ namespace Adepta\Proton\Tests\EntityDefinitions;
 use Adepta\Proton\Contracts\Entity\EntityConfigContract;
 use Adepta\Proton\Contracts\Entity\EntityDefinitionContract;
 use Adepta\Proton\Tests\Models\Project as ProjectModel;
-use Adepta\Proton\Field\Id;
-use Adepta\Proton\Field\Text;
-use Adepta\Proton\Field\HasMany;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Field\Config\Id;
+use Adepta\Proton\Field\Config\Text;
+use Adepta\Proton\Field\Config\TextArea;
+use Adepta\Proton\Field\Config\HasMany;
+use Adepta\Proton\Field\Config\BelongsTo;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectDefinition implements EntityDefinitionContract
-{
-    /**
-     * Constructor
-     * 
-     * @param EntityConfigContract $entityConfig
-    */
-    public function __construct(
-        private EntityConfigContract $entityConfig
-    ) { }
-    
+{    
     /**
      * Define and return the entity's configuration.
      * 
-     * @return EntityConfigContract $entityConfig
+     * @param EntityConfigContract $entityConfig
+     * 
+     * @return EntityConfigContract
     */
-    public function getEntityConfig() : EntityConfigContract
+    public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract
     {
-        $this->entityConfig
-            ->setCode('project')
+        $entityConfig
             ->setModel(ProjectModel::class)
             ->addField(Id::create('id')->sortable())
-            ->addField(BelongsTo::create('user')->setValidation('required'))
+            ->addField(BelongsTo::create('user')->validation('required'))
             ->addField(HasMany::create('task'))
-            ->addField(Text::create('name')->sortable()->setValidation('required')->name())
-            ->addField(Text::create('description'))
-            ->addField(Text::create('priority')->sortable()->setValidation('required'))
+            ->addField(Text::create('name')->sortable()->validation('required')->name())
+            ->addField(TextArea::create('description')->title('Project Description'))
+            ->addField(Text::create('priority')->sortable()->validation('required'))
             ->setQueryFilter(function(Builder $query) {
                 /** @var \Adepta\Proton\Tests\Models\User $user */
                 $user = Auth::user();
@@ -47,6 +40,6 @@ class ProjectDefinition implements EntityDefinitionContract
                 }
             });
         
-        return $this->entityConfig;
+        return $entityConfig;
     }
 }

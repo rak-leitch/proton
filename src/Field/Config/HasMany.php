@@ -1,21 +1,22 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Field;
+namespace Adepta\Proton\Field\Config;
 
+use Adepta\Proton\Field\Config\FieldConfig;
 use Adepta\Proton\Field\DisplayContext;
+use Adepta\Proton\Field\Internal\HasMany as HasManyField;
 
-final class Text extends Field
+final class HasMany extends FieldConfig
 {    
     /**
-     * Get the field's frontend display type.
+     * Indication of the internal field class this config 
+     * object corresponds to
      * 
-     * @param DisplayContext $displayContext
-     * 
-     * @return ?string
+     * @return class-string
      */
-    public function getFrontendType(DisplayContext $displayContext) : ?string
+    public function getInternalFieldClass() : string
     {
-        return 'text';
+        return HasManyField::class;
     }
     
     /**
@@ -27,10 +28,7 @@ final class Text extends Field
     protected function setInitialDisplayContexts() : void
     {
         $this->displayContexts = collect([
-            DisplayContext::CREATE,
-            DisplayContext::UPDATE,
             DisplayContext::VIEW,
-            DisplayContext::INDEX,
         ]);
     }
 }

@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from "vue";
+    import { ref, watch, toRefs } from "vue";
     import { request } from "../utilities/request";
     import { useRouter } from "vue-router";
 
@@ -17,23 +17,20 @@
         settings: Object,
     });
     
-    watch(
-        () => props.settings,
-        () => {
-            getConfig()
-        }, {
-            deep: true,
-        }
-    );
+    const { settings } = toRefs(props);
+    
+    watch(settings, () => {
+        getConfig();
+    });
     
     async function getConfig() {
         try {
             const { json } = await request("config/list", [
-                props.settings.entityCode,
+                settings.value.entityCode,
             ]);
             configData.value = json;
         } catch (error) {
-            currentError.value = `Failed to get list config: ${error.message}`;
+            currentError.value = `Failed to set up list: ${error.message}`;
         }
     }
     
@@ -47,13 +44,13 @@
                 queryParams.sortOrder = sortBy[0].order;
             }
             
-            if(props.settings.contextCode && props.settings.contextId) {
-                queryParams.contextCode = props.settings.contextCode;
-                queryParams.contextId = props.settings.contextId;
+            if(settings.value.contextCode && settings.value.contextId) {
+                queryParams.contextCode = settings.value.contextCode;
+                queryParams.contextId = settings.value.contextId;
             }
             
             const { json } = await request("data/list", [
-                props.settings.entityCode,
+                settings.value.entityCode,
                 page,
                 itemsPerPage
             ], queryParams);
@@ -85,7 +82,7 @@
     
     function pushRoute(type, item) {
         const primaryKeyValue = item[configData.value.primary_key];
-        const entityCode = props.settings.entityCode;
+        const entityCode = settings.value.entityCode;
         router.push({ 
             name: type, 
             params: { 
@@ -99,14 +96,14 @@
         const route = {
             name: 'entity-create',
             params: { 
-                entityCode: props.settings.entityCode,
+                entityCode: settings.value.entityCode,
             }
         };
         
-        if(props.settings.contextCode && props.settings.contextId) {
+        if(settings.value.contextCode && settings.value.contextId) {
             route['query'] = { 
-                contextCode: props.settings.contextCode,
-                contextId: props.settings.contextId,
+                contextCode: settings.value.contextCode,
+                contextId: settings.value.contextId,
             };
         }
         
@@ -119,7 +116,7 @@
 
 <template>
     <div
-        :dusk="`list-${props.settings.entityCode}`"
+        :dusk="`list-${settings.entityCode}`"
     >
         <v-alert
             v-if="currentError"

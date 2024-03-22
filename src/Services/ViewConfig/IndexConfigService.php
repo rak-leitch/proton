@@ -12,7 +12,10 @@ final class IndexConfigService
      *
      * @aparam Entity $entity
      * 
-     * @return mixed[]
+     * @return array{
+     *     entity_code: string, 
+     *     title: string
+     * }
     */
     public function getViewConfig(Entity $entity) : array
     {

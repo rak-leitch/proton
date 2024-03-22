@@ -9,7 +9,9 @@ interface EntityDefinitionContract
     /**
      * Define and return the entity's configuration.
      * 
+     * @param EntityConfigContract $entityConfig
+     * 
      * @return EntityConfigContract $entityConfig
     */
-    public function getEntityConfig() : EntityConfigContract;
+    public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract;
 }

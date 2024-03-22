@@ -5,7 +5,7 @@ namespace Adepta\Proton\Http\Controllers\View;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Adepta\Proton\Services\EntityFactory;
+use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\ViewConfig\DisplayConfigService;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 

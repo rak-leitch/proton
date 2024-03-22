@@ -27,17 +27,17 @@ class EntityDisplayTest extends BrowserTestCase
                 })
                 ->within(new DisplayComponent(), function (Browser $browser) use ($user) {
                     $browser
-                        ->assertRowValues(1, 'id', '1')
-                        ->assertRowValues(2, 'user_id', $user->name)
-                        ->assertRowValues(3, 'name', 'Do it yourself')
-                        ->assertRowValues(4, 'description', 'All the DIY jobs that need to be done.')
-                        ->assertRowValues(5, 'priority', 'normal');
+                        ->assertRowValues(1, 'Id', '1')
+                        ->assertRowValues(2, 'User', $user->name)
+                        ->assertRowValues(3, 'Name', 'Do it yourself')
+                        ->assertRowValues(4, 'Project Description', 'All the DIY jobs that need to be done.')
+                        ->assertRowValues(5, 'Priority', 'normal');
                 })
                 ->within(new ListComponent('@list-task'), function (Browser $browser) {
-                    $browser->assertHeaderText(1, 'id')
-                        ->assertHeaderText(2, 'project_id')
-                        ->assertHeaderText(3, 'name')
-                        ->assertHeaderText(4, 'description')
+                    $browser->assertHeaderText(1, 'Id')
+                        ->assertHeaderText(2, 'Project')
+                        ->assertHeaderText(3, 'Name')
+                        ->assertHeaderText(4, 'Description')
                         ->assertHeaderText(5, 'Actions')
                         ->assertCellText(1, 1, '1')
                         ->assertCellText(1, 2, 'Do it yourself')

@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Exception;
 
-final class ConfigurationException extends Exception
+final class EntityNotFoundException extends Exception
 {
     /**
      * Custom JSON response for frontend
@@ -15,11 +15,21 @@ final class ConfigurationException extends Exception
      *
      * @return JsonResponse
     */
-    public function render(Request $request) : JsonResponse
+    public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'error' => 'Bad Configuration',
+            'error' => 'Not found',
             'detail' => app()->hasDebugModeEnabled() ? $this->getMessage() : ''
-        ], 500);
+        ], 404);
+    }
+
+    /**
+     * Do not log these exceptions.
+     *
+     * @return bool
+    */
+    public function report(): bool
+    {
+        return true;
     }
 }

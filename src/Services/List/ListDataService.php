@@ -5,21 +5,20 @@ namespace Adepta\Proton\Services\List;
 use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Adepta\Proton\Field\DisplayContext;
-use Adepta\Proton\Services\EntityFactory;
-use Adepta\Proton\Field\HasMany;
-use Adepta\Proton\Field\BelongsTo;
+use Adepta\Proton\Entity\EntityFactory;
+use Adepta\Proton\Field\Internal\HasMany;
+use Adepta\Proton\Field\Internal\BelongsTo;
 use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Exceptions\RequestException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Foundation\Auth\User;
-use Adepta\Proton\Contracts\Field\FieldContract;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use StdClass;
 
 final class ListDataService
-{    
+{ 
     /**
      * Constructor.
      * 
@@ -41,7 +40,15 @@ final class ListDataService
      * @param int $itemsPerPage 
      * @param StdClass $requestQuery
      * 
-     * @return mixed[]
+     * @return array{
+     *     totalRows: int, 
+     *     data: array<int, array<string, float|int|string|null>>, 
+     *     permissions: array<int|string, array{
+     *         update: bool, 
+     *         view: bool, 
+     *         delete: bool
+     *     }>
+     * }
     */
     public function getData(
         Entity $entity,
