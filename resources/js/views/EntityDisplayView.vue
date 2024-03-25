@@ -9,7 +9,7 @@
     
     const props = defineProps({
         entityCode: String,
-        entityId: Number
+        entityId: String
     });
     
     const { entityCode, entityId } = toRefs(props);
@@ -21,10 +21,13 @@
     async function getConfig() {
         try {
             currentError.value = "";
-            const { json } = await request("config/view/entity-display", [
-                entityCode.value,
-                entityId.value,
-            ]);
+            const { json } = await request({
+                path: "config/view/entity-display", 
+                params: [
+                    entityCode.value,
+                    entityId.value,
+                ]
+            });
             configData.value = json;
         } catch (error) {
             currentError.value = error.message;

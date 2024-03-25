@@ -14,7 +14,7 @@ final class CreateConfigService
      * @param Entity $entity
      * 
      * @return array{
-     *     entity_code: string, 
+     *     entityCode: string, 
      *     title: string
      * }
     */
@@ -22,7 +22,7 @@ final class CreateConfigService
     {
         $pageConfig = [];
         
-        $pageConfig['entity_code'] = $entity->getCode();
+        $pageConfig['entityCode'] = $entity->getCode();
         $pageConfig['title'] = 'New '.$entity->getLabel();
         
         return $pageConfig;

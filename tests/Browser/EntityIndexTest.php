@@ -60,4 +60,26 @@ class EntityIndexTest extends BrowserTestCase
                 });
         });  
     }
+    
+    /**
+     * Test to check entity deletion.
+     *
+     * @return void
+    */
+    public function test_project_index_delete(): void
+    {        
+        $this->browse(function (Browser $browser) {
+            $browser
+                ->loginAs(User::findOrFail(1))
+                ->visit(url('proton/entity/project/index'))
+                ->within(new ListComponent('@list-project'), function (Browser $browser) {
+                    $browser->clickCellButton(1, 6, '.delete-button')
+                        ->clickDeleteConfirmButton()
+                        ->waitForCellText(1, 1, '2')
+                        ->assertCellText(1, 3, 'Fun')
+                        ->assertCellText(1, 4, 'Non-boring things to do.')
+                        ->assertCellNotPresent(2, 1);
+                });
+        });  
+    }
 }

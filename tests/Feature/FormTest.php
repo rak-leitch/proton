@@ -270,36 +270,36 @@ class FormTest extends TestCase
             ->has('fields.0', fn (AssertableJson $json) =>
                 $json->where('title', 'User')
                     ->where('key', 'user_id')
-                    ->where('related_entity_code', 'user')
-                    ->where('frontend_type', 'select')
+                    ->where('relatedEntityCode', 'user')
+                    ->where('frontendType', 'select')
                     ->where('required', true)
-                    ->where('select_options.0.value', 1)
-                    ->has('select_options', 1)
-                    ->has('select_options.0', fn (AssertableJson $json) =>
+                    ->where('selectOptions.0.value', 1)
+                    ->has('selectOptions', 1)
+                    ->has('selectOptions.0', fn (AssertableJson $json) =>
                         $json->where('value', 1)
                              ->where('title', $user->name)
                     )
             )->has('fields.1', fn (AssertableJson $json) =>
                 $json->where('title', 'Name')
                     ->where('key', 'name')
-                    ->where('related_entity_code', '')
-                    ->where('frontend_type', 'text')
+                    ->where('relatedEntityCode', '')
+                    ->where('frontendType', 'text')
                     ->where('required', true)
-                    ->has('select_options', 0)
+                    ->has('selectOptions', 0)
             )->has('fields.2', fn (AssertableJson $json) =>
                 $json->where('title', 'Project Description')
                     ->where('key', 'description')
-                    ->where('related_entity_code', '')
-                    ->where('frontend_type', 'textarea')
+                    ->where('relatedEntityCode', '')
+                    ->where('frontendType', 'textarea')
                     ->where('required', false)
-                    ->has('select_options', 0)
+                    ->has('selectOptions', 0)
             )->has('fields.3', fn (AssertableJson $json) =>
                 $json->where('title', 'Priority')
                     ->where('key', 'priority')
-                    ->where('related_entity_code', '')
-                    ->where('frontend_type', 'text')
+                    ->where('relatedEntityCode', '')
+                    ->where('frontendType', 'text')
                     ->where('required', true)
-                    ->has('select_options', 0)
+                    ->has('selectOptions', 0)
             );
     }
     

@@ -25,8 +25,8 @@ class EntityUpdateTest extends TestCase
         $response->assertStatus(200);
         
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->where('entity_code', 'project')
-                 ->where('entity_id', 1)
+            $json->where('entityCode', 'project')
+                 ->where('entityId', 1)
                  ->where('title', 'Update Project')
         );
     }

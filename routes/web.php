@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Adepta\Proton\Http\Controllers\ProtonController;
 use Adepta\Proton\Http\Controllers\View\{EntityIndexController, EntityCreateController, EntityUpdateController, EntityDisplayController};
-use Adepta\Proton\Http\Controllers\List\{ListConfigController, ListDataController};
+use Adepta\Proton\Http\Controllers\List\{ListConfigController, ListDataController, ListDeleteController};
 use Adepta\Proton\Http\Controllers\Form\{UpdateConfigController, CreateConfigController, SubmitUpdateController, SubmitCreateController};
 use Adepta\Proton\Http\Controllers\Display\DisplayConfigController;
 
@@ -27,7 +27,10 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
         Route::prefix('submit')->name('submit.')->group(function () {
             Route::post('form-update/{entity_code}/{entity_id}', [SubmitUpdateController::class, 'submit'])->name('form-update');
             Route::post('form-create/{entity_code}', [SubmitCreateController::class, 'submit'])->name('form-create');
-        }); 
+        });
+        Route::prefix('delete')->name('delete.')->group(function () {
+            Route::delete('list/{entity_code}/{entity_id}', [ListDeleteController::class, 'delete'])->name('list');
+        });    
     });
     Route::get('/', [ProtonController::class, 'index'])->name('index');
     Route::get('{any}', [ProtonController::class, 'index'])->where('any', '.*');

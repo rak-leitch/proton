@@ -9,19 +9,22 @@
     
     const props = defineProps({
         entityCode: String,
-        entityId: Number
+        entityId: String
     });
     
     async function getConfig() {
         try {
-            const { json } = await request("config/view/entity-update", [
-                props.entityCode,
-                props.entityId,
-            ]);
+            const { json } = await request({
+                path: "config/view/entity-update", 
+                params: [
+                    props.entityCode,
+                    props.entityId,
+                ]
+            });
             configData.value = json;
             formSettings.value = {
-                entityCode: configData.value.entity_code,
-                entityId: configData.value.entity_id,
+                entityCode: configData.value.entityCode,
+                entityId: configData.value.entityId,
                 configPath: "config/form-update",
                 submitPath: "submit/form-update"
             };
@@ -30,7 +33,7 @@
         }
     }
     
-    const displayForm = computed(() => {
+    const display = computed(() => {
         return (Object.keys(configData.value).length && !currentError.value);
     });
     
@@ -40,7 +43,10 @@
 
 <template>
     <v-card class="my-4" elevation="4">
-        <template v-slot:title>
+        <template 
+            v-slot:title
+            v-if="display"
+        >
             {{ configData.title }}
         </template>
         <template v-slot:text>
@@ -52,7 +58,7 @@
                 {{ currentError }}
             </v-alert>
             <protonForm
-                v-if="displayForm"
+                v-if="display"
                 :settings="formSettings"
             />
         </template>

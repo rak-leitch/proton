@@ -20,12 +20,15 @@
     async function getConfig() {
         try {
             currentError.value = "";
-            const { json } = await request("config/view/entity-index", [
-                entityCode.value,
-            ]);
+            const { json } = await request({
+                path: "config/view/entity-index", 
+                params: [
+                    entityCode.value,
+                ]
+            });
             configData.value = json;
             listSettings.value = {
-                entityCode: configData.value.entity_code,
+                entityCode: configData.value.entityCode,
                 contextCode: null,
                 conectId: null
             };
@@ -34,7 +37,7 @@
         }
     }
     
-    const displayList = computed(() => {
+    const display = computed(() => {
         return (Object.keys(configData.value).length && !currentError.value);
     });
     
@@ -44,7 +47,10 @@
 
 <template>
     <v-card class="my-4" elevation="4">
-        <template v-slot:title>
+        <template 
+            v-slot:title
+            v-if="display"
+        >
             {{ configData.title }}
         </template>
         <template v-slot:text>
@@ -56,7 +62,7 @@
                 {{ currentError }}
             </v-alert>
             <protonList 
-                v-if="displayList"
+                v-if="display"
                 :settings="listSettings"
             />
         </template>

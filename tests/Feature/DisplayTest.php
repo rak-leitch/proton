@@ -30,31 +30,31 @@ class DisplayTest extends TestCase
                 ->has('fields.0', fn (AssertableJson $json) =>
                     $json->where('title', 'Id')
                         ->where('key', 'id')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', 1)
                 )
                 ->has('fields.1', fn (AssertableJson $json) =>
                     $json->where('title', 'User')
                         ->where('key', 'user_id')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', $user->name)
                 )
                 ->has('fields.2', fn (AssertableJson $json) =>
                     $json->where('title', 'Name')
                         ->where('key', 'name')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', 'Do it yourself')
                 )
                 ->has('fields.3', fn (AssertableJson $json) =>
                     $json->where('title', 'Project Description')
                         ->where('key', 'description')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', 'All the DIY jobs that need to be done.')
                 )
                 ->has('fields.4', fn (AssertableJson $json) =>
                     $json->where('title', 'Priority')
                         ->where('key', 'priority')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', 'normal')
                 )
         );

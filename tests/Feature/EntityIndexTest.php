@@ -24,7 +24,7 @@ class EntityIndexTest extends TestCase
         $response->assertStatus(200);
         
         $response->assertJson(fn (AssertableJson $json) =>
-            $json->where('entity_code', 'project')
+            $json->where('entityCode', 'project')
                  ->where('title', 'Projects')
         );
     }

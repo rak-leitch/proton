@@ -46,11 +46,12 @@ class ListTest extends TestCase
                 $json->where('title', 'Priority')
                      ->where('key', 'priority')
                      ->where('sortable', true)
-            )->where('primary_key', 'id')
-            ->where('can_create', true)
-            ->where('entity_label', 'Project')
+            )->where('primaryKey', 'id')
+            ->where('canCreate', true)
+            ->where('entityLabel', 'Project')
             ->has('version')
-            ->has('page_size_options')
+            ->has('pageSizeOptions')
+            ->has('initialPageSize')
         );
     }
     
@@ -174,6 +175,40 @@ class ListTest extends TestCase
             'page' => 1,
             'items_per_page' => 5,
             'sort_by' => 'null',
+        ]));
+         
+        $response->assertStatus(403);
+    }
+    
+    /**
+     * Check the list delete endpoint.
+     *
+     * @return void
+    */
+    public function test_list_delete_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(1));
+        
+        $response = $this->delete(route('proton.delete.list', [
+            'entity_code' => 'project',
+            'entity_id' => 1,
+        ]));
+         
+        $response->assertStatus(200);
+    }
+    
+    /**
+     * Check unauthorised list delete endpoint.
+     *
+     * @return void
+    */
+    public function test_unauthed_list_delete_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(2));
+        
+        $response = $this->delete(route('proton.delete.list', [
+            'entity_code' => 'project',
+            'entity_id' => 1,
         ]));
          
         $response->assertStatus(403);
