@@ -6,6 +6,7 @@ use Laravel\Dusk\Browser;
 use Adepta\Proton\Tests\BrowserTestCase;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Browser\Components\ListComponent;
+use Adepta\Proton\Tests\Browser\Components\MenuComponent;
  
 class EntityIndexTest extends BrowserTestCase
 {
@@ -34,7 +35,8 @@ class EntityIndexTest extends BrowserTestCase
                         ->assertCellText(2, 3, 'Fun')
                         ->assertCellText(2, 4, 'Non-boring things to do.')
                         ->assertCellElementsVisible(1, 6, ['.update-button', '.display-button', '.delete-button'])
-                        ->assertCellElementsNotPresent(2, 6, ['.update-button', '.display-button', '.delete-button']);
+                        ->assertCellElementsNotPresent(2, 6, ['.update-button', '.display-button', '.delete-button'])
+                        ->assertCellNotPresent(3, 1);
                 });
         });
                 
@@ -80,6 +82,29 @@ class EntityIndexTest extends BrowserTestCase
                         ->assertCellText(1, 4, 'Non-boring things to do.')
                         ->assertCellNotPresent(2, 1);
                 });
+        });  
+    }
+    
+    /**
+     * Test to check entity index menu.
+     *
+     * @return void
+    */
+    public function test_index_menu(): void
+    {        
+        $this->browse(function (Browser $browser) {
+            $browser
+                ->loginAs(User::findOrFail(1))
+                ->visit(url('proton/entity/task/index'))
+                ->within(new MenuComponent(), function (Browser $browser) {
+                    $browser->openMenu()
+                        ->clickMenuItem('project');
+                })
+                ->within(new ListComponent('@list-project'), function (Browser $browser) {
+                    $browser->waitForCellText(2, 3, 'Fun')
+                        ->assertCellText(2, 4, 'Non-boring things to do.');
+                })
+                ->assertSeeIn('.v-card-title', 'Projects');
         });  
     }
 }

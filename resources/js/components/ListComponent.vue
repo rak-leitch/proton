@@ -225,24 +225,26 @@
                 </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
-                <v-icon
-                    v-if="rowPermissions[item.id].update"
-                    icon="$pencil"
-                    class="update-button me-2"
-                    @click="updateItem(item)"
-                />
-                <v-icon
-                    v-if="rowPermissions[item.id].view"
-                    icon="$eye"
-                    class="display-button me-2"
-                    @click="viewItem(item)"
-                />
-                <v-icon
-                    v-if="rowPermissions[item.id].delete"
-                    icon="$rubbish"
-                    class="delete-button me-2"
-                    @click="deleteItem(item)"
-                />
+                <div style="white-space: nowrap;">
+                    <v-icon
+                        v-if="rowPermissions[item.id].update"
+                        icon="$pencil"
+                        class="update-button me-2"
+                        @click="updateItem(item)"
+                    />
+                    <v-icon
+                        v-if="rowPermissions[item.id].view"
+                        icon="$eye"
+                        class="display-button me-2"
+                        @click="viewItem(item)"
+                    />
+                    <v-icon
+                        v-if="rowPermissions[item.id].delete"
+                        icon="$rubbish"
+                        class="delete-button me-2"
+                        @click="deleteItem(item)"
+                    />
+                </div>
             </template>
         </v-data-table-server>
     </div>

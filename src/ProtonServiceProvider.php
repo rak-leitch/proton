@@ -33,7 +33,7 @@ class ProtonServiceProvider extends ServiceProvider
         
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../public/adepta/proton/assets/' => public_path('adepta/proton/assets'),
+                __DIR__.'/../build/artefacts/' => public_path('adepta/proton'),
             ], 'assets');
         }
     }

@@ -6,6 +6,7 @@ use Adepta\Proton\Http\Controllers\View\{EntityIndexController, EntityCreateCont
 use Adepta\Proton\Http\Controllers\List\{ListConfigController, ListDataController, ListDeleteController};
 use Adepta\Proton\Http\Controllers\Form\{UpdateConfigController, CreateConfigController, SubmitUpdateController, SubmitCreateController};
 use Adepta\Proton\Http\Controllers\Display\DisplayConfigController;
+use Adepta\Proton\Http\Controllers\Menu\MenuConfigController;
 
 Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(function () {
     Route::prefix('api')->group(function () {
@@ -20,6 +21,7 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
             Route::get('form-update/{entity_code}/{entity_id}', [UpdateConfigController::class, 'getConfig'])->name('form-update');
             Route::get('form-create/{entity_code}', [CreateConfigController::class, 'getConfig'])->name('form-create');
             Route::get('display/{entity_code}/{entity_id}', [DisplayConfigController::class, 'getConfig'])->name('display');
+            Route::get('menu', [MenuConfigController::class, 'getConfig'])->name('menu');
         });
         Route::prefix('data')->name('data.')->group(function () {
             Route::get('list/{entity_code}/{page}/{items_per_page}', [ListDataController::class, 'getData'])->name('list');

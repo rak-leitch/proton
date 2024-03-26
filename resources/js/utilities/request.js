@@ -1,15 +1,12 @@
 export class HttpMethod {
-    
-    static Get = new HttpMethod('GET');
-    static Post = new HttpMethod('POST');
-    static Delete = new HttpMethod('DELETE');
+ 
+    static Get = new HttpMethod('GET', false);
+    static Post = new HttpMethod('POST', true);
+    static Delete = new HttpMethod('DELETE', true);
 
-    constructor(name) {
+    constructor(name, needsCsrfToken) {
         this.name = name;
-    }
-    
-    needsCsrfToken() {
-        return (this.name !== HttpMethod.Get.name);
+        this.needsCsrfToken = needsCsrfToken;
     }
 }
 
@@ -85,19 +82,13 @@ function getRequestOptions(httpMethod, bodyData) {
         }
     };
     
-    if(httpMethod.needsCsrfToken()) { 
+    if(httpMethod.needsCsrfToken) { 
         const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-        const csrfHeader = {
-            "X-Csrf-Token": csrfToken 
-        };
-        requestOptions["headers"] = {...requestOptions["headers"], ...csrfHeader};
+        requestOptions["headers"]["X-Csrf-Token"] = csrfToken;
     }
     
     if(Object.keys(bodyData).length) {
-        const contentHeader = {
-            "Content-Type": "application/json",
-        };
-        requestOptions["headers"] = {...requestOptions["headers"], ...contentHeader};
+        requestOptions["headers"]["Content-Type"] = "application/json";
         requestOptions["body"] = JSON.stringify(bodyData);
     }
     

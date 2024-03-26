@@ -1,7 +1,7 @@
 /node_modules
 /vendor
 /.phpunit.cache
-/public
+/build
 /tests/Browser/console
 /tests/Browser/screenshots
 /tests/Browser/source
