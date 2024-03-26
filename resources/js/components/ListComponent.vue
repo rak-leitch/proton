@@ -131,7 +131,7 @@
         });
     }
     
-    function goToCreate() {
+    function pushCreateRoute() {
         const route = {
             name: 'entity-create',
             params: { 
@@ -174,7 +174,6 @@
             :items-length="totalItems"
             :items="serverItems"
             :loading="loading"
-            item-value="name"
             @update:options="loadData"
             :items-per-page-options="configData.pageSizeOptions"
             :key="configData.version"
@@ -188,7 +187,7 @@
                     <v-btn
                         v-if="configData.canCreate"
                         color="primary"
-                        @click="goToCreate"
+                        @click="pushCreateRoute"
                         class="create-entity-button"
                     >
                         New {{ configData.entityLabel }}

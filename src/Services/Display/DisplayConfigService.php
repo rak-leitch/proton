@@ -23,7 +23,7 @@ final class DisplayConfigService
      *         title: string, 
      *         key: string, 
      *         frontendType: string, 
-     *         value: float|int|string|null
+     *         value: float|int|string|bool|null
      *     }>
      * }
     */

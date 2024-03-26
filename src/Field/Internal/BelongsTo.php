@@ -59,9 +59,9 @@ final class BelongsTo extends Field
      * 
      * @param Model $model
      * 
-     * @return string|int|float|null
+     * @return float|int|string|bool|null
      */
-    public function getProcessedValue(Model $model) : string|int|float|null
+    public function getProcessedValue(Model $model) : float|int|string|bool|null
     {
         $parentEntity = $this->entityFactory->create($this->getRelatedEntityCode());
         $parentNameField = $parentEntity->getNameField();

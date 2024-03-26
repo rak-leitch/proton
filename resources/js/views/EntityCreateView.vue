@@ -1,5 +1,5 @@
 <script setup>
-    import protonForm from "../components/FormComponent.vue";
+    import ProtonForm from "../components/FormComponent.vue";
     import { request } from "../utilities/request";
     import { ref, computed } from "vue";
     import { useRoute } from "vue-router";
@@ -60,7 +60,7 @@
             >
                 {{ currentError }}
             </v-alert>
-            <protonForm
+            <ProtonForm
                 v-if="display"
                 :settings="formSettings"
             />

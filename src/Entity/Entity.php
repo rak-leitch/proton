@@ -136,11 +136,11 @@ final class Entity
     /**
      * Get loaded model for this entity.
      *
-     * @param float|int|string $key
+     * @param int|string $key
      * 
      * @return Model
     */
-    public function getLoadedModel(float|int|string $key) : Model
+    public function getLoadedModel(int|string $key) : Model
     {
         $modelClass = $this->entityConfig->getModel();
         

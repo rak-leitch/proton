@@ -30,7 +30,7 @@ final class FormConfigService
      *             selectOptions: Collection<int, Model>
      *          }>
      *     }, 
-     *     data: array<string, float|int|string|null>
+     *     data: array<string, float|int|string|bool|null>
      * }
     */
     public function getFormConfig(
@@ -72,7 +72,7 @@ final class FormConfigService
      * @param Entity $entity
      * @param Model $model
      * 
-     * @return array<string, float|int|string|null>
+     * @return array<string, float|int|string|bool|null>
     */
     public function getFormData(
         DisplayContext $displayContext, 

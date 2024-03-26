@@ -28,11 +28,11 @@ final class DisplayConfigController extends BaseController
      * 
      * @param Request $request
      * @param string $entityCode
-     * @param int $entityId
+     * @param int|string $entityId
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $entityCode, int $entityId) : JsonResponse
+    public function getConfig(Request $request, string $entityCode, int|string $entityId) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
         $model = $entity->getLoadedModel($entityId);

@@ -149,9 +149,9 @@ abstract class Field
      * 
      * @param Model $model
      * 
-     * @return string|int|float|null
+     * @return float|int|string|bool|null
      */
-    public function getRawValue(Model $model) : string|int|float|null
+    public function getRawValue(Model $model) : float|int|string|bool|null
     {
         $value = null;
         $fieldName = $this->getFieldName();
@@ -170,9 +170,9 @@ abstract class Field
      * 
      * @param Model $model
      * 
-     * @return string|int|float|null
+     * @return float|int|string|bool|null
      */
-    public function getProcessedValue(Model $model) : string|int|float|null
+    public function getProcessedValue(Model $model) : float|int|string|bool|null
     {
         return $this->getRawValue($model);
     }

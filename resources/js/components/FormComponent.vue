@@ -35,7 +35,8 @@
             const { json, status } = await request({
                 path: props.settings.submitPath, 
                 params: getRequestParams(), 
-                bodyData: formData.value
+                bodyData: formData.value,
+                acceptableErrors: [ 422 ],
             });
             errorMessages.value = json.errors ? json.errors : {};
             if(status === successStatus) {
@@ -72,7 +73,9 @@
         
         if(contextCode && contextId) {
             const contextField = configData.value.fields.find(field => field.relatedEntityCode === contextCode);
-            formData.value[contextField.key] = parseInt(contextId);
+            if(contextField) {
+                formData.value[contextField.key] = contextId;
+            }
         }
     }
     
@@ -97,7 +100,8 @@
         v-if="displayForm"
     >
         <template v-for="(field) in configData.fields">
-            <v-text-field v-if="field.frontendType==='text'"
+            <v-text-field 
+                v-if="field.frontendType==='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"
@@ -109,7 +113,8 @@
                     </span>
                 </template>
             </v-text-field>
-            <v-textarea v-if="field.frontendType==='textarea'"
+            <v-textarea 
+                v-if="field.frontendType==='textarea'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"
@@ -121,7 +126,8 @@
                     </span>
                 </template>
             </v-textarea>
-            <v-select v-if="field.frontendType==='select'"
+            <v-select 
+                v-if="field.frontendType==='select'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"

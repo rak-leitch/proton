@@ -28,7 +28,7 @@ final class FormSubmitService
      * @param DisplayContext $displayContext
      * @param Entity $entity
      * @param Model $model
-     * @param array<string, string|int|float|null> $data
+     * @param array<string, string|int|float|bool|null> $data
      * 
      * @return void
     */
@@ -49,7 +49,7 @@ final class FormSubmitService
             $fieldValue = $data[$fieldName];
             
             //Check they are allowed to add this entity to a parent
-            if($field->getClass() === BelongsTo::class) {
+            if($field->getClass() === BelongsTo::class) { 
                 $this->authService->canAdd($user, $entity, $field, $fieldValue, true);
             }
             

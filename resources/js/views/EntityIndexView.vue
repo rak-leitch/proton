@@ -1,5 +1,5 @@
 <script setup>
-    import protonList from "../components/ListComponent.vue";
+    import ProtonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
     import { watch, ref, computed, toRefs } from "vue";
     
@@ -61,7 +61,7 @@
             >
                 {{ currentError }}
             </v-alert>
-            <protonList 
+            <ProtonList 
                 v-if="display"
                 :settings="listSettings"
             />

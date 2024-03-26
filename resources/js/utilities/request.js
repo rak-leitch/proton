@@ -15,12 +15,11 @@ export async function request({
     params = [], 
     queryParams = {}, 
     bodyData = {}, 
-    method = null
+    method = null,
+    acceptableErrors = [],
 }) {
     
     const baseUrl = window.protonApiBase;
-    const acceptableErrors = [ 422 ];
-    
     const httpMethod = getHttpMethod(bodyData, method);
     const parameterString = getParameterString(params, queryParams);
     const requestOptions = getRequestOptions(httpMethod, bodyData);

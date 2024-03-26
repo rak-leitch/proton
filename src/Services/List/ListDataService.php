@@ -42,7 +42,7 @@ final class ListDataService
      * 
      * @return array{
      *     totalRows: int, 
-     *     data: array<int, array<string, float|int|string|null>>, 
+     *     data: array<int, array<string, float|int|string|bool|null>>, 
      *     permissions: array<int|string, array{
      *         update: bool, 
      *         view: bool, 

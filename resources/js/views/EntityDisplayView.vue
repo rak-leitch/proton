@@ -1,6 +1,6 @@
 <script setup>
-    import protonDisplay from "../components/DisplayComponent.vue";
-    import protonList from "../components/ListComponent.vue";
+    import ProtonDisplay from "../components/DisplayComponent.vue";
+    import ProtonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
     import { watch, ref, computed, toRefs } from "vue";
     
@@ -55,7 +55,7 @@
             {{ configData.title }}
         </template>
         <template v-slot:text>
-            <protonDisplay
+            <ProtonDisplay
                 :settings="configData.displaySettings"
             />
         </template>
@@ -65,7 +65,7 @@
             {{ listConfig.title }}
         </template>
         <template v-slot:text>
-            <protonList 
+            <ProtonList 
                 :settings="listConfig.listSettings"
             />
         </template>
