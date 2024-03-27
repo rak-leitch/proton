@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 namespace Adepta\Proton\Field\Internal;
+
 use Adepta\Proton\Field\DisplayContext;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;

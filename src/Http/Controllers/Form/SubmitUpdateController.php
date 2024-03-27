@@ -29,7 +29,7 @@ final class SubmitUpdateController extends BaseController
     ) { }
     
     /**
-     * Get the configuration for an form component.
+     * Handle the submission of an update form.
      * 
      * @param Request $request
      * @param string $entityCode

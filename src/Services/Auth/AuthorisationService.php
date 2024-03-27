@@ -38,7 +38,7 @@ final class AuthorisationService
         bool $throwException = false
     ) : bool 
     {
-        return $this->allowed('viewAny', $user, $entity->getModel(), $throwException);
+        return $this->allowed('viewAny', $user, $entity->getModelClass(), $throwException);
     }
     
     /**
@@ -58,7 +58,7 @@ final class AuthorisationService
         bool $throwException = false
     ) : bool 
     {
-        return $this->allowed('create', $user, $entity->getModel(), $throwException);
+        return $this->allowed('create', $user, $entity->getModelClass(), $throwException);
     }
     
     /**

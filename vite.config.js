@@ -20,7 +20,11 @@ export default defineConfig(({ command }) => ({
                 }
             }
         },
-        vuetify(),
-        //vuetify({ autoImport: true, styles: { configFile: 'resources/styles/vuetify.scss' } }),
+        vuetify({ 
+            autoImport: true, 
+            styles: { 
+                configFile: 'resources/styles/vuetify.scss' 
+            } 
+        }),
     ]
 }));

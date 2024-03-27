@@ -3,7 +3,6 @@
 namespace Adepta\Proton\Services\ViewConfig;
 
 use Adepta\Proton\Entity\Entity;
-use Illuminate\Database\Eloquent\Model;
 
 final class CreateConfigService
 {    

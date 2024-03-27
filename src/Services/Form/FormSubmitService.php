@@ -53,7 +53,7 @@ final class FormSubmitService
                 $this->authService->canAdd($user, $entity, $field, $fieldValue, true);
             }
             
-            $model->{$fieldName} = $data[$fieldName];
+            $model->{$fieldName} = $fieldValue;
         }
         
         $model->save();

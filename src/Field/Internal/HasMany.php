@@ -34,7 +34,7 @@ final class HasMany extends Field
      */
     public function getRelationMethod(Model|string $model) : string 
     {
-        $relationMethod = Str::camel(str::plural($this->fieldConfig->getFieldName()));
+        $relationMethod = Str::camel(Str::plural($this->fieldConfig->getFieldName()));
         $this->checkModelRelation($model, $relationMethod);
         return $relationMethod;
     }

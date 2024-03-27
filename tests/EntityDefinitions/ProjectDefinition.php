@@ -25,7 +25,7 @@ class ProjectDefinition implements EntityDefinitionContract
     public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract
     {
         $entityConfig
-            ->setModel(ProjectModel::class)
+            ->setModelClass(ProjectModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(BelongsTo::create('user')->validation('required'))
             ->addField(HasMany::create('task'))

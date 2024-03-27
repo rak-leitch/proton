@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 final class UpdateConfigService
 {    
     /**
-     * Get the index page config for an entity
+     * Get the update page config for an entity
      * for use by the frontend.
      *
      * @param Entity $entity

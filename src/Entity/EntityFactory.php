@@ -15,6 +15,7 @@ final class EntityFactory
      * Constructor.
      *
      * @param ConfigStoreContract $configStore
+     * @param Application $app
     */
     public function __construct(
         private ConfigStoreContract $configStore,
@@ -26,8 +27,6 @@ final class EntityFactory
      * the entity code.
      * 
      * @param string $entityCode
-     * 
-     * @throws ConfigurationException
      *
      * @return Entity
     */

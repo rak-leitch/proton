@@ -23,7 +23,7 @@ final class ListDeleteController extends BaseController
     ) { }
     
     /**
-     * Get the data for an list component.
+     * Handle an entity delete request.
      * 
      * @param Request $request
      * @param string $entityCode

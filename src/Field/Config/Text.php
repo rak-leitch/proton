@@ -30,7 +30,7 @@ final class Text extends FieldConfig
         $this->displayContexts = collect([
             DisplayContext::CREATE,
             DisplayContext::UPDATE,
-            DisplayContext::VIEW,
+            DisplayContext::DISPLAY,
             DisplayContext::INDEX,
         ]);
     }

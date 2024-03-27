@@ -17,7 +17,7 @@ interface EntityConfigContract
      * 
      * @return self
      */
-    public function setModel(string $model) : self;
+    public function setModelClass(string $model) : self;
     
     /**
      * Get the model associated with this entity
@@ -25,7 +25,7 @@ interface EntityConfigContract
      * 
      * @return class-string<Model>
      */
-    public function getModel() : string;
+    public function getModelClass() : string;
     
     /**
      * Add a field to the configuration

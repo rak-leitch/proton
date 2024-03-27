@@ -72,9 +72,17 @@
         const contextId = props.settings.contextId;
         
         if(contextCode && contextId) {
-            const contextField = configData.value.fields.find(field => field.relatedEntityCode === contextCode);
+            const contextField = configData.value.fields.find(
+                field => field.relatedEntityCode === contextCode
+            );
             if(contextField) {
-                formData.value[contextField.key] = contextId;
+                const selectOption = contextField.selectOptions.find(
+                    //Loose comparison as key may be int or string
+                    option => option.value == contextId
+                );
+                if(selectOption) {
+                    formData.value[contextField.key] = selectOption.value;
+                }
             }
         }
     }

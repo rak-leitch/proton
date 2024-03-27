@@ -47,9 +47,10 @@
             
             currentListOptions = { page, itemsPerPage, sortBy };
             
-            if(sortBy.length && sortBy[0]) {
-                queryParams.sortField = sortBy[0].key;
-                queryParams.sortOrder = sortBy[0].order;
+            if(sortBy.length) {
+                const [sort] = sortBy;
+                queryParams.sortField = sort.key;
+                queryParams.sortOrder = sort.order;
             }
             
             if(settings.value.contextCode && settings.value.contextId) {

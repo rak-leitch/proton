@@ -4,7 +4,7 @@ namespace Adepta\Proton\Services\Menu;
 
 use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use Adepta\Proton\Services\ConfigStoreService;
+use Adepta\Proton\Contracts\ConfigStoreContract;
 use Illuminate\Foundation\Auth\User;
 
 final class MenuConfigService
@@ -14,12 +14,12 @@ final class MenuConfigService
      *
      * @param EntityFactory $entityFactory
      * @param AuthorisationService $authorisationService
-     * @param ConfigStoreService $configStoreService
+     * @param ConfigStoreContract $configStoreService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private AuthorisationService $authorisationService,
-        private ConfigStoreService $configStoreService
+        private ConfigStoreContract $configStoreService
     ) { }
     
     /**

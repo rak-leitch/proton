@@ -29,7 +29,7 @@ final class SubmitCreateController extends BaseController
     ) { }
     
     /**
-     * Get the configuration for an form component.
+     * Handle the submission of a create form.
      * 
      * @param Request $request
      * @param string $entityCode

@@ -15,6 +15,7 @@ final class DisplayConfigController extends BaseController
      * Constructor.
      *
      * @param EntityFactory $entityFactory
+     * @param AuthorisationService $authorisationService
      * @param DisplayConfigService $displayConfigService
     */
     public function __construct(

@@ -25,7 +25,7 @@ final class EntityDisplayController extends BaseController
     ) { }
     
     /**
-     * Get the configuration for an entity view page.
+     * Get the configuration for an entity display page.
      * 
      * @param Request $request
      * @param string $entityCode
