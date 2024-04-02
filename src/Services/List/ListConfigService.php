@@ -32,11 +32,12 @@ final class ListConfigService
      *         key: string,     
      *         sortable: bool
      *     }>, 
-     *     primary_key: string, 
-     *     can_create: bool, 
-     *     entity_label: string, 
+     *     primaryKey: string, 
+     *     canCreate: bool, 
+     *     initialPageSize: int,
+     *     entityLabel: string, 
      *     version: string, 
-     *     page_size_options: array<int, array{
+     *     pageSizeOptions: array<int, array{
      *         value: int, 
      *         title: string
      *     }>
@@ -46,12 +47,13 @@ final class ListConfigService
     {
         $listConfig = [];
         $listConfig['fields'] = [];
-        $listConfig['primary_key'] = $entity->getPrimaryKeyField()->getFieldName(); 
-        $listConfig['can_create'] = $this->authorisationService->canCreate($user, $entity);
-        $listConfig['entity_label'] = $entity->getLabel();
+        $listConfig['primaryKey'] = $entity->getPrimaryKeyField()->getFieldName(); 
+        $listConfig['canCreate'] = $this->authorisationService->canCreate($user, $entity);
+        $listConfig['entityLabel'] = $entity->getLabel();
+        $listConfig['initialPageSize'] = 5;
         $listConfig['version'] = Carbon::now()->toJSON();
         
-        $listConfig['page_size_options'] = [
+        $listConfig['pageSizeOptions'] = [
             ['value' => 3, 'title' => '3'],
             ['value' => 5, 'title' => '5'],
             ['value' => 10, 'title' => '10'],

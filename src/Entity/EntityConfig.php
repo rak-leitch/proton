@@ -41,7 +41,7 @@ final class EntityConfig implements EntityConfigContract
      * 
      * @return self
      */
-    public function setModel(string $model) : self
+    public function setModelClass(string $model) : self
     {
         $this->model = $model;
         return $this;
@@ -53,7 +53,7 @@ final class EntityConfig implements EntityConfigContract
      * 
      * @return class-string<Model>
      */
-    public function getModel() : string
+    public function getModelClass() : string
     {
         if($this->model === null) {
             throw new ConfigurationException('No model class name configured'); 

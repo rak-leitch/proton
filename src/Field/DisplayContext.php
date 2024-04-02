@@ -6,7 +6,7 @@ enum DisplayContext
 {
     case CREATE;
     case UPDATE;
-    case VIEW;
+    case DISPLAY;
     case INDEX;
     
     /**
@@ -20,7 +20,7 @@ enum DisplayContext
         return match($this) {
             self::CREATE => true,   
             self::UPDATE => true,   
-            self::VIEW => false,
+            self::DISPLAY => false,
             self::INDEX => false,   
         };
     }

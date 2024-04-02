@@ -7,6 +7,7 @@ use Adepta\Proton\Tests\BrowserTestCase;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Browser\Components\ListComponent;
 use Adepta\Proton\Tests\Browser\Components\FormComponent;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
  
 class EntityUpdateTest extends BrowserTestCase
 {
@@ -28,9 +29,9 @@ class EntityUpdateTest extends BrowserTestCase
                 })
                 ->within(new FormComponent(), function (Browser $browser) {
                     $browser
-                        ->assertFieldValue('user_id', '1')
-                        ->assertFieldValue('name', 'Do it yourself')
-                        ->assertAreaValue('description', 'All the DIY jobs that need to be done.')
+                        ->assertFieldValue('user_id', ProjectSeeder::getData(1, 'user_id'))
+                        ->assertFieldValue('name', ProjectSeeder::getData(1, 'name'))
+                        ->assertAreaValue('description', ProjectSeeder::getData(1, 'description'))
                         ->clearTextFieldValue('name')
                         ->typeInField('name', self::PROJECT_NAME)
                         ->click('@form-submit');

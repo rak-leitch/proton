@@ -4,7 +4,6 @@ namespace Adepta\Proton\Services\Form;
 
 use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Field\DisplayContext;
-use Illuminate\Validation\ValidationRuleParser;
 
 final class FormValidationService
 {    

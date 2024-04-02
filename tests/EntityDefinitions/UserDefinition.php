@@ -24,7 +24,7 @@ class UserDefinition implements EntityDefinitionContract
     public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract
     {
         $entityConfig
-            ->setModel(UserModel::class)
+            ->setModelClass(UserModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(HasMany::create('project'))
             ->addField(Text::create('name')->sortable()->validation('required')->name())

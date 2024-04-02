@@ -29,15 +29,15 @@ final class SubmitUpdateController extends BaseController
     ) { }
     
     /**
-     * Get the configuration for an form component.
+     * Handle the submission of an update form.
      * 
      * @param Request $request
      * @param string $entityCode
-     * @param int $entityId
+     * @param int|string $entityId
      *
      * @return JsonResponse
     */
-    public function submit(Request $request, string $entityCode, int $entityId) : JsonResponse
+    public function submit(Request $request, string $entityCode, int|string $entityId) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
         $model = $this->formModelFactory->getUpdateModel($entity, $entityId, $request->user());

@@ -3,6 +3,7 @@
 namespace Adepta\Proton\Services\Auth;
 
 use Adepta\Proton\Exceptions\AuthorisationException;
+use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Foundation\Auth\User;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
@@ -37,7 +38,7 @@ final class AuthorisationService
         bool $throwException = false
     ) : bool 
     {
-        return $this->allowed('viewAny', $user, $entity->getModel(), $throwException);
+        return $this->allowed('viewAny', $user, $entity->getModelClass(), $throwException);
     }
     
     /**
@@ -57,7 +58,7 @@ final class AuthorisationService
         bool $throwException = false
     ) : bool 
     {
-        return $this->allowed('create', $user, $entity->getModel(), $throwException);
+        return $this->allowed('create', $user, $entity->getModelClass(), $throwException);
     }
     
     /**
@@ -121,7 +122,7 @@ final class AuthorisationService
      * @param ?User $user 
      * @param Entity $entity
      * @param Field $field 
-     * @param string|int|float|null $fieldValue
+     * @param string|int|float|bool|null $fieldValue
      * @param bool $throwException = false
      *
      * @return bool
@@ -130,7 +131,7 @@ final class AuthorisationService
         ?User $user, 
         Entity $entity,
         Field $field, 
-        string|int|float|null $fieldValue,
+        string|int|float|bool|null $fieldValue,
         bool $throwException = false
     ) : bool 
     {
@@ -139,10 +140,14 @@ final class AuthorisationService
         if($fieldValue === null) {
             $allowed = true;
         } else {
-            $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
-            $parentModel = $parentEntity->getLoadedModel($fieldValue);
-            $policyName = 'add'.$entity->getStudlyCode();
-            $allowed = $this->allowed($policyName, $user, $parentModel, $throwException);
+            if(is_string($fieldValue) || is_int($fieldValue)) {
+                $parentEntity = $this->entityFactory->create($field->getRelatedEntityCode());
+                $parentModel = $parentEntity->getLoadedModel($fieldValue);
+                $policyName = 'add'.$entity->getStudlyCode();
+                $allowed = $this->allowed($policyName, $user, $parentModel, $throwException);
+            } else {
+                throw new ConfigurationException('Key fields used for checking add permissions must be int or string');
+            }
         }
         
         return $allowed;

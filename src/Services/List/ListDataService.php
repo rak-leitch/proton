@@ -42,7 +42,7 @@ final class ListDataService
      * 
      * @return array{
      *     totalRows: int, 
-     *     data: array<int, array<string, float|int|string|null>>, 
+     *     data: array<int, array<string, float|int|string|bool|null>>, 
      *     permissions: array<int|string, array{
      *         update: bool, 
      *         view: bool, 
@@ -61,13 +61,11 @@ final class ListDataService
         $response = [];
         $rowData = [];
         $permissions = [];
-        $displayContext = DisplayContext::INDEX;
-        $modelClass = $entity->getModel();
+        $modelClass = $entity->getModelClass();
         $pkFieldName = $entity->getPrimaryKeyField()->getFieldName();
         $query = $modelClass::query();
         
         if($requestQuery->contextCode && $requestQuery->contextId) {
-            $displayContext = DisplayContext::VIEW;
             $query = $this->getContextQuery(
                 $requestQuery->contextCode, 
                 $requestQuery->contextId, 
@@ -76,12 +74,12 @@ final class ListDataService
         }
         
         $entity->getQueryFilter()($query);
-        $this->addBelongsToRelations($entity, $displayContext, $query);
-        $this->sort($query, $requestQuery, $entity, $displayContext);
+        $this->addBelongsToRelations($entity, $query);
+        $this->sort($query, $requestQuery, $entity);
         $totalRows = $query->count();
         $collection = $this->loadCollection($query, $page, $itemsPerPage);
         $listFields = $entity->getFields(
-            displayContext: $displayContext
+            displayContext: DisplayContext::INDEX
         );
         
         foreach($collection as $model) {            
@@ -126,7 +124,7 @@ final class ListDataService
         $contextEntity = $this->entityFactory->create($contextCode);
         
         $relationField = $contextEntity->getFields(
-            displayContext: DisplayContext::VIEW, 
+            displayContext: DisplayContext::DISPLAY, 
             fieldTypes: collect([HasMany::class]), 
             relatedEntityCode: $entityCode,
             onlyDisplayable: false
@@ -145,26 +143,24 @@ final class ListDataService
     /**
      * Add on the BelongsTo relationships
      *
-     * @param Entity $entity
-     * @param DisplayContext $displayContext 
+     * @param Entity $entity 
      * @param Builder $query
      * 
      * @return void
     */
     private function addBelongsToRelations(
         Entity $entity, 
-        DisplayContext $displayContext,
         Builder $query
     ) : void
     {
         $belongsToFields = $entity->getFields(
-            displayContext: $displayContext, 
+            displayContext: DisplayContext::INDEX, 
             fieldTypes: collect([BelongsTo::class])
         );
         
         foreach($belongsToFields as $belongsToField) {
             
-            $relationMethod = $belongsToField->getRelationMethod($entity->getModel());
+            $relationMethod = $belongsToField->getRelationMethod($entity->getModelClass());
             
             //Get all fields here so they can be 
             //used in policies without having to load the relationship.
@@ -178,7 +174,6 @@ final class ListDataService
      * @param Builder $query 
      * @param StdClass $requestQuery 
      * @param Entity $entity
-     * @param DisplayContext $displayContext
      * 
      * @return void
     */
@@ -186,13 +181,12 @@ final class ListDataService
         Builder $query, 
         StdClass $requestQuery,
         Entity $entity,
-        DisplayContext $displayContext
     ) : void
     {
         if($requestQuery->sortField && $requestQuery->sortOrder) {
             
             $sortField = $entity->getFields(
-                displayContext: $displayContext,
+                displayContext: DisplayContext::INDEX,
                 fieldName: $requestQuery->sortField,
             )->first();
             

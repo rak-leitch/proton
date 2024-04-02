@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from "vue";
+    import { ref, computed } from "vue";
     import { request } from "../utilities/request";
     import { useRouter } from "vue-router";
 
@@ -17,7 +17,10 @@
     
     async function getConfig() {
         try {
-            const { json } = await request(props.settings.configPath, getRequestParams());
+            const { json } = await request({
+                path: props.settings.configPath, 
+                params: getRequestParams()
+            });
             configData.value = json.config;
             formData.value = json.data;
             selectRelatedField();
@@ -29,7 +32,12 @@
     async function submitForm() {
         try {
             submitInProgress.value = true;
-            const { json, status } = await request(props.settings.submitPath, getRequestParams(), {}, formData.value);
+            const { json, status } = await request({
+                path: props.settings.submitPath, 
+                params: getRequestParams(), 
+                bodyData: formData.value,
+                acceptableErrors: [ 422 ],
+            });
             errorMessages.value = json.errors ? json.errors : {};
             if(status === successStatus) {
                 router.push(router.options.history.state['back']);
@@ -64,10 +72,24 @@
         const contextId = props.settings.contextId;
         
         if(contextCode && contextId) {
-            const contextField = configData.value.fields.find(field => field.related_entity_code === contextCode);
-            formData.value[contextField.key] = parseInt(contextId);
+            const contextField = configData.value.fields.find(
+                field => field.relatedEntityCode === contextCode
+            );
+            if(contextField) {
+                const selectOption = contextField.selectOptions.find(
+                    //Loose comparison as key may be int or string
+                    option => option.value == contextId
+                );
+                if(selectOption) {
+                    formData.value[contextField.key] = selectOption.value;
+                }
+            }
         }
     }
+    
+    const displayForm = computed(() => {
+        return Object.keys(configData.value).length;
+    });
     
     await getConfig();
 
@@ -81,9 +103,13 @@
     >
         {{ currentError }}
     </v-alert>
-    <v-form @submit.prevent="submitForm">
+    <v-form 
+        @submit.prevent="submitForm"
+        v-if="displayForm"
+    >
         <template v-for="(field) in configData.fields">
-            <v-text-field v-if="field.frontend_type==='text'"
+            <v-text-field 
+                v-if="field.frontendType==='text'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"
@@ -95,7 +121,8 @@
                     </span>
                 </template>
             </v-text-field>
-            <v-textarea v-if="field.frontend_type==='textarea'"
+            <v-textarea 
+                v-if="field.frontendType==='textarea'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"
@@ -107,11 +134,12 @@
                     </span>
                 </template>
             </v-textarea>
-            <v-select v-if="field.frontend_type==='select'"
+            <v-select 
+                v-if="field.frontendType==='select'"
                 v-model="formData[field.key]"
                 :error-messages="getErrorMessage(field.key)"
                 :class="`field-${field.key}`"
-                :items="field.select_options"
+                :items="field.selectOptions"
             >
                 <template v-slot:label>
                     <span>

@@ -13,4 +13,11 @@ interface ConfigStoreContract
      * @return string
     */
     public function getDefinitionClass(string $entityCode) : string;
+    
+    /**
+     * Get all entity codes
+     *
+     * @return array<int, string>
+    */
+    public function getAllEntityCodes() : array;
 }

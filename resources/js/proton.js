@@ -6,8 +6,8 @@ import vuetify from "./vuetify";
 import "../styles/custom.scss";
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 createApp(app).use(router).use(vuetify).mount("#proton");

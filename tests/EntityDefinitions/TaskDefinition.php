@@ -24,7 +24,7 @@ class TaskDefinition implements EntityDefinitionContract
     public function getEntityConfig(EntityConfigContract $entityConfig) : EntityConfigContract
     {
         $entityConfig
-            ->setModel(TaskModel::class)
+            ->setModelClass(TaskModel::class)
             ->addField(Id::create('id')->sortable())
             ->addField(BelongsTo::create('project')->validation('required'))
             ->addField(Text::create('name')->sortable()->validation('required')->name())

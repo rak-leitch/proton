@@ -28,7 +28,7 @@ final class Id extends FieldConfig
     protected function setInitialDisplayContexts() : void
     {
         $this->displayContexts = collect([
-            DisplayContext::VIEW,
+            DisplayContext::DISPLAY,
             DisplayContext::INDEX,
         ]);
     }

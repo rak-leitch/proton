@@ -52,6 +52,16 @@ final class ConfigStoreService implements ConfigStoreContract
     }
     
     /**
+     * Get all entity codes
+     *
+     * @return array<int, string>
+    */
+    public function getAllEntityCodes() : array
+    {
+        return array_keys($this->definitionClasses);
+    }
+    
+    /**
      * Read and do some basic verification on the 
      * entity definition config.
      * 

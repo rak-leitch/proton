@@ -45,7 +45,7 @@ final class BelongsTo extends Field
     
     /**
      * Get the field's name. Guess this from the 
-     * entity code provided.
+     * field name provided.
      * 
      * @return string
      */
@@ -59,9 +59,9 @@ final class BelongsTo extends Field
      * 
      * @param Model $model
      * 
-     * @return string|int|float|null
+     * @return float|int|string|bool|null
      */
-    public function getProcessedValue(Model $model) : string|int|float|null
+    public function getProcessedValue(Model $model) : float|int|string|bool|null
     {
         $parentEntity = $this->entityFactory->create($this->getRelatedEntityCode());
         $parentNameField = $parentEntity->getNameField();
@@ -104,7 +104,7 @@ final class BelongsTo extends Field
         $parentEntity = $this->entityFactory->create($this->getRelatedEntityCode());
         $keyField = $parentEntity->getPrimaryKeyField()->getFieldname();
         $nameField = $parentEntity->getNameField()->getFieldname();
-        $modelClass = $parentEntity->getModel();
+        $modelClass = $parentEntity->getModelClass();
         $query = $modelClass::select("{$keyField} as value", "{$nameField} as title");
         $parentEntity->getQueryFilter()($query);
         return $query->get();

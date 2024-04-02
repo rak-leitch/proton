@@ -13,7 +13,7 @@ final class IndexConfigService
      * @aparam Entity $entity
      * 
      * @return array{
-     *     entity_code: string, 
+     *     entityCode: string, 
      *     title: string
      * }
     */
@@ -21,7 +21,7 @@ final class IndexConfigService
     {
         $pageConfig = [];
         
-        $pageConfig['entity_code'] = $entity->getCode();
+        $pageConfig['entityCode'] = $entity->getCode();
         $pageConfig['title'] = $entity->getLabel(true);
 
         return $pageConfig;

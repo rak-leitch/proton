@@ -23,12 +23,12 @@ final class FormModelFactory
      * Create the model for a form update.
      *
      * @param Entity $entity
-     * @param int $entityId
+     * @param int|string $entityId
      * @param ?User $user
      * 
      * @return Model
     */
-    public function getUpdateModel(Entity $entity, int $entityId, ?User $user) : Model
+    public function getUpdateModel(Entity $entity, int|string $entityId, ?User $user) : Model
     {
         $model = $entity->getLoadedModel($entityId);
         $this->authorisationService->canUpdate($user, $model, true);
@@ -45,7 +45,7 @@ final class FormModelFactory
     */
     public function getCreateModel(Entity $entity, ?User $user) : Model
     {
-        $modelClass = $entity->getModel();
+        $modelClass = $entity->getModelClass();
         $this->authorisationService->canCreate($user, $entity, true);
         return $modelClass::make();
     }

@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch, toRefs } from "vue";
+    import { ref, watch, toRefs, computed } from "vue";
     import { request } from "../utilities/request";
 
     const configData = ref({});
@@ -17,15 +17,23 @@
     
     async function getConfigData() {
         try {
-            const { json } = await request("config/display", [
-                settings.value.entityCode,
-                settings.value.entityId,
-            ]);
+            currentError.value = "";
+            const { json } = await request({
+                path: "config/display", 
+                params: [
+                    settings.value.entityCode,
+                    settings.value.entityId,
+                ]
+            });
             configData.value = json;
         } catch (error) {
             currentError.value = `Failed to set up display: ${error.message}`;
         }
     }
+    
+    const display = computed(() => {
+        return (Object.keys(configData.value).length && !currentError.value);
+    });
     
     await getConfigData();
 
@@ -40,7 +48,9 @@
         >
             {{ currentError }}
         </v-alert>
-      <v-table>
+      <v-table
+          v-if="display"
+      >
             <thead>
                 <tr>
                     <th class="text-left">Name</th>
@@ -53,7 +63,7 @@
                     :key="field.name"
                 >
                     <td>{{ field.title }}</td>
-                    <td v-if="field.frontend_type==='text'">{{ field.value }}</td>
+                    <td v-if="field.frontendType==='text'">{{ field.value }}</td>
                 </tr>
             </tbody>
         </v-table>

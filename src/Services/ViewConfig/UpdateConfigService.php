@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 final class UpdateConfigService
 {    
     /**
-     * Get the index page config for an entity
+     * Get the update page config for an entity
      * for use by the frontend.
      *
      * @param Entity $entity
      * @param Model $model
      * 
      * @return array{
-     *     entity_code: string, 
-     *     entity_id: int|string, 
+     *     entityCode: string, 
+     *     entityId: int|string, 
      *     title: string
      * }
     */
@@ -25,8 +25,8 @@ final class UpdateConfigService
         $pageConfig = [];
         $primaryKeyName = $entity->getPrimaryKeyField()->getFieldName();
         
-        $pageConfig['entity_code'] = $entity->getCode();
-        $pageConfig['entity_id'] = $model->{$primaryKeyName};
+        $pageConfig['entityCode'] = $entity->getCode();
+        $pageConfig['entityId'] = $model->{$primaryKeyName};
         $pageConfig['title'] = 'Update '.$entity->getLabel();
         
         return $pageConfig;

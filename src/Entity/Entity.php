@@ -20,6 +20,9 @@ final class Entity
      */
     private Collection $fieldCollection;
     
+    private Field $primaryKeyField;
+    private Field $nameField;
+    
     /**
      * Constructor
      * 
@@ -36,26 +39,9 @@ final class Entity
     {
         $this->fieldCollection = collect();
         $this->initialiseFields();
-        $this->validateEntityCode();
-        $this->validateModelClass();
-        $this->validateFieldExistence();
-        $this->validatePrimaryKey();
-        $this->validateNameField();
-    }
-    
-    /**
-     * Initialise the fields based on the field config.
-     * 
-     * @throws ConfigurationException
-     * 
-     * @return void
-     */
-    private function initialiseFields() : void
-    {
-        foreach($this->entityConfig->getFields() as $fieldConfig) {
-            $field = $this->fieldFactory->create($fieldConfig);
-            $this->fieldCollection->push($field);
-        } 
+        $this->validateSetup();
+        $this->initPrimaryKeyField();
+        $this->initNameField();
     }
     
     /**
@@ -84,15 +70,44 @@ final class Entity
             $onlyDisplayable, 
             $fieldName
         ) {
-            $displayContextOk = $field->getDisplayContexts()->contains($displayContext);
-            $fieldTypeOk = $fieldTypes ? $fieldTypes->contains($field->getClass()) : true;
-            $fieldNameOk = ($fieldName !== null) ? ($field->getFieldName() === $fieldName) : true;
-            $entityCodeOk = ($relatedEntityCode !== null) ? ($field->getRelatedEntityCode() === $relatedEntityCode) : true;
-            $onlyDisplayableOk = $onlyDisplayable ? ($field->getFrontendType($displayContext) !== FrontendType::NONE) : true;
-            return ($displayContextOk && $fieldTypeOk && $fieldNameOk && $entityCodeOk && $onlyDisplayableOk);
+            $displayContextFound = $field->getDisplayContexts()->contains($displayContext);
+            
+            $fieldTypeFound = ($fieldTypes !== null) ? 
+                $fieldTypes->contains($field->getClass()) 
+                : true;
+            
+            $fieldNameFound = ($fieldName !== null) ? 
+                ($field->getFieldName() === $fieldName) 
+                : true;
+                
+            $entityCodeFound = ($relatedEntityCode !== null) ? 
+                ($field->getRelatedEntityCode() === $relatedEntityCode) 
+                : true;
+                
+            $onlyDisplayableFound = $onlyDisplayable ? 
+                ($field->getFrontendType($displayContext) !== FrontendType::NONE) 
+                : true;
+                
+            return (
+                $displayContextFound && 
+                $fieldTypeFound && 
+                $fieldNameFound && 
+                $entityCodeFound && 
+                $onlyDisplayableFound
+            );
         });
         
         return $fields;
+    }
+    
+    /**
+     * Get the primary key field for this entity.
+     *
+     * @return Field
+    */
+    public function getPrimaryKeyField() : Field
+    {
+        return $this->primaryKeyField;
     }
     
     /**
@@ -102,15 +117,7 @@ final class Entity
     */
     public function getNameField() : Field
     {
-        $fields = $this->fieldCollection->filter(function ($field) {
-            return $field->getIsNameField();
-        });
-        
-        if(!$fields->first()) {
-            throw new ConfigurationException('Could not find name field for '.$this->entityCode);
-        } 
-        
-        return $fields->first();
+        return $this->nameField;
     }
     
     /**
@@ -128,21 +135,21 @@ final class Entity
      *
      * @return class-string<Model>
     */
-    public function getModel() : string
+    public function getModelClass() : string
     {
-        return $this->entityConfig->getModel();
+        return $this->entityConfig->getModelClass();
     }
     
     /**
      * Get loaded model for this entity.
      *
-     * @param float|int|string $key
+     * @param int|string $key
      * 
      * @return Model
     */
-    public function getLoadedModel(float|int|string $key) : Model
+    public function getLoadedModel(int|string $key) : Model
     {
-        $modelClass = $this->entityConfig->getModel();
+        $modelClass = $this->entityConfig->getModelClass();
         
         //Assuming our ID field is the same as the model's
         return $modelClass::findOrFail($key);
@@ -165,26 +172,6 @@ final class Entity
     }
     
     /**
-     * Get the primary key field for this entity.
-     *
-     * @return Field
-    */
-    public function getPrimaryKeyField() : Field
-    {
-        $primaryKeys = $this->fieldCollection->filter(function ($field, $key) {
-            return $field->isPrimaryKey();
-        });
-        
-        $pkField = $primaryKeys->first();
-        
-        if($pkField === null) {
-            throw new ConfigurationException('Each entity must contain a primary key field');
-        }
-        
-        return $pkField;
-    }
-    
-    /**
      * Get the query filter for this entity.
      *
      * @return Closure
@@ -202,6 +189,33 @@ final class Entity
     public function getStudlyCode() : string
     {
         return Str::studly($this->entityCode);
+    }
+    
+    /**
+     * Initialise the fields based on the field config.
+     * 
+     * @throws ConfigurationException
+     * 
+     * @return void
+     */
+    private function initialiseFields() : void
+    {
+        foreach($this->entityConfig->getFields() as $fieldConfig) {
+            $field = $this->fieldFactory->create($fieldConfig);
+            $this->fieldCollection->push($field);
+        } 
+    }
+    
+    /**
+     * Validate the setup of the entity.
+     *
+     * @return void
+    */
+    private function validateSetup() : void
+    {
+        $this->validateEntityCode();
+        $this->validateModelClass();
+        $this->validateFieldExistence();
     }
     
     /**
@@ -227,7 +241,7 @@ final class Entity
      */
     private function validateModelClass() : void
     {
-        if(!is_subclass_of($this->entityConfig->getModel(), Model::class)) {
+        if(!is_subclass_of($this->entityConfig->getModelClass(), Model::class)) {
             throw new ConfigurationException('Entity model must extend '.Model::class);
         }
     }
@@ -247,38 +261,50 @@ final class Entity
     }
     
     /**
-     * Check one primary key exists
-     * 
-     * @throws ConfigurationException
-     * 
+     * Initialise the primary key field for this entity.
+     *
      * @return void
-     */
-    private function validatePrimaryKey() : void
+    */
+    private function initPrimaryKeyField() : void
     {
-        $primaryKeys = $this->fieldCollection->filter(function ($field, $key) {
+        $primaryKeys = $this->fieldCollection->filter(function ($field) {
             return $field->isPrimaryKey();
         });
         
-        if($primaryKeys->count() !== 1) {
+        $pkField = $primaryKeys->first();
+        
+        if($pkField === null) {
+            throw new ConfigurationException('Could not find primary key field for '.$this->entityCode);
+        }
+        
+        if($primaryKeys->count() > 1) {
             throw new ConfigurationException('Each entity must contain a single primary key field');
         }
+        
+        $this->primaryKeyField = $pkField;
     }
     
     /**
-     * Check one name field exists
-     * 
-     * @throws ConfigurationException
-     * 
+     * Initialise the name field for this entity.
+     *
      * @return void
-     */
-    private function validateNameField() : void
+    */
+    private function initNameField() : void
     {
-        $nameFields = $this->fieldCollection->filter(function ($field, $key) {
+        $nameFields = $this->fieldCollection->filter(function ($field) {
             return $field->getIsNameField();
         });
         
-        if($nameFields->count() !== 1) {
+        $nameField = $nameFields->first();
+        
+        if(!$nameField) {
+            throw new ConfigurationException('Could not find name field for '.$this->entityCode);
+        } 
+        
+        if($nameFields->count() > 1) {
             throw new ConfigurationException('Each entity must contain a single name field');
         }
+        
+        $this->nameField = $nameField;
     }
 }

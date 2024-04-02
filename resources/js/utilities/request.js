@@ -1,40 +1,30 @@
-export async function request(path, parameters = [], queryParams = {}, postData = {}) {
+export class HttpMethod {
+ 
+    static Get = new HttpMethod('GET', false);
+    static Post = new HttpMethod('POST', true);
+    static Delete = new HttpMethod('DELETE', true);
 
-    const getVerb = 'GET';
-    const postVerb = 'POST';
+    constructor(name, needsCsrfToken) {
+        this.name = name;
+        this.needsCsrfToken = needsCsrfToken;
+    }
+}
+
+export async function request({
+    path, 
+    params = [], 
+    queryParams = {}, 
+    bodyData = {}, 
+    method = null,
+    acceptableErrors = [],
+}) {
+    
     const baseUrl = window.protonApiBase;
-    const method = Object.keys(postData).length ? postVerb : getVerb;
-    const acceptableErrors = [ 422 ];
-    let parameterString = "";
-    
-    const requestOptions = {
-        method: method,
-        headers: {
-            "Accept": "application/json",
-        }
-    };
-    
-    for (const parameter of parameters) {
-        parameterString += `${encodeURIComponent(parameter)}/`;
-    }
-    
-    if(Object.keys(queryParams).length > 0) {
-        const queryString = new URLSearchParams(queryParams);
-        parameterString += `?${queryString}`;
-    }
-    
-    if(method === postVerb) {
-        const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-        const postHeaders = {
-            "Content-Type": "application/json",
-            "X-Csrf-Token": csrfToken 
-        };
-        requestOptions["headers"] = {...requestOptions["headers"], ...postHeaders};
-        requestOptions["body"] = JSON.stringify(postData);
-    }
+    const httpMethod = getHttpMethod(bodyData, method);
+    const parameterString = getParameterString(params, queryParams);
+    const requestOptions = getRequestOptions(httpMethod, bodyData);
     
     const response = await fetch(`${baseUrl}/${path}/${parameterString}`, requestOptions);
-    
     const json = await response.json();
     
     if (!response.ok && (!acceptableErrors.includes(response.status))) {
@@ -51,4 +41,55 @@ export async function request(path, parameters = [], queryParams = {}, postData 
         status: response.status,
         json: json,
     };
+}
+
+function getHttpMethod(bodyData, specificMethod) {
+    
+    let httpMethod = null;
+    
+    if(specificMethod) {
+        httpMethod = specificMethod;
+    } else {
+        httpMethod = Object.keys(bodyData).length ? HttpMethod.Post : HttpMethod.Get;
+    }
+    
+    return httpMethod;
+}
+
+function getParameterString(params, queryParams) {
+    
+    let parameterString = "";
+    
+    for (const param of params) {
+        parameterString += `${encodeURIComponent(param)}/`;
+    }
+    
+    if(Object.keys(queryParams).length > 0) {
+        const queryString = new URLSearchParams(queryParams);
+        parameterString += `?${queryString}`;
+    }
+    
+    return parameterString;
+}
+
+function getRequestOptions(httpMethod, bodyData) {
+    
+    const requestOptions = {
+        method: httpMethod.name,
+        headers: {
+            "Accept": "application/json",
+        }
+    };
+    
+    if(httpMethod.needsCsrfToken) { 
+        const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+        requestOptions["headers"]["X-Csrf-Token"] = csrfToken;
+    }
+    
+    if(Object.keys(bodyData).length) {
+        requestOptions["headers"]["Content-Type"] = "application/json";
+        requestOptions["body"] = JSON.stringify(bodyData);
+    }
+    
+    return requestOptions;
 }

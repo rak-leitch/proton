@@ -66,7 +66,7 @@ final class DisplayConfigService
         ];
         
         foreach($parentEntity->getFields(
-            displayContext: DisplayContext::VIEW, 
+            displayContext: DisplayContext::DISPLAY, 
             fieldTypes: collect([HasMany::class]),
             onlyDisplayable: false
         ) as $field) {

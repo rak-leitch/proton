@@ -1,10 +1,13 @@
-<script setup>
-    const showOverlay = true;
+<script setup>  
+    import protonMenu from "../components/MenuComponent.vue";  
+    const showSuspenseOverlay = true;
 </script>
 
 <template>
     <v-layout class="rounded rounded-md">
-        <v-app-bar color="surface-variant" title="Proton"></v-app-bar>
+        <v-app-bar color="surface-variant" title="Proton">
+            <protonMenu />
+        </v-app-bar>
         <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
             <v-container>
                 <v-row>
@@ -15,7 +18,7 @@
                                     <component :is="Component"/>
                                     <template #fallback>
                                         <v-overlay
-                                            :model-value="showOverlay"
+                                            :model-value="showSuspenseOverlay"
                                             class="align-center justify-center"
                                         >
                                             <v-progress-circular
@@ -28,15 +31,6 @@
                                 </Suspense>
                             </template>
                         </RouterView>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col>
-                        <div class="mt-3 text-center">
-                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'test_project' }}">Projects</router-link> |
-                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'test_task' }}">Tasks</router-link> |
-                            <router-link :to="{ name: 'entity-index', params: { entityCode: 'test_user' }}">Users</router-link>
-                        </div>
                     </v-col>
                 </v-row>
             </v-container>

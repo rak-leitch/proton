@@ -221,6 +221,23 @@ final class ListComponent extends BaseComponent
     }
     
     /**
+     * Click delete confirm button
+     * 
+     * @param Browser $browser
+     *
+     * @return void
+    */
+    public function clickDeleteConfirmButton(
+        Browser $browser, 
+    ) : void
+    {
+        $buttonSelector = '.v-overlay-container .v-overlay .v-card .v-card-actions';
+        $browser->elsewhereWhenAvailable($buttonSelector, function (Browser $browser) {
+            $browser->click('.delete-confirm');
+        });
+    }
+    
+    /**
      * Get the selector for a list body cell.
      * 
      * @param int $row

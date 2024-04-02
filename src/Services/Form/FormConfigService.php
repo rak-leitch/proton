@@ -6,8 +6,6 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Internal\Field;
-use Adepta\Proton\Field\BelongsTo;
-use Adepta\Proton\Exceptions\ConfigurationException;
 use Illuminate\Support\Collection;
 
 final class FormConfigService
@@ -24,13 +22,13 @@ final class FormConfigService
      *         fields: array<int, array{
      *             title: string, 
      *             key: string, 
-     *             related_entity_code: string, 
-     *             frontend_type: string, 
+     *             relatedEntityCode: string, 
+     *             frontendType: string, 
      *             required: bool, 
-     *             select_options: Collection<int, Model>
+     *             selectOptions: Collection<int, Model>
      *          }>
      *     }, 
-     *     data: array<string, float|int|string|null>
+     *     data: array<string, float|int|string|bool|null>
      * }
     */
     public function getFormConfig(
@@ -52,10 +50,10 @@ final class FormConfigService
             $fieldName = $field->getFieldName();
             $fieldConfig['title'] = $field->getTitle();
             $fieldConfig['key'] = $fieldName;
-            $fieldConfig['related_entity_code'] = $field->getRelatedEntityCode();
-            $fieldConfig['frontend_type'] = $field->getFrontendType($displayContext)->value;
+            $fieldConfig['relatedEntityCode'] = $field->getRelatedEntityCode();
+            $fieldConfig['frontendType'] = $field->getFrontendType($displayContext)->value;
             $fieldConfig['required'] = $this->fieldRequired($field);
-            $fieldConfig['select_options'] = $field->getSelectOptions();
+            $fieldConfig['selectOptions'] = $field->getSelectOptions();
             
             $formConfig['config']['fields'][] = $fieldConfig;
             $formConfig['data'][$fieldName] = null;
@@ -72,7 +70,7 @@ final class FormConfigService
      * @param Entity $entity
      * @param Model $model
      * 
-     * @return array<string, float|int|string|null>
+     * @return array<string, float|int|string|bool|null>
     */
     public function getFormData(
         DisplayContext $displayContext, 

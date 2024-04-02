@@ -1,31 +1,29 @@
 <?php declare(strict_types = 1);
 
-namespace Adepta\Proton\Http\Controllers\Display;
+namespace Adepta\Proton\Http\Controllers\List;
 
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use Adepta\Proton\Services\Display\DisplayConfigService;
+use StdClass;
 
-final class DisplayConfigController extends BaseController
+final class ListDeleteController extends BaseController
 {    
     /**
      * Constructor.
      *
      * @param EntityFactory $entityFactory
      * @param AuthorisationService $authorisationService
-     * @param DisplayConfigService $displayConfigService
     */
     public function __construct(
         private EntityFactory $entityFactory,
         private AuthorisationService $authorisationService,
-        private DisplayConfigService $displayConfigService,
     ) { }
     
     /**
-     * Get the configuration for a display component.
+     * Handle an entity delete request.
      * 
      * @param Request $request
      * @param string $entityCode
@@ -33,13 +31,16 @@ final class DisplayConfigController extends BaseController
      *
      * @return JsonResponse
     */
-    public function getConfig(Request $request, string $entityCode, int|string $entityId) : JsonResponse
+    public function delete(
+        Request $request, 
+        string $entityCode,
+        int|string $entityId
+    ) : JsonResponse
     {
         $entity = $this->entityFactory->create($entityCode);
         $model = $entity->getLoadedModel($entityId);
-        $this->authorisationService->canView($request->user(), $model, true);
-        $displayConfig = $this->displayConfigService->getDisplayConfig($entity, $model);
-        
-        return response()->json($displayConfig);
+        $this->authorisationService->canDelete($request->user(), $model, true);
+        $model->delete();
+        return response()->json([]);
     }
 }

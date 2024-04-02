@@ -6,6 +6,7 @@ use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Models\Project;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
 
 class ListTest extends TestCase
 {
@@ -46,11 +47,12 @@ class ListTest extends TestCase
                 $json->where('title', 'Priority')
                      ->where('key', 'priority')
                      ->where('sortable', true)
-            )->where('primary_key', 'id')
-            ->where('can_create', true)
-            ->where('entity_label', 'Project')
+            )->where('primaryKey', 'id')
+            ->where('canCreate', true)
+            ->where('entityLabel', 'Project')
             ->has('version')
-            ->has('page_size_options')
+            ->has('pageSizeOptions')
+            ->has('initialPageSize')
         );
     }
     
@@ -81,16 +83,16 @@ class ListTest extends TestCase
             ->has('data.0', fn (AssertableJson $json) =>
                 $json->where('id', 2)
                      ->where('user_id', $user->name)
-                     ->where('name', 'Fun')
-                     ->where('description', 'Non-boring things to do.')
-                     ->where('priority', 'normal')
+                     ->where('name', ProjectSeeder::getData(2, 'name'))
+                     ->where('description', ProjectSeeder::getData(2, 'description'))
+                     ->where('priority', ProjectSeeder::getData(2, 'priority'))
             )
             ->has('data.1', fn (AssertableJson $json) =>
                 $json->where('id', 1)
                      ->where('user_id', $user->name)
-                     ->where('name', 'Do it yourself')
-                     ->where('description', 'All the DIY jobs that need to be done.')
-                     ->where('priority', 'normal')
+                     ->where('name', ProjectSeeder::getData(1, 'name'))
+                     ->where('description', ProjectSeeder::getData(1, 'description'))
+                     ->where('priority', ProjectSeeder::getData(1, 'priority'))
             )
             ->has('permissions', 2)
             ->has('permissions.1', fn (AssertableJson $json) =>
@@ -174,6 +176,40 @@ class ListTest extends TestCase
             'page' => 1,
             'items_per_page' => 5,
             'sort_by' => 'null',
+        ]));
+         
+        $response->assertStatus(403);
+    }
+    
+    /**
+     * Check the list delete endpoint.
+     *
+     * @return void
+    */
+    public function test_list_delete_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(1));
+        
+        $response = $this->delete(route('proton.delete.list', [
+            'entity_code' => 'project',
+            'entity_id' => 1,
+        ]));
+         
+        $response->assertStatus(200);
+    }
+    
+    /**
+     * Check unauthorised list delete endpoint.
+     *
+     * @return void
+    */
+    public function test_unauthed_list_delete_endpoint() : void
+    {        
+        $this->actingAs(User::findOrFail(2));
+        
+        $response = $this->delete(route('proton.delete.list', [
+            'entity_code' => 'project',
+            'entity_id' => 1,
         ]));
          
         $response->assertStatus(403);

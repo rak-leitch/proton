@@ -5,6 +5,7 @@ namespace Adepta\Proton\Tests\Feature;
 use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
 
 class DisplayTest extends TestCase
 {
@@ -30,32 +31,32 @@ class DisplayTest extends TestCase
                 ->has('fields.0', fn (AssertableJson $json) =>
                     $json->where('title', 'Id')
                         ->where('key', 'id')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', 1)
                 )
                 ->has('fields.1', fn (AssertableJson $json) =>
                     $json->where('title', 'User')
                         ->where('key', 'user_id')
-                        ->where('frontend_type', 'text')
+                        ->where('frontendType', 'text')
                         ->where('value', $user->name)
                 )
                 ->has('fields.2', fn (AssertableJson $json) =>
                     $json->where('title', 'Name')
                         ->where('key', 'name')
-                        ->where('frontend_type', 'text')
-                        ->where('value', 'Do it yourself')
+                        ->where('frontendType', 'text')
+                        ->where('value', ProjectSeeder::getData(1, 'name'))
                 )
                 ->has('fields.3', fn (AssertableJson $json) =>
                     $json->where('title', 'Project Description')
                         ->where('key', 'description')
-                        ->where('frontend_type', 'text')
-                        ->where('value', 'All the DIY jobs that need to be done.')
+                        ->where('frontendType', 'text')
+                        ->where('value', ProjectSeeder::getData(1, 'description'))
                 )
                 ->has('fields.4', fn (AssertableJson $json) =>
                     $json->where('title', 'Priority')
                         ->where('key', 'priority')
-                        ->where('frontend_type', 'text')
-                        ->where('value', 'normal')
+                        ->where('frontendType', 'text')
+                        ->where('value', ProjectSeeder::getData(1, 'priority'))
                 )
         );
     }
