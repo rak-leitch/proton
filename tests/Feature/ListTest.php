@@ -6,6 +6,7 @@ use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Models\Project;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
 
 class ListTest extends TestCase
 {
@@ -82,16 +83,16 @@ class ListTest extends TestCase
             ->has('data.0', fn (AssertableJson $json) =>
                 $json->where('id', 2)
                      ->where('user_id', $user->name)
-                     ->where('name', 'Fun')
-                     ->where('description', 'Non-boring things to do.')
-                     ->where('priority', 'normal')
+                     ->where('name', ProjectSeeder::getData(2, 'name'))
+                     ->where('description', ProjectSeeder::getData(2, 'description'))
+                     ->where('priority', ProjectSeeder::getData(2, 'priority'))
             )
             ->has('data.1', fn (AssertableJson $json) =>
                 $json->where('id', 1)
                      ->where('user_id', $user->name)
-                     ->where('name', 'Do it yourself')
-                     ->where('description', 'All the DIY jobs that need to be done.')
-                     ->where('priority', 'normal')
+                     ->where('name', ProjectSeeder::getData(1, 'name'))
+                     ->where('description', ProjectSeeder::getData(1, 'description'))
+                     ->where('priority', ProjectSeeder::getData(1, 'priority'))
             )
             ->has('permissions', 2)
             ->has('permissions.1', fn (AssertableJson $json) =>

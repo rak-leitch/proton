@@ -6,6 +6,7 @@ use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Models\Project;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
 
 class FormTest extends TestCase
 {
@@ -58,9 +59,9 @@ class FormTest extends TestCase
             $json->has('config', fn (AssertableJson $json) =>
                 $this->checkFormConfigFields($json, $user)
             )->has('data', fn (AssertableJson $json) =>
-                $json->where('user_id', 1)
-                     ->where('name', 'Do it yourself')
-                     ->where('description', 'All the DIY jobs that need to be done.')
+                $json->where('user_id', ProjectSeeder::getData(1, 'user_id'))
+                     ->where('name', ProjectSeeder::getData(1, 'name'))
+                     ->where('description', ProjectSeeder::getData(1, 'description'))
                      ->where('priority', 'normal')
             )
         );

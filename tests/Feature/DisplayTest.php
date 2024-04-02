@@ -5,6 +5,7 @@ namespace Adepta\Proton\Tests\Feature;
 use Adepta\Proton\Tests\TestCase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Adepta\Proton\Tests\Models\User;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
 
 class DisplayTest extends TestCase
 {
@@ -43,19 +44,19 @@ class DisplayTest extends TestCase
                     $json->where('title', 'Name')
                         ->where('key', 'name')
                         ->where('frontendType', 'text')
-                        ->where('value', 'Do it yourself')
+                        ->where('value', ProjectSeeder::getData(1, 'name'))
                 )
                 ->has('fields.3', fn (AssertableJson $json) =>
                     $json->where('title', 'Project Description')
                         ->where('key', 'description')
                         ->where('frontendType', 'text')
-                        ->where('value', 'All the DIY jobs that need to be done.')
+                        ->where('value', ProjectSeeder::getData(1, 'description'))
                 )
                 ->has('fields.4', fn (AssertableJson $json) =>
                     $json->where('title', 'Priority')
                         ->where('key', 'priority')
                         ->where('frontendType', 'text')
-                        ->where('value', 'normal')
+                        ->where('value', ProjectSeeder::getData(1, 'priority'))
                 )
         );
     }

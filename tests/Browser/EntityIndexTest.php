@@ -7,6 +7,7 @@ use Adepta\Proton\Tests\BrowserTestCase;
 use Adepta\Proton\Tests\Models\User;
 use Adepta\Proton\Tests\Browser\Components\ListComponent;
 use Adepta\Proton\Tests\Browser\Components\MenuComponent;
+use Adepta\Proton\Tests\Database\Seeders\ProjectSeeder;
  
 class EntityIndexTest extends BrowserTestCase
 {
@@ -30,10 +31,10 @@ class EntityIndexTest extends BrowserTestCase
                         ->assertHeaderText(4, 'Description')
                         ->assertHeaderText(5, 'Priority')
                         ->assertHeaderText(6, 'Actions')
-                        ->assertCellText(1, 3, 'Do it yourself')
-                        ->assertCellText(1, 4, 'All the DIY jobs that need to be done.')
-                        ->assertCellText(2, 3, 'Fun')
-                        ->assertCellText(2, 4, 'Non-boring things to do.')
+                        ->assertCellText(1, 3, ProjectSeeder::getData(1, 'name'))
+                        ->assertCellText(1, 4, ProjectSeeder::getData(1, 'description'))
+                        ->assertCellText(2, 3, ProjectSeeder::getData(2, 'name'))
+                        ->assertCellText(2, 4, ProjectSeeder::getData(2, 'description'))
                         ->assertCellElementsVisible(1, 6, ['.update-button', '.display-button', '.delete-button'])
                         ->assertCellElementsNotPresent(2, 6, ['.update-button', '.display-button', '.delete-button'])
                         ->assertCellNotPresent(3, 1);
@@ -57,8 +58,8 @@ class EntityIndexTest extends BrowserTestCase
                     $browser->clickHeader(1)
                         ->clickHeader(1)
                         ->waitForCellText(1, 1, '2')
-                        ->assertCellText(1, 3, 'Fun')
-                        ->assertCellText(1, 4, 'Non-boring things to do.');
+                        ->assertCellText(1, 3, ProjectSeeder::getData(2, 'name'))
+                        ->assertCellText(1, 4, ProjectSeeder::getData(2, 'description'));
                 });
         });  
     }
@@ -78,8 +79,8 @@ class EntityIndexTest extends BrowserTestCase
                     $browser->clickCellButton(1, 6, '.delete-button')
                         ->clickDeleteConfirmButton()
                         ->waitForCellText(1, 1, '2')
-                        ->assertCellText(1, 3, 'Fun')
-                        ->assertCellText(1, 4, 'Non-boring things to do.')
+                        ->assertCellText(1, 3, ProjectSeeder::getData(2, 'name'))
+                        ->assertCellText(1, 4, ProjectSeeder::getData(2, 'description'))
                         ->assertCellNotPresent(2, 1);
                 });
         });  
@@ -101,8 +102,8 @@ class EntityIndexTest extends BrowserTestCase
                         ->clickMenuItem('project');
                 })
                 ->within(new ListComponent('@list-project'), function (Browser $browser) {
-                    $browser->waitForCellText(2, 3, 'Fun')
-                        ->assertCellText(2, 4, 'Non-boring things to do.');
+                    $browser->waitForCellText(2, 3, ProjectSeeder::getData(2, 'name'))
+                        ->assertCellText(2, 4, ProjectSeeder::getData(2, 'description'));
                 })
                 ->assertSeeIn('.v-card-title', 'Projects');
         });  
