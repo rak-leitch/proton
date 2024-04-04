@@ -1,22 +1,22 @@
 # Proton
 
-Proton is a Laravel package which provides a configurable CRUD user interface  based on Eloquent ORM relationships and Vuetify, similar to Laravel Nova. It's not yet ready for real-world use, but it currently implements display, creation, updating and deletion of database entities, which can be related by the BelongsTo and HasMany Eloquent relationships. 
+Proton is a Laravel package which provides a configurable CRUD SPA based on Eloquent ORM relationships and Vuetify, in a similar fashion to Laravel Nova. It's not yet ready for real-world use, but it currently implements display, creation, updating and deletion of database entities, which can be related by the BelongsTo and HasMany Eloquent relationships. 
 
 ## Installation
 
 At the moment, you'll need to install the package locally alongside an installation of Laravel 10.x or 11.x. Start by cloning the repo to a location accessible by your Laravel installation:
-<br><br>
+
 ```
 git clone https://adepta2@bitbucket.org/adepta-proton/proton.git
 ```
 
 In your Laravel installation's `composer.json`, add repositories config so that composer looks in the correct place for the package, e.g.
-<br><br>
+
 ```
 "repositories": [
     {
         "type": "path",
-        "url": "../package"
+        "url": "../proton"
     }
 ],
 ```
@@ -24,20 +24,20 @@ In your Laravel installation's `composer.json`, add repositories config so that 
 You will also have to change the `minimum-stability` entry in Laravel's `composer.json` to `dev`.
 
 If you're using Laravel Sail, then you'll need to ensure that this path is listed in the volumes config for the `laravel.test` service:
-<br><br>
+
 ```bash
 volumes:
-    - '../package:/var/www/package'
+    - '../proton:/var/www/proton'
 ```
 
 You can now go ahead and require the package:
-<br><br>
+
 ```
 composer require adepta/proton
 ```
 
 Finally, to publish the frontend assets, run this command in the Laravel installation:
-<br><br>
+
 ```
 php artisan vendor:publish --provider="Adepta\Proton\ProtonServiceProvider" --tag=assets
 ```
@@ -47,7 +47,7 @@ php artisan vendor:publish --provider="Adepta\Proton\ProtonServiceProvider" --ta
 ### Configuration
 
 Proton uses entity definition classes defined in Laravel's `config/proton.php` file to configure each entity. The contents of the `config/proton.php` file might look something like this (`definition_classes` array keys are __snake case__ entity codes):
-<br><br>
+
 ```php
 <?php declare(strict_types = 1);
 
@@ -65,7 +65,7 @@ return [
 ```
 
 Here's an example of an entity definition class:
-<br><br>
+
 ```php
 <?php declare(strict_types = 1);
 
@@ -122,7 +122,7 @@ Each entity definition must contain exactly one `name()` field. Finally, `setQue
 
 For a full example, see the `EntityDefinitions`, `Database/Migrations`, `Models` and `Policies` directories under the `tests` directory in the package.
 
-Note that all Proton routes currently require a logged in user and a Policy must be implemented for all Models used by entity definitions. 
+Note that all Proton routes currently require a logged in user and a Policy must be implemented for all Models used by entity definitions. Policy methods currently used by Proton are `viewAny()`, `view()`, ` create()`, `update()`, and `forceDelete()`. In addition, there is a `add<entity_code>()` method; see the UI Update section for details.
 
 ### Resulting UI
 
@@ -134,7 +134,7 @@ There are four main views (pages):
 
 For each entity definition, the index displaying all records will be available at `/proton/entity/<entity_code>/index`. The results are filtered through the query filter in the entity definition class if provided. From the list displayed here, it is possible to edit, view or delete each record or to create a new record. 
 
-The 'View Entities' menu in the top right of the screen in every view will have an entry for each entity definition that links to the index page for it, as long as the user has viewAny Policy authorization for the entity's corresponding model. Note that a CRUD button on the list will not appear if any of the respective create/update/delete/view Policy methods disallow this for a particular record.
+The 'View Entities' menu in the top right of the screen in every view will have an entry for each entity definition that links to the index page for it, as long as the user has `viewAny` Policy authorization for the entity's corresponding model. Note that a CRUD button on the list will not appear if any of the respective `create`/`update`/`delete`/`view` Policy methods disallow this for a particular user/record.
 
 #### Create
 
@@ -152,7 +152,7 @@ Similar to the Create view, form validation is applied here. Note the `BelongsTo
 
 ![Proton update view](https://filedn.com/lghqsCeu3YOjgUIe8IJkOjy/proton_screenshots/display.png)
 
-This view is available at `/proton/entity/<entity_code>/display/<entity_id>`. Basic record information is available at the top of the view and a number of lists appear below, one for each `HasMany` relation defined in the current record's entity definition. Within each list the results are filtered not only by the child entity's query filter, but also by the BelongsTo field value corresponding to the currently displayed main entity, so that only relevant records are displayed.
+This view is available at `/proton/entity/<entity_code>/display/<entity_id>`. Basic record information is available at the top of the view and a number of lists appear below, one for each `HasMany` relation defined in the current record's entity definition. Within each list the results are filtered not only by the child entity's query filter, but also by the `BelongsTo` field value corresponding to the currently displayed main entity, so that only relevant records are displayed.
 
 CRUD buttons are displayed as in the index view subject to Policy constraints.
 
@@ -161,6 +161,7 @@ CRUD buttons are displayed as in the index view subject to Policy constraints.
 - Currently, standard Laravel conventions are assumed with model relationship names, `BelongsTo` (foreign key) fields etc.
 - Only the `BelongsTo` and `HasMany` Eloquent relationships are currently handled.
 - Only `ID`, `Text` and `TextArea`, `BelongsTo` and `HasMany` fields are supported. 
+- Soft deletes are not yet supported.
 
 ## Licence
 
