@@ -95,7 +95,7 @@ final class ListDataService
             $permissions[$model->{$pkFieldName}] = [
                 'update' => $this->authService->canUpdate($user, $model),
                 'view' => $this->authService->canView($user, $model),
-                'delete' => $this->authService->canDelete($user, $model),
+                'delete' => $this->authService->canForceDelete($user, $model),
             ];
         }
         

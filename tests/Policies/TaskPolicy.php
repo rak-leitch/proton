@@ -58,32 +58,6 @@ class TaskPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
-     * 
-     * @param User $user
-     * @param Task $task
-     * 
-     * @return bool
-     */
-    public function delete(User $user, Task $task): bool
-    {
-        return $this->checkOwnership($user, $task);
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     * 
-     * @param User $user
-     * @param Task $task
-     * 
-     * @return bool
-     */
-    public function restore(User $user, Task $task): bool
-    {
-        return $this->checkOwnership($user, $task);
-    }
-
-    /**
      * Determine whether the user can permanently delete the model.
      * 
      * @param User $user

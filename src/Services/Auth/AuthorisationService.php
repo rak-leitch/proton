@@ -98,7 +98,7 @@ final class AuthorisationService
     }
     
     /**
-     * Check if a user can delete an entity instance.
+     * Check if a user can force delete an entity instance.
      * 
      * @param User $user
      * @param Model $model
@@ -106,13 +106,13 @@ final class AuthorisationService
      *
      * @return bool
     */
-    public function canDelete(
+    public function canForceDelete(
         ?User $user, 
         Model $model, 
         bool $throwException = false
     ) : bool 
     {
-        return $this->allowed('delete', $user, $model, $throwException);
+        return $this->allowed('forceDelete', $user, $model, $throwException);
     }
     
     /**

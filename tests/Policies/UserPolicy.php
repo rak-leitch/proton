@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Adepta\Proton\Tests\Policies;
 
@@ -17,7 +17,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
         /** @var UserModel $user */
-        return $user->is_admin;
+        return (bool)$user->is_admin;
     }
 
     /**
@@ -31,7 +31,7 @@ class UserPolicy
     public function view(User $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return $user->is_admin;
+        return (bool)$user->is_admin;
     }
 
     /**
@@ -57,35 +57,7 @@ class UserPolicy
     public function update(User $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return $user->is_admin;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     * 
-     * @param User $user
-     * @param UserModel $userModel
-     * 
-     * @return bool
-     */
-    public function delete(User $user, UserModel $userModel): bool
-    {
-        /** @var UserModel $user */
-        return $user->is_admin;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     * 
-     * @param User $user
-     * @param UserModel $userModel
-     * 
-     * @return bool
-     */
-    public function restore(User $user, UserModel $userModel): bool
-    {
-        /** @var UserModel $user */
-        return $user->is_admin;
+        return (bool)$user->is_admin;
     }
 
     /**
@@ -99,7 +71,7 @@ class UserPolicy
     public function forceDelete(User $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return $user->is_admin;
+        return (bool)$user->is_admin;
     }
     
     /**
@@ -113,6 +85,6 @@ class UserPolicy
     public function addProject(User $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return $user->is_admin || ($userModel->id === $user->id);
+        return (bool)$user->is_admin || ($userModel->id === $user->id);
     }
 }

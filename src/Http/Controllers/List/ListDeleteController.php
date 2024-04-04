@@ -39,7 +39,7 @@ final class ListDeleteController extends BaseController
     {
         $entity = $this->entityFactory->create($entityCode);
         $model = $entity->getLoadedModel($entityId);
-        $this->authorisationService->canDelete($request->user(), $model, true);
+        $this->authorisationService->canForceDelete($request->user(), $model, true);
         $model->delete();
         return response()->json([]);
     }

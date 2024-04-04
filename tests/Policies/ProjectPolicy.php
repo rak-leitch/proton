@@ -61,32 +61,6 @@ class ProjectPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
-     * 
-     * @param User $user
-     * @param Project $project
-     * 
-     * @return bool
-     */
-    public function delete(User $user, Project $project): bool
-    {
-        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     * 
-     * @param User $user
-     * @param Project $project
-     * 
-     * @return bool
-     */
-    public function restore(User $user, Project $project): bool
-    {
-        return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
-    }
-
-    /**
      * Determine whether the user can permanently delete the model.
      * 
      * @param User $user
