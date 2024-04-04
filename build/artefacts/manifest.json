@@ -1,0 +1,14 @@
+{
+  "resources/js/proton.css": {
+    "file": "assets/proton-a19f091d.css",
+    "src": "resources/js/proton.css"
+  },
+  "resources/js/proton.js": {
+    "css": [
+      "assets/proton-a19f091d.css"
+    ],
+    "file": "assets/proton-88f4450f.js",
+    "isEntry": true,
+    "src": "resources/js/proton.js"
+  }
+}
