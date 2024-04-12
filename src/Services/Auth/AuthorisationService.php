@@ -4,7 +4,7 @@ namespace Adepta\Proton\Services\Auth;
 
 use Adepta\Proton\Exceptions\AuthorisationException;
 use Adepta\Proton\Exceptions\ConfigurationException;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\Internal\Field;
@@ -24,7 +24,7 @@ final class AuthorisationService
     /**
      * Check if a user can view an entity type.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Entity $entity
      * @param bool $throwException
      * 
@@ -33,7 +33,7 @@ final class AuthorisationService
      * @return bool
     */
     public function canViewAny(
-        ?User $user, 
+        ?Authenticatable $user, 
         Entity $entity, 
         bool $throwException = false
     ) : bool 
@@ -44,7 +44,7 @@ final class AuthorisationService
     /**
      * Check if a user can view an entity type.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Entity $entity
      * @param bool $throwException
      * 
@@ -53,7 +53,7 @@ final class AuthorisationService
      * @return bool
     */
     public function canCreate(
-        ?User $user, 
+        ?Authenticatable $user, 
         Entity $entity, 
         bool $throwException = false
     ) : bool 
@@ -64,14 +64,14 @@ final class AuthorisationService
     /**
      * Check if a user can view an entity instance.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Model $model
      * @param bool $throwException
      *
      * @return bool
     */
     public function canView(
-        ?User $user, 
+        ?Authenticatable $user, 
         Model $model, 
         bool $throwException = false
     ) : bool
@@ -82,14 +82,14 @@ final class AuthorisationService
     /**
      * Check if a user can update an entity instance.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Model $model
      * @param bool $throwException
      *
      * @return bool
     */
     public function canUpdate(
-        ?User $user, 
+        ?Authenticatable $user, 
         Model $model, 
         bool $throwException = false
     ) : bool
@@ -100,14 +100,14 @@ final class AuthorisationService
     /**
      * Check if a user can force delete an entity instance.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Model $model
      * @param bool $throwException
      *
      * @return bool
     */
     public function canForceDelete(
-        ?User $user, 
+        ?Authenticatable $user, 
         Model $model, 
         bool $throwException = false
     ) : bool 
@@ -119,7 +119,7 @@ final class AuthorisationService
      * Check if a user can add an entity
      * to its parent (BelongsTo).
      * 
-     * @param ?User $user 
+     * @param ?Authenticatable $user 
      * @param Entity $entity
      * @param Field $field 
      * @param string|int|float|bool|null $fieldValue
@@ -128,7 +128,7 @@ final class AuthorisationService
      * @return bool
     */
     public function canAdd(
-        ?User $user, 
+        ?Authenticatable $user, 
         Entity $entity,
         Field $field, 
         string|int|float|bool|null $fieldValue,
@@ -158,7 +158,7 @@ final class AuthorisationService
      * on a particular entity.
      * 
      * @param string $action
-     * @param User $user
+     * @param Authenticatable $user
      * @param Model|class-string<Model> $model
      * @param bool $throwException
      * 
@@ -168,7 +168,7 @@ final class AuthorisationService
     */
     private function allowed(
         string $action,
-        ?User $user, 
+        ?Authenticatable $user, 
         Model|string $model, 
         bool $throwException = false
     ) : bool 

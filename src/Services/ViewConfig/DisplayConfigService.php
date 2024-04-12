@@ -8,7 +8,7 @@ use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Field\Internal\HasMany;
 use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 final class DisplayConfigService
 {    
@@ -27,7 +27,7 @@ final class DisplayConfigService
      * Get the view config for an entity instance
      * for use by the frontend.
      *
-     * @param ?User $user
+     * @param ?Authenticatable $user
      * @param Entity $parentEntity
      * @param Model $model
      * 
@@ -48,7 +48,7 @@ final class DisplayConfigService
      *  }
     */
     public function getViewConfig(
-        ?User $user,
+        ?Authenticatable $user,
         Entity $parentEntity,
         Model $model
         

@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\Form;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 final class FormModelFactory
 {    
@@ -24,11 +24,11 @@ final class FormModelFactory
      *
      * @param Entity $entity
      * @param int|string $entityId
-     * @param ?User $user
+     * @param ?Authenticatable $user
      * 
      * @return Model
     */
-    public function getUpdateModel(Entity $entity, int|string $entityId, ?User $user) : Model
+    public function getUpdateModel(Entity $entity, int|string $entityId, ?Authenticatable $user) : Model
     {
         $model = $entity->getLoadedModel($entityId);
         $this->authorisationService->canUpdate($user, $model, true);
@@ -39,11 +39,11 @@ final class FormModelFactory
      * Create the model for a form create.
      *
      * @param Entity $entity
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return Model
     */
-    public function getCreateModel(Entity $entity, ?User $user) : Model
+    public function getCreateModel(Entity $entity, ?Authenticatable $user) : Model
     {
         $modelClass = $entity->getModelClass();
         $this->authorisationService->canCreate($user, $entity, true);

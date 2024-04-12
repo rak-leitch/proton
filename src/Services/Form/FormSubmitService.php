@@ -6,7 +6,7 @@ use Adepta\Proton\Entity\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Adepta\Proton\Field\Internal\BelongsTo;
 
 final class FormSubmitService
@@ -24,7 +24,7 @@ final class FormSubmitService
      * Save a model on form submission given
      * previously validated data.
      *
-     * @param ?User $user
+     * @param ?Authenticatable $user
      * @param DisplayContext $displayContext
      * @param Entity $entity
      * @param Model $model
@@ -33,7 +33,7 @@ final class FormSubmitService
      * @return void
     */
     public function submit(
-        ?User $user,
+        ?Authenticatable $user,
         DisplayContext $displayContext, 
         Entity $entity, 
         Model $model, 
