@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\List;
 use Adepta\Proton\Entity\Entity;
 use Adepta\Proton\Field\DisplayContext;
 use Adepta\Proton\Services\Auth\AuthorisationService;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Carbon\Carbon;
 
 final class ListConfigService
@@ -23,7 +23,7 @@ final class ListConfigService
      * Get the list config for an entity
      * for use by the frontend.
      *
-     * @param ?User $user
+     * @param ?Authenticatable $user
      * @param Entity $entity
      * 
      * @return array{
@@ -43,7 +43,7 @@ final class ListConfigService
      *     }>
      * }
     */
-    public function getListConfig(?User $user, Entity $entity) : array
+    public function getListConfig(?Authenticatable $user, Entity $entity) : array
     {
         $listConfig = [];
         $listConfig['fields'] = [];

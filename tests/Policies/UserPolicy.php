@@ -2,7 +2,7 @@
 
 namespace Adepta\Proton\Tests\Policies;
 
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Adepta\Proton\Tests\Models\User as UserModel;
 
 class UserPolicy
@@ -10,38 +10,38 @@ class UserPolicy
     /**
      * Determine whether the user can view any models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function viewAny(User $user): bool
+    public function viewAny(Authenticatable $user): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can view the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function view(User $user, UserModel $userModel): bool
+    public function view(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can create models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function create(User $user): bool
+    public function create(Authenticatable $user): bool
     {
         return false;
     }
@@ -49,42 +49,57 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function update(User $user, UserModel $userModel): bool
+    public function update(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function forceDelete(User $user, UserModel $userModel): bool
+    public function forceDelete(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
     
     /**
      * Determine whether the user can add a Project to this user
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param UserModel $userModel
      * 
      * @return bool
      */
-    public function addProject(User $user, UserModel $userModel): bool
+    public function addProject(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin || ($userModel->id === $user->id);
+        return ($this->isAdmin($user)) || ($userModel->id === $user->id);
+    }
+    
+    /**
+     * Returns boolean representation of whether user is
+     * admin. Workaround for the time being as model boolean $cast appears
+     * not to work. 
+     * 
+     * @param Authenticatable $user
+     * 
+     * @return bool
+     */
+    protected function isAdmin(Authenticatable $user)
+    { 
+        /** @var UserModel $user */
+        return (bool)($user->is_admin);
     }
 }

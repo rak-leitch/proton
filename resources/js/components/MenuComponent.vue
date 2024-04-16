@@ -19,7 +19,7 @@
     }
     
     function initialiseMenu(json) {
-        json.entities.forEach(function(entity) {
+        for(const entity of json.entities) {
             const entityConfig = {
                 route: {
                     name: 'entity-index',  
@@ -31,7 +31,7 @@
                 code: entity.entityCode,
             };
             menuConfig.value.push(entityConfig);
-        }); 
+        }; 
     }
     
     const displayMenu = computed(() => {

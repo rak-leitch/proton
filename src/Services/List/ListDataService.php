@@ -12,7 +12,7 @@ use Adepta\Proton\Exceptions\ConfigurationException;
 use Adepta\Proton\Exceptions\RequestException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use StdClass;
@@ -35,7 +35,7 @@ final class ListDataService
      * for use by the frontend.
      *
      * @param Entity $entity 
-     * @param User $user
+     * @param Authenticatable $user
      * @param int $page 
      * @param int $itemsPerPage 
      * @param StdClass $requestQuery
@@ -52,7 +52,7 @@ final class ListDataService
     */
     public function getData(
         Entity $entity,
-        ?User $user, 
+        ?Authenticatable $user, 
         int $page, 
         int $itemsPerPage, 
         StdClass $requestQuery

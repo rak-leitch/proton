@@ -28,8 +28,8 @@
                 submitPath: "submit/form-create"
             };
             if(route.query.contextCode && route.query.contextId) {
-                formSettings.value["contextCode"] = route.query.contextCode;
-                formSettings.value["contextId"] = route.query.contextId;
+                formSettings.value.contextCode = route.query.contextCode;
+                formSettings.value.contextId = route.query.contextId;
             }
         } catch (error) {
             currentError.value = `Failed to get config: ${error.message}`;

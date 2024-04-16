@@ -3,18 +3,18 @@
 namespace Adepta\Proton\Tests\Policies;
 
 use Adepta\Proton\Tests\Models\Task;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class TaskPolicy
 {
     /**
      * Determine whether the user can view any models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function viewAny(User $user): bool
+    public function viewAny(Authenticatable $user): bool
     {
         return true;
     }
@@ -22,12 +22,12 @@ class TaskPolicy
     /**
      * Determine whether the user can view the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Task $task
      * 
      * @return bool
      */
-    public function view(User $user, Task $task): bool
+    public function view(Authenticatable $user, Task $task): bool
     {
         return $this->checkOwnership($user, $task);
     }
@@ -35,11 +35,11 @@ class TaskPolicy
     /**
      * Determine whether the user can create models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function create(User $user): bool
+    public function create(Authenticatable $user): bool
     {
         return true;
     }
@@ -47,12 +47,12 @@ class TaskPolicy
     /**
      * Determine whether the user can update the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Task $task
      * 
      * @return bool
      */
-    public function update(User $user, Task $task): bool
+    public function update(Authenticatable $user, Task $task): bool
     {
         return $this->checkOwnership($user, $task);
     }
@@ -60,12 +60,12 @@ class TaskPolicy
     /**
      * Determine whether the user can permanently delete the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Task $task
      * 
      * @return bool
      */
-    public function forceDelete(User $user, Task $task): bool
+    public function forceDelete(Authenticatable $user, Task $task): bool
     {
         return $this->checkOwnership($user, $task);
     }
@@ -73,12 +73,12 @@ class TaskPolicy
     /**
      * Check the user can perform the action
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Task $task
      * 
      * @return bool
      */
-    private function checkOwnership(User $user, Task $task) : bool
+    private function checkOwnership(Authenticatable $user, Task $task) : bool
     {
         /** @var \Adepta\Proton\Tests\Models\User $user */
         return $user->is_admin || ($task->project && ($task->project->user_id === $user->id));

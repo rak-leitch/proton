@@ -5,7 +5,7 @@ namespace Adepta\Proton\Tests\Database\Seeders;
 use Illuminate\Database\Seeder;
 use Adepta\Proton\Tests\Models\User;
 
-class UserSeeder extends Seeder
+final class UserSeeder extends Seeder
 {
     /**
      * Initialise the User table for testing.
@@ -14,8 +14,6 @@ class UserSeeder extends Seeder
     */
     public function run(): void
     {
-        for($userCount = 0; $userCount < 3; $userCount++) {
-            User::factory()->create();
-        }
+        User::factory()->count(3)->create();
     }
 }

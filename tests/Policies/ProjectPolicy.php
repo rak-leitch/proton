@@ -3,7 +3,7 @@
 namespace Adepta\Proton\Tests\Policies;
 
 use Adepta\Proton\Tests\Models\Project;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class ProjectPolicy
 {
@@ -13,11 +13,11 @@ class ProjectPolicy
     /**
      * Determine whether the user can view any models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function viewAny(User $user): bool
+    public function viewAny(Authenticatable $user): bool
     {
         return $user->id === self::NO_PERMISSION_USER_ID ? false : true;
     }
@@ -25,12 +25,12 @@ class ProjectPolicy
     /**
      * Determine whether the user can view the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Project $project
      * 
      * @return bool
      */
-    public function view(User $user, Project $project): bool
+    public function view(Authenticatable $user, Project $project): bool
     {   
         return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
@@ -38,11 +38,11 @@ class ProjectPolicy
     /**
      * Determine whether the user can create models.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * 
      * @return bool
      */
-    public function create(User $user): bool
+    public function create(Authenticatable $user): bool
     {
         return $user->id === self::NO_PERMISSION_USER_ID ? false : true;
     }
@@ -50,12 +50,12 @@ class ProjectPolicy
     /**
      * Determine whether the user can update the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Project $project
      * 
      * @return bool
      */
-    public function update(User $user, Project $project): bool
+    public function update(Authenticatable $user, Project $project): bool
     {
         return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
@@ -63,12 +63,12 @@ class ProjectPolicy
     /**
      * Determine whether the user can permanently delete the model.
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Project $project
      * 
      * @return bool
      */
-    public function forceDelete(User $user, Project $project): bool
+    public function forceDelete(Authenticatable $user, Project $project): bool
     {
         return $project->id === self::CANNOT_INTERACT_PROJECT_ID ? false : $this->checkOwnership($user, $project);
     }
@@ -76,12 +76,12 @@ class ProjectPolicy
     /**
      * Determine whether the user can add a Task to this Project
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Project $project
      * 
      * @return bool
      */
-    public function addTask(User $user, Project $project): bool
+    public function addTask(Authenticatable $user, Project $project): bool
     {
         return $this->checkOwnership($user, $project);
     }
@@ -89,12 +89,12 @@ class ProjectPolicy
     /**
      * Check the user can perform the action
      * 
-     * @param User $user
+     * @param Authenticatable $user
      * @param Project $project
      * 
      * @return bool
      */
-    private function checkOwnership(User $user, Project $project) : bool
+    private function checkOwnership(Authenticatable $user, Project $project) : bool
     {
         /** @var \Adepta\Proton\Tests\Models\User $user */
         return $user->is_admin || ($project->user_id === $user->id);

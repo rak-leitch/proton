@@ -5,7 +5,7 @@ namespace Adepta\Proton\Services\Menu;
 use Adepta\Proton\Entity\EntityFactory;
 use Adepta\Proton\Services\Auth\AuthorisationService;
 use Adepta\Proton\Contracts\ConfigStoreContract;
-use Illuminate\Foundation\Auth\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 final class MenuConfigService
 {    
@@ -25,7 +25,7 @@ final class MenuConfigService
     /**
      * Get the entity menu config
      *
-     * @param ?User $user
+     * @param ?Authenticatable $user
      * 
      * @return array{
      *     entities: array<int, array{
@@ -34,7 +34,7 @@ final class MenuConfigService
      *     }>
      * }
     */
-    public function getMenuConfig(?User $user) : array
+    public function getMenuConfig(?Authenticatable $user) : array
     {
         $config = [];
         $config['entities'] = [];
