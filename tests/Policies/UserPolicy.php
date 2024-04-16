@@ -17,7 +17,7 @@ class UserPolicy
     public function viewAny(Authenticatable $user): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -31,7 +31,7 @@ class UserPolicy
     public function view(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserPolicy
     public function update(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
 
     /**
@@ -71,7 +71,7 @@ class UserPolicy
     public function forceDelete(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return (bool)$user->is_admin;
+        return $this->isAdmin($user);
     }
     
     /**
@@ -85,6 +85,21 @@ class UserPolicy
     public function addProject(Authenticatable $user, UserModel $userModel): bool
     {
         /** @var UserModel $user */
-        return ((bool)$user->is_admin) || ($userModel->id === $user->id);
+        return ($this->isAdmin($user)) || ($userModel->id === $user->id);
+    }
+    
+    /**
+     * Returns boolean representation of whether user is
+     * admin. Workaround for the time being as model boolean $cast appears
+     * not to work. 
+     * 
+     * @param Authenticatable $user
+     * 
+     * @return bool
+     */
+    protected function isAdmin(Authenticatable $user)
+    { 
+        /** @var UserModel $user */
+        return (bool)($user->is_admin);
     }
 }

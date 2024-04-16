@@ -7,6 +7,7 @@ use Adepta\Proton\Tests\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Adepta\Proton\Tests\Models\Project;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * Adepta\Proton\Tests\Models\User
