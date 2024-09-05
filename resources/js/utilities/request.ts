@@ -1,22 +1,47 @@
+import { RequestParams, RequestQueryParams } from "../types";
+
+type RequestOptions = {
+    method: string;
+    headers: {
+        [key: string]: string;
+    };
+    body?: string;
+};
+
+declare global {
+  interface Window {
+    protonApiBase: string;
+  }
+}
+
 export class HttpMethod {
- 
+    name: string;
+    needsCsrfToken: boolean;
+    
     static Get = new HttpMethod('GET', false);
     static Post = new HttpMethod('POST', true);
     static Delete = new HttpMethod('DELETE', true);
 
-    constructor(name, needsCsrfToken) {
+    constructor(name: string, needsCsrfToken: boolean) {
         this.name = name;
         this.needsCsrfToken = needsCsrfToken;
     }
 }
-
+    
 export async function request({
-    path, 
+    path,
     params = [], 
     queryParams = {}, 
     bodyData = {}, 
     method = null,
-    acceptableErrors = [],
+    acceptableErrors = [], 
+} : {
+    path: string, 
+    params?: RequestParams, 
+    queryParams?: RequestQueryParams, 
+    bodyData?: Object, 
+    method?: HttpMethod|null,
+    acceptableErrors?: number[],
 }) {
     
     const baseUrl = window.protonApiBase;
@@ -43,7 +68,7 @@ export async function request({
     };
 }
 
-function getHttpMethod(bodyData, specificMethod) {
+function getHttpMethod(bodyData: Object, specificMethod: HttpMethod|null) {
     
     let httpMethod = null;
     
@@ -56,7 +81,7 @@ function getHttpMethod(bodyData, specificMethod) {
     return httpMethod;
 }
 
-function getParameterString(params, queryParams) {
+function getParameterString(params: RequestParams, queryParams: RequestQueryParams) {
     
     let parameterString = "";
     
@@ -72,9 +97,9 @@ function getParameterString(params, queryParams) {
     return parameterString;
 }
 
-function getRequestOptions(httpMethod, bodyData) {
+function getRequestOptions(httpMethod: HttpMethod, bodyData: Object) {
     
-    const requestOptions = {
+    const requestOptions: RequestOptions = {
         method: httpMethod.name,
         headers: {
             "Accept": "application/json",
@@ -82,13 +107,18 @@ function getRequestOptions(httpMethod, bodyData) {
     };
     
     if(httpMethod.needsCsrfToken) { 
-        const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-        requestOptions["headers"]["X-Csrf-Token"] = csrfToken;
+        const csrfTokenTag = document.querySelector("meta[name='csrf-token']");
+        if(csrfTokenTag) {
+            const csrfToken = csrfTokenTag.getAttribute("content");
+            if(csrfToken) {
+                requestOptions.headers["X-Csrf-Token"] = csrfToken;
+            }
+        }
     }
     
     if(Object.keys(bodyData).length) {
-        requestOptions["headers"]["Content-Type"] = "application/json";
-        requestOptions["body"] = JSON.stringify(bodyData);
+        requestOptions.headers["Content-Type"] = "application/json";
+        requestOptions.body = JSON.stringify(bodyData);
     }
     
     return requestOptions;

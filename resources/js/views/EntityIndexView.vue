@@ -1,16 +1,31 @@
-<script setup>
+<script setup lang="ts">
     import ProtonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
-    import { watch, ref, computed, toRefs } from "vue";
+    import { watch, ref, toRefs } from "vue";
+    import { RequestParams, ListComponentSettings } from "../types";
     
-    const configData = ref({});
-    const listSettings = ref({});
-    const currentError = ref("");
+    type ConfigData = {
+        entityCode: string; 
+        title: string;
+    };
     
-    const props = defineProps({
-        entityCode: String,
+    const props = defineProps<{
+        entityCode: string;
+    }>();
+    
+    const configData = ref<ConfigData>({
+        entityCode: "",
+        title: "",
     });
     
+    const listSettings = ref<ListComponentSettings>({
+        entityCode: "",
+        contextCode: "",
+        contextId: "",
+    });
+    
+    const currentError = ref("");
+    const initialised = ref(false);
     const { entityCode } = toRefs(props);
     
     watch(entityCode, async () => {
@@ -20,27 +35,30 @@
     async function getConfig() {
         try {
             currentError.value = "";
+            
+            const params: RequestParams = [
+                entityCode.value,
+            ];
+            
             const { json } = await request({
                 path: "config/view/entity-index", 
-                params: [
-                    entityCode.value,
-                ]
+                params: params,
             });
             configData.value = json;
             listSettings.value = {
                 entityCode: configData.value.entityCode,
-                contextCode: null,
-                conectId: null
+                contextCode: "",
+                contextId: ""
             };
+            initialised.value = true;
         } catch (error) {
-            currentError.value = error.message;
+            if (error instanceof Error) {
+                currentError.value = error.message;
+            }
         }
     }
     
-    const display = computed(() => {
-        return (Object.keys(configData.value).length && !currentError.value);
-    });
-    
+    // @ts-ignore
     await getConfig();
 
 </script>
@@ -49,7 +67,7 @@
     <v-card class="my-4" elevation="4">
         <template 
             v-slot:title
-            v-if="display"
+            v-if="initialised"
         >
             {{ configData.title }}
         </template>
@@ -62,7 +80,7 @@
                 {{ currentError }}
             </v-alert>
             <ProtonList 
-                v-if="display"
+                v-if="initialised"
                 :settings="listSettings"
             />
         </template>

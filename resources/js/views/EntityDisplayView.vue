@@ -1,19 +1,39 @@
-<script setup>
+<script setup lang="ts">
     import ProtonDisplay from "../components/DisplayComponent.vue";
     import ProtonList from "../components/ListComponent.vue";
     import { request } from "../utilities/request";
-    import { watch, ref, computed, toRefs } from "vue";
+    import { watch, ref, toRefs } from "vue";
+    import { RequestParams, DisplayComponentSettings, ListComponentSettings } from "../types";
     
-    const configData = ref({});
-    const currentError = ref("");
+    type ListSettings = {
+        title: string;
+        listSettings: ListComponentSettings;
+    };
     
-    const props = defineProps({
-        entityCode: String,
-        entityId: String
+    type ConfigData = {
+        title: string;
+        lists: Array<ListSettings>;
+        displaySettings: DisplayComponentSettings;
+    };
+    
+    const props = defineProps<{
+        entityCode: string;
+        entityId: string;
+    }>();
+    
+    const configData = ref<ConfigData>({
+        title: "",
+        lists: [],
+        displaySettings: {
+            entityCode: "",
+            entityId: "",
+        },
     });
     
+    const currentError = ref("");
     const { entityCode, entityId } = toRefs(props);
-
+    const initialised = ref(false);
+    
     watch([entityCode, entityId], async () => {
         getConfig();
     });
@@ -21,23 +41,26 @@
     async function getConfig() {
         try {
             currentError.value = "";
+            
+            const params: RequestParams = [
+                entityCode.value,
+                entityId.value,
+            ]; 
+            
             const { json } = await request({
                 path: "config/view/entity-display", 
-                params: [
-                    entityCode.value,
-                    entityId.value,
-                ]
+                params: params,
             });
             configData.value = json;
+            initialised.value = true;
         } catch (error) {
-            currentError.value = error.message;
+            if (error instanceof Error) {
+                currentError.value = error.message;
+            }
         }
     }
     
-    const displayComponents = computed(() => {
-        return (Object.keys(configData.value).length && !currentError.value);
-    });
-    
+    // @ts-ignore
     await getConfig();
 
 </script>
@@ -50,7 +73,7 @@
     >
         {{ currentError }}
     </v-alert>
-    <v-card v-if="displayComponents" class="my-4" elevation="4" >
+    <v-card v-if="initialised" class="my-4" elevation="4" >
         <template v-slot:title>
             {{ configData.title }}
         </template>
@@ -60,7 +83,7 @@
             />
         </template>
     </v-card>
-    <v-card v-if="displayComponents" class="my-4" elevation="4" v-for="(listConfig) in configData.lists">
+    <v-card v-if="initialised" class="my-4" elevation="4" v-for="(listConfig) in configData.lists">
         <template v-slot:title>
             {{ listConfig.title }}
         </template>

@@ -1,11 +1,31 @@
-<script setup>
+<script setup lang="ts">
     import { useRouter } from "vue-router";
     import { request } from "../utilities/request";
     import { ref, computed } from "vue";
     
+    type JsonConfigEntry = {
+        entityCode: string; 
+        label: string;
+    };
+    
+    type JsonConfig = {
+        entities: Array<JsonConfigEntry>;
+    };
+    
+    type EntityConfig = {
+        route: {
+            name: string;  
+            params: { 
+                entityCode: string; 
+            },
+        },
+        label: string;
+        code: string;
+    };
+    
     const router = useRouter();
-    const menuConfig = ref([]);
-    const errorMessage = ref('');
+    const menuConfig = ref<Array<EntityConfig>>([]);
+    const errorMessage = ref("");
     
     async function getConfig() {
         try {
@@ -18,9 +38,9 @@
         }
     }
     
-    function initialiseMenu(json) {
+    function initialiseMenu(json: JsonConfig) {
         for(const entity of json.entities) {
-            const entityConfig = {
+            const entityConfig: EntityConfig = {
                 route: {
                     name: 'entity-index',  
                     params: { 

@@ -1,4 +1,4 @@
-<script setup>  
+<script setup lang="ts">  
     import protonMenu from "../components/MenuComponent.vue";  
     const showSuspenseOverlay = true;
 </script>
