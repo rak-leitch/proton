@@ -47,11 +47,11 @@
                 entityId.value,
             ]; 
             
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-display", 
                 params: params,
             });
-            configData.value = json;
+            configData.value = response;
             initialised.value = true;
         } catch (error) {
             if (error instanceof Error) {

@@ -38,11 +38,11 @@
                 settings.value.entityCode,
                 settings.value.entityId,
             ]; 
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/display", 
                 params: params,
             });
-            configData.value = json;
+            configData.value = response;
             initialised.value = true;
         } catch (error) {
             if (error instanceof Error) {

@@ -28,7 +28,7 @@ export class HttpMethod {
     }
 }
     
-export async function request({
+export async function request<T>({
     path,
     params = [], 
     queryParams = {}, 
@@ -42,7 +42,10 @@ export async function request({
     bodyData?: Object, 
     method?: HttpMethod|null,
     acceptableErrors?: number[],
-}) {
+}): Promise<{ 
+    status: number; 
+    response: T;
+}> {
     
     const baseUrl = window.protonApiBase;
     const httpMethod = getHttpMethod(bodyData, method);
@@ -64,13 +67,13 @@ export async function request({
     
     return { 
         status: response.status,
-        json: json,
+        response: json as T,
     };
 }
 
-function getHttpMethod(bodyData: Object, specificMethod: HttpMethod|null) {
+function getHttpMethod(bodyData: Object, specificMethod: HttpMethod|null): HttpMethod {
     
-    let httpMethod = null;
+    let httpMethod: HttpMethod;
     
     if(specificMethod) {
         httpMethod = specificMethod;
@@ -81,7 +84,7 @@ function getHttpMethod(bodyData: Object, specificMethod: HttpMethod|null) {
     return httpMethod;
 }
 
-function getParameterString(params: RequestParams, queryParams: RequestQueryParams) {
+function getParameterString(params: RequestParams, queryParams: RequestQueryParams): string {
     
     let parameterString = "";
     
@@ -97,7 +100,7 @@ function getParameterString(params: RequestParams, queryParams: RequestQueryPara
     return parameterString;
 }
 
-function getRequestOptions(httpMethod: HttpMethod, bodyData: Object) {
+function getRequestOptions(httpMethod: HttpMethod, bodyData: Object): RequestOptions {
     
     const requestOptions: RequestOptions = {
         method: httpMethod.name,
@@ -109,7 +112,7 @@ function getRequestOptions(httpMethod: HttpMethod, bodyData: Object) {
     if(httpMethod.needsCsrfToken) { 
         const csrfTokenTag = document.querySelector("meta[name='csrf-token']");
         if(csrfTokenTag) {
-            const csrfToken = csrfTokenTag.getAttribute("content");
+            const csrfToken = csrfTokenTag.getAttribute("content") as string;
             if(csrfToken) {
                 requestOptions.headers["X-Csrf-Token"] = csrfToken;
             }

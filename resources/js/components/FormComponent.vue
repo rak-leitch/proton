@@ -5,7 +5,7 @@
     import { RequestParams, FormComponentSettings } from "../types";
     
     type ErrorMessages = {
-        [key: string]: string;
+        [key: string]: Array<string>;
     };
     
     type ConfigSelectOption = {
@@ -30,6 +30,16 @@
         [key: string]: any;
     };
     
+    type ConfigResponse = {
+        config: ConfigData;
+        data: FormData;
+    };
+    
+    type SubmitResponse = {
+        message?: string;
+        errors?: ErrorMessages
+    };
+    
     const props = defineProps<{
       settings: FormComponentSettings
     }>();
@@ -48,12 +58,12 @@
     
     async function getConfig() {
         try {
-            const { json } = await request({
+            const { response } = await request<ConfigResponse>({
                 path: props.settings.configPath, 
                 params: getRequestParams()
             });
-            configData.value = json.config;
-            formData.value = json.data;
+            configData.value = response.config;
+            formData.value = response.data;
             initialised.value = true;
             selectRelatedField();
         } catch (error) {
@@ -66,13 +76,13 @@
     async function submitForm() {
         try {
             submitInProgress.value = true;
-            const { json, status } = await request({
+            const { response, status } = await request<SubmitResponse>({
                 path: props.settings.submitPath, 
                 params: getRequestParams(), 
                 bodyData: formData.value,
                 acceptableErrors: [ 422 ],
             });
-            errorMessages.value = json.errors ? json.errors : {};
+            errorMessages.value = response.errors ? response.errors : {};
             if(status === successStatus) {
                 router.go(-1);
             }
@@ -86,14 +96,10 @@
     }
     
     function getErrorMessage(fieldKey: string): string {
-        let errorMessage: string|Array<string> = "";
+        let errorMessage = "";
         if(Object.hasOwn(errorMessages.value, fieldKey)) {
             let fieldMessages = errorMessages.value[fieldKey];
-            if(Array.isArray(fieldMessages)) {
-                errorMessage = fieldMessages.join(" ");
-            } else {
-                errorMessage = fieldMessages;
-            }
+            errorMessage = fieldMessages.join(" ");
         }
         return errorMessage;
     };
@@ -112,7 +118,7 @@
         const contextCode = props.settings.contextCode;
         const contextId = props.settings.contextId;
         
-        if(contextCode && contextId && Array.isArray(configData.value.fields)) {
+        if(contextCode && contextId) {
             const contextField = configData.value.fields.find(
                 field => field.relatedEntityCode === contextCode
             );

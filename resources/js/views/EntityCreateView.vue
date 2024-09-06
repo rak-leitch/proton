@@ -39,12 +39,12 @@
                 props.entityCode,
             ];
             
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-create", 
                 params: params,
             });
             
-            configData.value = json;
+            configData.value = response;
             formSettings.value.entityCode = configData.value.entityCode;
             formSettings.value.configPath = "config/form-create";
             formSettings.value.submitPath = "submit/form-create";

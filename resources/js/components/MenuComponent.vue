@@ -3,13 +3,13 @@
     import { request } from "../utilities/request";
     import { ref, computed } from "vue";
     
-    type JsonConfigEntry = {
+    type ConfigEntry = {
         entityCode: string; 
         label: string;
     };
     
-    type JsonConfig = {
-        entities: Array<JsonConfigEntry>;
+    type Config = {
+        entities: Array<ConfigEntry>;
     };
     
     type EntityConfig = {
@@ -29,17 +29,17 @@
     
     async function getConfig() {
         try {
-            const { json } = await request({
+            const { response } = await request<Config>({
                 path: "config/menu"
             });
-            initialiseMenu(json);
+            initialiseMenu(response);
         } catch (error) {
             errorMessage.value = "Menu setup failed";
         }
     }
     
-    function initialiseMenu(json: JsonConfig) {
-        for(const entity of json.entities) {
+    function initialiseMenu(config: Config) {
+        for(const entity of config.entities) {
             const entityConfig: EntityConfig = {
                 route: {
                     name: 'entity-index',  

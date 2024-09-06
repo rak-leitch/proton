@@ -40,11 +40,11 @@
                 entityCode.value,
             ];
             
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-index", 
                 params: params,
             });
-            configData.value = json;
+            configData.value = response;
             listSettings.value = {
                 entityCode: configData.value.entityCode,
                 contextCode: "",

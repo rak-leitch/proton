@@ -41,12 +41,12 @@
                 props.entityId,
             ];
             
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-update", 
                 params: params,
             });
             
-            configData.value = json;
+            configData.value = response;
             formSettings.value.entityCode = configData.value.entityCode;
             formSettings.value.entityId = configData.value.entityId;
             formSettings.value.configPath = "config/form-update";

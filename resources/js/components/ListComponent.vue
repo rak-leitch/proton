@@ -48,6 +48,16 @@
         sortBy: Array<SortBy>;
     };
     
+    type ServerItem = {
+        [key: string]: string|number|boolean|null;
+    };
+    
+    type DataResponse = {
+        data: Array<ServerItem>;
+        totalRows: number;
+        permissions: RowPermissions;
+    };
+    
     const props = defineProps<{
       settings: ListComponentSettings
     }>();
@@ -63,7 +73,7 @@
     });
     
     const router = useRouter();
-    const serverItems = ref([]);
+    const serverItems = ref<Array<ServerItem>>([]);
     const loading = ref(true);
     const totalItems = ref(0);
     const currentError = ref("");
@@ -92,12 +102,12 @@
                 settings.value.entityCode,
             ];
              
-            const { json } = await request({
+            const { response } = await request<ConfigData>({
                 path: "config/list",
                 params: params,
             });
             
-            configData.value = json;
+            configData.value = response;
             initialised.value = true;
         } catch (error) {
             if (error instanceof Error) {
@@ -120,7 +130,7 @@
             
             if(sortBy.length) {
                 const [sort] = sortBy;
-                queryParams.sortField = String(sort.key);
+                queryParams.sortField = sort.key;
                 queryParams.sortOrder = String(sort.order);
             }
             
@@ -135,15 +145,15 @@
                 itemsPerPage
             ]; 
             
-            const { json } = await request({
+            const { response } = await request<DataResponse>({
                 path: "data/list", 
                 params: params, 
                 queryParams
             });
             
-            serverItems.value = json.data;
-            totalItems.value = json.totalRows;
-            rowPermissions = json.permissions;
+            serverItems.value = response.data;
+            totalItems.value = response.totalRows;
+            rowPermissions = response.permissions;
         } catch (error) {
             serverItems.value = [];
             totalItems.value = 0;
