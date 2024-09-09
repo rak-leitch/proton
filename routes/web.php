@@ -27,7 +27,7 @@ Route::prefix('proton')->middleware(['web', 'auth'])->name('proton.')->group(fun
             Route::get('list/{entity_code}/{page}/{items_per_page}', [ListDataController::class, 'getData'])->name('list');
         });
         Route::prefix('submit')->name('submit.')->group(function () {
-            Route::post('form-update/{entity_code}/{entity_id}', [SubmitUpdateController::class, 'submit'])->name('form-update');
+            Route::patch('form-update/{entity_code}/{entity_id}', [SubmitUpdateController::class, 'submit'])->name('form-update');
             Route::post('form-create/{entity_code}', [SubmitCreateController::class, 'submit'])->name('form-create');
         });
         Route::prefix('delete')->name('delete.')->group(function () {

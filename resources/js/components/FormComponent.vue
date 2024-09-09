@@ -78,6 +78,7 @@
             submitInProgress.value = true;
             const { response, status } = await request<SubmitResponse>({
                 path: props.settings.submitPath, 
+                method: props.settings.submitVerb,
                 params: getRequestParams(), 
                 bodyData: formData.value,
                 acceptableErrors: [ 422 ],

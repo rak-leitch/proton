@@ -111,7 +111,7 @@ class FormTest extends TestCase
             'priority' => 'urgent',
         ];
         
-        $response = $this->postJson(route('proton.submit.form-update', [
+        $response = $this->patchJson(route('proton.submit.form-update', [
             'entity_code' => 'project',
             'entity_id' => $entityId,
         ]), $fieldValues);
@@ -140,7 +140,7 @@ class FormTest extends TestCase
             'priority' => 'normal',
         ];
         
-        $response = $this->postJson(route('proton.submit.form-update', [
+        $response = $this->patchJson(route('proton.submit.form-update', [
             'entity_code' => 'project',
             'entity_id' => 1,
         ]), $fieldValues);
@@ -177,7 +177,7 @@ class FormTest extends TestCase
     { 
         $this->actingAs(User::findOrFail(1));
         
-        $response = $this->postJson(route('proton.submit.form-update', [
+        $response = $this->patchJson(route('proton.submit.form-update', [
             'entity_code' => 'project',
             'entity_id' => 1,
         ]), []);
@@ -251,7 +251,7 @@ class FormTest extends TestCase
     {        
         $this->actingAs(User::findOrFail(2));
         
-        $response = $this->postJson(route('proton.submit.form-update', [
+        $response = $this->patchJson(route('proton.submit.form-update', [
             'entity_code' => 'project',
             'entity_id' => 2,
         ]), []);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import ProtonForm from "../components/FormComponent.vue";
-    import { request } from "../utilities/request";
+    import { request, HttpMethod } from "../utilities/request";
     import { ref } from "vue";
     import { RequestParams, FormComponentSettings } from "../types";
     
@@ -26,8 +26,9 @@
         entityId: null,
         configPath: "",
         submitPath: "",
-        contextCode: "",
-        contextId: "",
+        submitVerb: null,
+        contextCode: null,
+        contextId: null,
     });
     
     const currentError = ref("");
@@ -51,6 +52,7 @@
             formSettings.value.entityId = configData.value.entityId;
             formSettings.value.configPath = "config/form-update";
             formSettings.value.submitPath = "submit/form-update";
+            formSettings.value.submitVerb = HttpMethod.Patch;
             initialised.value = true;
         } catch (error) {
             if (error instanceof Error) {

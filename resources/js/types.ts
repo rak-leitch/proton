@@ -1,3 +1,5 @@
+import { HttpMethod } from "./utilities/request";
+
 export type RequestParams = (string|number)[];
 
 export type RequestQueryParams = {
@@ -14,8 +16,9 @@ export type FormComponentSettings = {
     entityId: string|null;
     configPath: string;
     submitPath: string;
-    contextCode: string;
-    contextId: string;
+    submitVerb: HttpMethod|null;
+    contextCode: string|null;
+    contextId: string|null;
 };
 
 export type ListComponentSettings = {

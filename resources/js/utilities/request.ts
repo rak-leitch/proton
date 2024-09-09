@@ -20,6 +20,7 @@ export class HttpMethod {
     
     static Get = new HttpMethod('GET', false);
     static Post = new HttpMethod('POST', true);
+    static Patch = new HttpMethod('PATCH', true);
     static Delete = new HttpMethod('DELETE', true);
 
     constructor(name: string, needsCsrfToken: boolean) {
