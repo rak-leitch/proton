@@ -1,42 +1,67 @@
-<script setup>
+<script setup lang="ts">
     import ProtonForm from "../components/FormComponent.vue";
-    import { request } from "../utilities/request";
-    import { ref, computed } from "vue";
+    import { request, HttpMethod } from "../utilities/request";
+    import { ref } from "vue";
+    import { RequestParams, FormComponentSettings } from "../types";
     
-    const configData = ref({});
-    const formSettings = ref({});
-    const currentError = ref("");
+    type ConfigData = {
+        entityCode: string; 
+        entityId: string;
+        title: string;
+    };
     
-    const props = defineProps({
-        entityCode: String,
-        entityId: String
+    const props = defineProps<{
+      entityCode: string,
+      entityId: string
+    }>();
+    
+    const configData = ref<ConfigData>({
+        entityCode: '',
+        entityId: '',
+        title: '',
     });
+    
+    const formSettings = ref<FormComponentSettings>({
+        entityCode: "",
+        entityId: null,
+        configPath: "",
+        submitPath: "",
+        submitVerb: null,
+        contextCode: null,
+        contextId: null,
+    });
+    
+    const currentError = ref("");
+    const initialised = ref(false);
     
     async function getConfig() {
         try {
-            const { json } = await request({
+            
+            const params: RequestParams = [
+                props.entityCode,
+                props.entityId,
+            ];
+            
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-update", 
-                params: [
-                    props.entityCode,
-                    props.entityId,
-                ]
+                params: params,
             });
-            configData.value = json;
-            formSettings.value = {
-                entityCode: configData.value.entityCode,
-                entityId: configData.value.entityId,
-                configPath: "config/form-update",
-                submitPath: "submit/form-update"
-            };
+            
+            configData.value = response;
+            formSettings.value.entityCode = configData.value.entityCode;
+            formSettings.value.entityId = configData.value.entityId;
+            formSettings.value.configPath = "config/form-update";
+            formSettings.value.submitPath = "submit/form-update";
+            formSettings.value.submitVerb = HttpMethod.Patch;
+            initialised.value = true;
         } catch (error) {
-            currentError.value = error.message;
+            if (error instanceof Error) {
+                currentError.value = error.message;
+            }
         }
     }
     
-    const display = computed(() => {
-        return (Object.keys(configData.value).length && !currentError.value);
-    });
-    
+    // @ts-ignore
     await getConfig();
 
 </script>
@@ -45,7 +70,7 @@
     <v-card class="my-4" elevation="4">
         <template 
             v-slot:title
-            v-if="display"
+            v-if="initialised"
         >
             {{ configData.title }}
         </template>
@@ -58,7 +83,7 @@
                 {{ currentError }}
             </v-alert>
             <ProtonForm
-                v-if="display"
+                v-if="initialised"
                 :settings="formSettings"
             />
         </template>

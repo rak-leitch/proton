@@ -1,45 +1,69 @@
-<script setup>
+<script setup lang="ts">
     import ProtonForm from "../components/FormComponent.vue";
-    import { request } from "../utilities/request";
-    import { ref, computed } from "vue";
+    import { request, HttpMethod } from "../utilities/request";
+    import { ref } from "vue";
     import { useRoute } from "vue-router";
+    import { RequestParams, FormComponentSettings } from "../types";
     
-    const configData = ref({});
-    const formSettings = ref({});
+    type ConfigData = {
+        entityCode: string; 
+        title: string;
+    };
+    
+    const props = defineProps<{
+      entityCode: string
+    }>();
+    
+    const configData = ref<ConfigData>({
+        entityCode: '',
+        title: '',
+    });
+    
+    const formSettings = ref<FormComponentSettings>({
+        entityCode: "",
+        entityId: null,
+        configPath: "",
+        submitPath: "",
+        submitVerb: null,
+        contextCode: null,
+        contextId: null,
+    });
+    
     const currentError = ref("");
     const route = useRoute();
-    
-    const props = defineProps({
-        entityCode: String,
-    });
+    const initialised = ref(false);
     
     async function getConfig() {
         try {
-            const { json } = await request({
+        
+            const params: RequestParams = [
+                props.entityCode,
+            ];
+            
+            const { response } = await request<ConfigData>({
                 path: "config/view/entity-create", 
-                params: [
-                    props.entityCode,
-                ]
+                params: params,
             });
-            configData.value = json;
-            formSettings.value = {
-                entityCode: configData.value.entityCode,
-                configPath: "config/form-create",
-                submitPath: "submit/form-create"
-            };
-            if(route.query.contextCode && route.query.contextId) {
+            
+            configData.value = response;
+            formSettings.value.entityCode = configData.value.entityCode;
+            formSettings.value.configPath = "config/form-create";
+            formSettings.value.submitPath = "submit/form-create";
+            formSettings.value.submitVerb = HttpMethod.Post;
+
+            if((typeof route.query.contextCode === 'string') && (typeof route.query.contextId === 'string')) {
                 formSettings.value.contextCode = route.query.contextCode;
                 formSettings.value.contextId = route.query.contextId;
             }
+            initialised.value = true;
         } catch (error) {
-            currentError.value = `Failed to get config: ${error.message}`;
+            if (error instanceof Error) {
+                currentError.value = `Failed to get config: ${error.message}`;
+            }
         }
     }
     
-    const display = computed(() => {
-        return (Object.keys(configData.value).length && !currentError.value);
-    });
-    
+    // @ts-ignore
     await getConfig();
 
 </script>
@@ -48,7 +72,7 @@
     <v-card class="my-4" elevation="4">
         <template 
             v-slot:title
-            v-if="display"
+            v-if="initialised"
         >
             {{ configData.title }}
         </template>
@@ -61,7 +85,7 @@
                 {{ currentError }}
             </v-alert>
             <ProtonForm
-                v-if="display"
+                v-if="initialised"
                 :settings="formSettings"
             />
         </template>

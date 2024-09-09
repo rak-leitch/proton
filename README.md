@@ -7,7 +7,7 @@ Proton is a Laravel package which provides a configurable CRUD SPA based on Eloq
 At the moment, you'll need to install the package locally alongside an installation of Laravel 10.x or 11.x. Start by cloning the repo to a location accessible by your Laravel installation:
 
 ```
-git clone https://adepta2@bitbucket.org/adepta-proton/proton.git
+git clone https://github.com/rak-leitch/proton.git
 ```
 
 In your Laravel installation's `composer.json`, add repositories config so that composer looks in the correct place for the package, e.g.
